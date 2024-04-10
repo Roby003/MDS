@@ -11495,19 +11495,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\theot\\.nuget\\packages\\": {}
+    "C:\\Users\\Roby\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
+      "projectUniqueName": "C:\\Users\\Roby\\Documents\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
       "projectName": "BoardBloom",
-      "projectPath": "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
-      "packagesPath": "C:\\Users\\theot\\.nuget\\packages\\",
-      "outputPath": "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\obj\\",
+      "projectPath": "C:\\Users\\Roby\\Documents\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
+      "packagesPath": "C:\\Users\\Roby\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Roby\\Documents\\MDS\\BoardBloom\\BoardBloom\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\theot\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Roby\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -11583,7 +11583,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

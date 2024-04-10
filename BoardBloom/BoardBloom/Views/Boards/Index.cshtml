@@ -1,0 +1,19 @@
+﻿<div class="row">
+    @foreach (var board in ViewBag.Boards)
+    {
+        <div class="col-4 mb-4">
+            <div class="card" onmouseover="handleHover(this)" onmouseout="resetColor(this)">
+
+                <div class="card-body">
+
+                    <h5 class="card-title" name="Name">@board.Name</h5>
+
+                    <div><i class="bi bi-person"> Creat de: </i> @board.User.UserName</div>
+
+                    <br />
+                    
+                </div>
+            </div>
+        </div>
+    }
+</div>
