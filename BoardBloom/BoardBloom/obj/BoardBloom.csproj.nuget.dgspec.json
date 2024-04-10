@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\C_dev\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj": {}
+    "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj": {}
   },
   "projects": {
-    "C:\\C_dev\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj": {
+    "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\C_dev\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
+        "projectUniqueName": "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
         "projectName": "BoardBloom",
-        "projectPath": "C:\\C_dev\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
-        "packagesPath": "C:\\Users\\mecca\\.nuget\\packages\\",
-        "outputPath": "C:\\C_dev\\MDS\\BoardBloom\\BoardBloom\\obj\\",
+        "projectPath": "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\BoardBloom.csproj",
+        "packagesPath": "C:\\Users\\theot\\.nuget\\packages\\",
+        "outputPath": "C:\\Unibuc\\AN 2\\MDS\\BoardBloom\\BoardBloom\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mecca\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\theot\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
