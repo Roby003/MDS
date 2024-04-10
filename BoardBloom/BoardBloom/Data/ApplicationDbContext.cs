@@ -11,6 +11,8 @@ namespace BoardBloom.Data
         {
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Board> Boards { get; set; }
+        public DbSet<BloomBoard> BloomBoards{ get; set; }
 
 
     }
