@@ -14,21 +14,21 @@ namespace BoardBloom.Controllers
 
         private readonly ApplicationDbContext db;
 
-        //private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        //private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public CommentsController(
             ApplicationDbContext context,
-            //UserManager<ApplicationUser> userManager,
-            //RoleManager<IdentityRole> roleManager
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager
             )
         {
             db = context;
 
-           // _userManager = userManager;
+           _userManager = userManager;
 
-            //_roleManager = roleManager;
+            _roleManager = roleManager;
         }
 
 
@@ -88,7 +88,7 @@ namespace BoardBloom.Controllers
 
                     db.SaveChanges();
 
-                    return Redirect("/Blooms/Show/" + comm.Bloomd);
+                    return Redirect("/Blooms/Show/" + comm.Bloom);
                 }
                 else
                 {

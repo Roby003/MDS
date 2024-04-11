@@ -1,8 +1,59 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+
+/*     body, html {
+        background-image:url(" https://preview.redd.it/1tvuiqqz64b51.jpg?width=1080&crop=smart&auto=webp&s=fd5972376a198d5b22011959a7894b2f046efdf0");
+        object-fit: cover;
+    } */
+
+    .header {
+        padding: 1em;
+        background: red;
+        margin-bottom: 1em;
+        padding-bottom: 3.5em;
+        text-align: center;
+        clip-path: polygon(50% 0%, 100% 0, 100% 65%, 50% 100%, 0 65%, 0 0);
+    }
+
+
+        .header img {
+            max-width: 100%;
+            height: auto;
+            max-height: 100px; /* Adjust the max-height to your desired value */
+            margin-top: 10px;
+        }
+</style>
+
+<header class="header">
+    <h1 class="text-center" style="font-family: 'Rubik Doodle Shadow', cursive;">BloomBoard </h1>
+    <img src="https://cdn.drawception.com/images/panels/2017/8-11/9z6BQFrbyE-4.png">
+</header>
+
+<br />
+
+@if (TempData["message"] != null)
+{
+    <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
+        @ViewBag.Message
+    </div>
+}
+
+<br />
+
+
+<div>
+    <h1>Join the mokeys</h1>
 </div>
+
+<style>
+    .centered-div {
+        margin: 0 auto;
+        width: fit-content;
+    }
+</style>

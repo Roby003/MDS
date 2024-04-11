@@ -14,24 +14,24 @@ namespace BoardBloom.Controllers
     {
         private readonly ApplicationDbContext db;
 
-        //private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        //private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         private IWebHostEnvironment _env;
 
         public BloomsController(
             ApplicationDbContext context,
-            //UserManager<ApplicationUser> userManager,
-            //RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IWebHostEnvironment env
             )
         {
             db = context;
 
-            //_userManager = userManager;
+            _userManager = userManager;
 
-           // _roleManager = roleManager;
+            _roleManager = roleManager;
 
             _env = env;
         }
@@ -95,16 +95,16 @@ namespace BoardBloom.Controllers
             }
 
 
-            //ViewBag.blooms = blooms;
+            ViewBag.blooms = blooms;
 
-            //var userId = _userManager.GetUserId(User);
+            var userId = _userManager.GetUserId(User);
 
-            //var userLikes = db.Likes
-            //    .Where(l => l.UserId == userId)
-            //    .Select(l => l.BloomId)
-            //    .ToList();
+            var userLikes = db.Likes
+                .Where(l => l.UserId == userId)
+                .Select(l => l.BloomId)
+                .ToList();
 
-            //ViewData["UserLikes"] = userLikes;
+            ViewData["UserLikes"] = userLikes;
 
             ViewBag.Blooms = paginatedBlooms;
 
@@ -125,9 +125,9 @@ namespace BoardBloom.Controllers
                                          .Where(bl => bl.Id == id)
                                          .First();
 
-            //ViewBag.UserBoards = db.Boards
-            //                          .Where(c => c.UserId == _userManager.GetUserId(User))
-            //                          .ToList();
+            ViewBag.UserBoards = db.Boards
+                                      .Where(c => c.UserId == _userManager.GetUserId(User))
+                                      .ToList();
 
             SetAccessRights();
 
@@ -147,7 +147,7 @@ namespace BoardBloom.Controllers
         public IActionResult Show([FromForm] Comment comment)
         {
             comment.Date = DateTime.Now;
-            //comment.UserId = _userManager.GetUserId(User);
+            comment.UserId = _userManager.GetUserId(User);
 
             if (ModelState.IsValid)
             {
@@ -167,9 +167,9 @@ namespace BoardBloom.Controllers
 
 
                 // Adaugam bloom-urile utilizatorului pentru dropdown
-                //ViewBag.Boards = db.Boards
-                //                          .Where(c => c.UserId == _userManager.GetUserId(User))
-                //                          .ToList();
+                ViewBag.Boards = db.Boards
+                                          .Where(c => c.UserId == _userManager.GetUserId(User))
+                                          .ToList();
 
                 SetAccessRights();
 
@@ -324,7 +324,7 @@ namespace BoardBloom.Controllers
             Bloom bloom = db.Blooms.Where(bl => bl.Id == id)
                                         .First();
 
-            //var usr = db.ApplicationUsers.Find(_userManager.GetUserId(User));
+            var usr = db.ApplicationUsers.Find(_userManager.GetUserId(User));
 
 
 

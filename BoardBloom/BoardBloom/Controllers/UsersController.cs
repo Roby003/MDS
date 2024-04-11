@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BoardBloom.Controllers
 {
@@ -229,7 +230,7 @@ namespace BoardBloom.Controllers
 
             var user = db.Users.Include(u => u.Blooms).SingleOrDefault(u => u.Id == userId);
 
- 
+
             // .Where(u => u.Id == userId)
             // .FirstOrDefault(u => u.Id == userId);
             if (user == null)
@@ -240,7 +241,7 @@ namespace BoardBloom.Controllers
 
             var boards = from boardd in db.Boards.Include("User")
                                .Where(b => b.UserId == userId)
-                             select boardd;
+                         select boardd;
 
             ViewBag.Boards = boards;
 

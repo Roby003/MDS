@@ -32,10 +32,10 @@ namespace BoardBloom.Models
         public string? Image { get; set; }
 
         // un Bloom este creat de catre un user
-       // public string? UserId { get; set; }
-       // public virtual ApplicationUser? User { get; set; }
+        public string? UserId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         // relatia many-to-many dintre Bloom si Board
-        //public virtual ICollection<BloomBoard>? BloomBoards { get; set; }
+        public virtual ICollection<BloomBoard>? BloomBoards { get; set; }
     }
 }
