@@ -15,9 +15,5 @@ namespace BoardBloom.Data
         public DbSet<BloomBoard> BloomBoards{ get; set; }
 
 
-
-        public DbSet<Bloom> Blooms { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Like> Likes { get; set; }
     }
 }
