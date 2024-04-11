@@ -47,3 +47,11 @@
     - Implement features such as recommended posts based on user preferences or bookmarked content.
     - Provide options for users to customize their homepage layout or content preferences.
 
+Bookmark == bloom = postare
+Category == board = grupare de postari
+BookmarkCategory == BloomBoard
+
+ApplicationUser si SeedData si login/logout -Theo
+Bookmark(redenumire) Comment si Like - Rares
+Category si BookmarkCatregory(redenumite) - Robert
+Tag si HomePageul - Mishu
