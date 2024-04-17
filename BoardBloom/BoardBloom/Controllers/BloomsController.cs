@@ -120,7 +120,7 @@ namespace BoardBloom.Controllers
         {
             Bloom bloom = db.Blooms.Include("User")
                                          .Include("Comments")
-                                         //.Include("Likes")
+                                         .Include("Likes")
                                          .Include("Comments.User")
                                          .Where(bl => bl.Id == id)
                                          .First();
@@ -283,7 +283,8 @@ namespace BoardBloom.Controllers
             bloom.Date = DateTime.Now;
 
 
-            //bloom.UserId = _userManager.GetUserId(User);
+            bloom.UserId = _userManager.GetUserId(User);
+            bloom.User = db.ApplicationUsers.Find(bloom.UserId);
 
             if (BloomImage != null && BloomImage.Length > 0 && BloomImage is IFormFile)
             {
@@ -305,6 +306,7 @@ namespace BoardBloom.Controllers
 
             if (ModelState.IsValid)
             {
+                
                 db.Blooms.Add(bloom);
                 db.SaveChanges();
                 TempData["message"] = "Bloom-ul a fost adaugat";
@@ -575,10 +577,5 @@ namespace BoardBloom.Controllers
             return selectList;
         }
 
-
-        public IActionResult IndexNou()
-        {
-            return View();
-        }
     }
 }
