@@ -236,3 +236,4 @@ _Pvt_Extensions
 *.bin
 *.vsidx
 /BoardBloom/BoardBloom/wwwroot/images
+/BoardBloom/BoardBloom/Data/Migrations
