@@ -44,7 +44,6 @@ namespace BoardBloom.Controllers
 			{
 				userId = _userManager.GetUserId(User);
 			}
-
 			ViewBag.CurrentUserId = userId;
 
 			var UserName = (from usr in db.Users

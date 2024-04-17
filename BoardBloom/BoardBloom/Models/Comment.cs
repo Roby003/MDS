@@ -19,7 +19,7 @@ namespace BoardBloom.Models
         // un comentariu este postat de catre un user
         public string? UserId { get; set; }
 
-        //public virtual ApplicationUser? User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         public virtual Bloom? Bloom { get; set; }
     }
