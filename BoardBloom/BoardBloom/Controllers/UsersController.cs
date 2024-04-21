@@ -200,9 +200,8 @@ namespace BoardBloom.Controllers
             int _perPage = 5;
 
             var blooms = db.Blooms.Include("User")
-                            .Where(b => b.UserId == userId)
+                            .Where(b => b.UserId == userId )
                             .OrderByDescending(a => a.TotalLikes);
-
 
             int totalItems = blooms.Count();
 
@@ -239,11 +238,11 @@ namespace BoardBloom.Controllers
                 return NotFound();
             }
 
-            var boards = from boardd in db.Boards.Include("User")
-                               .Where(b => b.UserId == userId)
-                         select boardd;
+            var boards = db.Boards
+                .Include("User")
+                .ToList();
 
-            ViewBag.Boards = boards;
+            ViewBag.Boards = boards.ToList();
 
             ViewBag.UserCurent = _userManager.GetUserId(User);
 

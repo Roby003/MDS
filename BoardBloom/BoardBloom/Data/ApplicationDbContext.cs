@@ -17,29 +17,23 @@ namespace BoardBloom.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Like> Likes { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			// definirea relatiei many-to-many dintre Bookmark si Category
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    base.OnModelCreating(modelBuilder);
 
-			base.OnModelCreating(modelBuilder);
+    modelBuilder.Entity<BloomBoard>()
+        .HasKey(bb => bb.Id);  // If Id is intended to be the primary key.
 
-			// definire primary key compus
-			modelBuilder.Entity<BloomBoard>()
-				.HasKey(bc => new { bc.Id, bc.BloomId, bc.BoardId });
+            // Correcting the relationships
+            modelBuilder.Entity<BloomBoard>()
+             .HasOne(bb => bb.Bloom)
+             .WithMany(b => b.BloomBoards)
+             .HasForeignKey(bb => bb.BloomId);
 
-
-			// definire relatii cu modelele Bookmark si Category
-			//Foreign Key
-
-			modelBuilder.Entity<BloomBoard>()
-				.HasOne(bc => bc.Bloom)
-				.WithMany(bc => bc.BloomBoards)
-				.HasForeignKey(bc => bc.BoardId);
-
-			modelBuilder.Entity<BloomBoard>()
-				.HasOne(bc => bc.Board)
-				.WithMany(bc => bc.BloomBoards)
-				.HasForeignKey(bc => bc.BoardId);
-		}
-	}
+            modelBuilder.Entity<BloomBoard>()
+                .HasOne(bb => bb.Board)
+                .WithMany(b => b.BloomBoards)
+                .HasForeignKey(bb => bb.BoardId);
+        }
+    }
 }

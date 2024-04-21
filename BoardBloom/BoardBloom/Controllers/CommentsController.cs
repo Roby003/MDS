@@ -75,7 +75,7 @@ namespace BoardBloom.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User,Admin")]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Edit(int id, Comment requestComment)
         {
             Comment comm = db.Comments.Find(id);
