@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoardBloom.Migrations
 {
-    public partial class init_21_4 : Migration
+    public partial class init_24_4 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

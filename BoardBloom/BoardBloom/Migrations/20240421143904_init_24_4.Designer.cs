@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoardBloom.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421125652_init_21_4")]
-    partial class init_21_4
+    [Migration("20240421143904_init_24_4")]
+    partial class init_24_4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

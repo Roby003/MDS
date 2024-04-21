@@ -118,9 +118,9 @@ namespace BoardBloom.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Show(int id)
         {
-            Bloom bloom = db.Blooms.Include("User")
+            Bloom bloom = db.Blooms.Include("Users")
                                          .Include("Comments")
-                                         //.Include("Likes")
+                                         .Include("Likes")
                                          .Include("Comments.User")
                                          .Where(bl => bl.Id == id)
                                          .First();
