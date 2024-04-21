@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BoardBloom.Data.Migrations
+namespace BoardBloom.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -96,7 +96,7 @@ namespace BoardBloom.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.Bookmark", b =>
+            modelBuilder.Entity("BoardBloom.Models.Bloom", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,10 +129,10 @@ namespace BoardBloom.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookmarks");
+                    b.ToTable("Blooms");
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.BookmarkCategory", b =>
+            modelBuilder.Entity("BoardBloom.Models.BloomBoard", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,25 +140,23 @@ namespace BoardBloom.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BookmarkId")
+                    b.Property<int?>("BloomId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int?>("BoardId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CategoryDate")
+                    b.Property<DateTime>("BoardDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id", "BookmarkId", "CategoryId");
+                    b.HasKey("Id", "BloomId", "BoardId");
 
-                    b.HasIndex("BookmarkId");
+                    b.HasIndex("BoardId");
 
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("BookmarkCategories");
+                    b.ToTable("BloomBoards");
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.Category", b =>
+            modelBuilder.Entity("BoardBloom.Models.Board", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -181,7 +179,7 @@ namespace BoardBloom.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Boards");
                 });
 
             modelBuilder.Entity("BoardBloom.Models.Comment", b =>
@@ -192,7 +190,7 @@ namespace BoardBloom.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BookmarkId")
+                    b.Property<int?>("BloomId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -207,7 +205,7 @@ namespace BoardBloom.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookmarkId");
+                    b.HasIndex("BloomId");
 
                     b.HasIndex("UserId");
 
@@ -222,17 +220,20 @@ namespace BoardBloom.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BookmarkId")
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("BloomId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookmarkId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("BloomId");
 
                     b.ToTable("Likes");
                 });
@@ -374,35 +375,35 @@ namespace BoardBloom.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.Bookmark", b =>
+            modelBuilder.Entity("BoardBloom.Models.Bloom", b =>
                 {
                     b.HasOne("BoardBloom.Models.ApplicationUser", "User")
-                        .WithMany("Bookmarks")
+                        .WithMany("Blooms")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.BookmarkCategory", b =>
+            modelBuilder.Entity("BoardBloom.Models.BloomBoard", b =>
                 {
-                    b.HasOne("BoardBloom.Models.Bookmark", "Bookmark")
-                        .WithMany("BookmarkCategories")
-                        .HasForeignKey("BookmarkId")
+                    b.HasOne("BoardBloom.Models.Bloom", "Bloom")
+                        .WithMany("BloomBoards")
+                        .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BoardBloom.Models.Category", "Category")
-                        .WithMany("BookmarkCategories")
-                        .HasForeignKey("CategoryId")
+                    b.HasOne("BoardBloom.Models.Board", "Board")
+                        .WithMany("BloomBoards")
+                        .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Bookmark");
+                    b.Navigation("Bloom");
 
-                    b.Navigation("Category");
+                    b.Navigation("Board");
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.Category", b =>
+            modelBuilder.Entity("BoardBloom.Models.Board", b =>
                 {
                     b.HasOne("BoardBloom.Models.ApplicationUser", "User")
                         .WithMany()
@@ -413,32 +414,30 @@ namespace BoardBloom.Data.Migrations
 
             modelBuilder.Entity("BoardBloom.Models.Comment", b =>
                 {
-                    b.HasOne("BoardBloom.Models.Bookmark", "Bookmark")
+                    b.HasOne("BoardBloom.Models.Bloom", "Bloom")
                         .WithMany("Comments")
-                        .HasForeignKey("BookmarkId");
+                        .HasForeignKey("BloomId");
 
                     b.HasOne("BoardBloom.Models.ApplicationUser", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("Bookmark");
+                    b.Navigation("Bloom");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("BoardBloom.Models.Like", b =>
                 {
-                    b.HasOne("BoardBloom.Models.Bookmark", "Bookmark")
+                    b.HasOne("BoardBloom.Models.ApplicationUser", null)
                         .WithMany("Likes")
-                        .HasForeignKey("BookmarkId");
+                        .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("BoardBloom.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                    b.HasOne("BoardBloom.Models.Bloom", "Bloom")
+                        .WithMany("Likes")
+                        .HasForeignKey("BloomId");
 
-                    b.Navigation("Bookmark");
-
-                    b.Navigation("User");
+                    b.Navigation("Bloom");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -494,23 +493,25 @@ namespace BoardBloom.Data.Migrations
 
             modelBuilder.Entity("BoardBloom.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Bookmarks");
-
-                    b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("BoardBloom.Models.Bookmark", b =>
-                {
-                    b.Navigation("BookmarkCategories");
+                    b.Navigation("Blooms");
 
                     b.Navigation("Comments");
 
                     b.Navigation("Likes");
                 });
 
-            modelBuilder.Entity("BoardBloom.Models.Category", b =>
+            modelBuilder.Entity("BoardBloom.Models.Bloom", b =>
                 {
-                    b.Navigation("BookmarkCategories");
+                    b.Navigation("BloomBoards");
+
+                    b.Navigation("Comments");
+
+                    b.Navigation("Likes");
+                });
+
+            modelBuilder.Entity("BoardBloom.Models.Board", b =>
+                {
+                    b.Navigation("BloomBoards");
                 });
 #pragma warning restore 612, 618
         }

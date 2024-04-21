@@ -243,7 +243,7 @@ namespace BoardBloom.Controllers
                                .Where(b => b.UserId == userId)
                          select boardd;
 
-            ViewBag.Boards = boards;
+            ViewBag.Boards = boards.ToList();
 
             ViewBag.UserCurent = _userManager.GetUserId(User);
 
