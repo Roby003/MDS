@@ -118,7 +118,7 @@ namespace BoardBloom.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Show(int id)
         {
-            Bloom bloom = db.Blooms.Include("Users")
+            Bloom bloom = db.Blooms.Include("User")
                                          .Include("Comments")
                                          .Include("Likes")
                                          .Include("Comments.User")
