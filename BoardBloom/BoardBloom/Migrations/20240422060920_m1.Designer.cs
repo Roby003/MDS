@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoardBloom.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421143904_init_24_4")]
-    partial class init_24_4
+    [Migration("20240422060920_m1")]
+    partial class m1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -145,13 +145,15 @@ namespace BoardBloom.Migrations
                     b.Property<int?>("BloomId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BoardId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("BoardDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id", "BloomId", "BoardId");
+                    b.Property<int?>("BoardId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloomId");
 
                     b.HasIndex("BoardId");
 
@@ -390,15 +392,11 @@ namespace BoardBloom.Migrations
                 {
                     b.HasOne("BoardBloom.Models.Bloom", "Bloom")
                         .WithMany("BloomBoards")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BloomId");
 
                     b.HasOne("BoardBloom.Models.Board", "Board")
                         .WithMany("BloomBoards")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BoardId");
 
                     b.Navigation("Bloom");
 
