@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using BoardBloom.Data;
 using BoardBloom.Models;
 using System;
+using System.Threading.Tasks;
 
 
 namespace BoardBloom.Controllers
@@ -158,6 +159,7 @@ namespace BoardBloom.Controllers
 
             else
             {
+                /*//aici prob bug
                 Bloom bloom = db.Blooms.Include("User")
                                          .Include("Comments")
                                          //.Include("Likes")
@@ -173,7 +175,11 @@ namespace BoardBloom.Controllers
 
                 SetAccessRights();
 
-                return View(bloom);
+                return View(bloom);*/
+
+                //bug fix
+                return Redirect("/Blooms/Show/" + comment.BloomId);
+
             }
         }
 
@@ -576,6 +582,42 @@ namespace BoardBloom.Controllers
             }
             return selectList;
         }
+        [HttpGet]
+        public IActionResult EditComm(int commId)
+        {
+            Comment comm = db.Comments.Find(commId);
+            if (comm == null)
+                return RedirectToAction("Index", "Blooms");
 
+
+            if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+            {
+                return PartialView("CommEditModal",comm);
+            }
+
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa editati comentariul";
+                TempData["messageType"] = "alert-danger";
+                return RedirectToAction("Index", "Blooms");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EditComm(Comment reqComm)
+        {
+            Comment c = db.Comments.Find(reqComm.Id);
+            if (c == null)
+            return RedirectToAction("Index", "Blooms");
+            if (ModelState.IsValid)
+            {
+             
+                    c.Content = reqComm.Content;
+                    TempData["message"] = "comment modified successfully";
+
+            }
+                db.SaveChanges();
+                return PartialView("CommEditModal", c);
+        }
     }
 }

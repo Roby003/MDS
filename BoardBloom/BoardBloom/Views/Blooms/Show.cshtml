@@ -50,7 +50,7 @@
             color: #fff;
         }
 </style>
-
+<div id="modal-placeholder"></div> @* where the modal will anchor once it is loaded *@
 <div class="card mx-auto" style="max-width: 800px;">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs" style="display: flex; justify-content: space-between;">
@@ -192,7 +192,13 @@ ca
                             @if (comm.UserId == ViewBag.UserCurent || ViewBag.EsteAdmin)
                             {
                                 <div class="d-flex justify-content-start mt-3">
-                                    <a class="btn btn-outline-primary me-2" href="/Comments/Edit/@comm.Id"><i class="bi bi-pencil-square"></i> Editeaza</a>
+@*                                     <a class="btn btn-outline-primary me-2" href="/Comments/Edit/@comm.Id"><i class="bi bi-pencil-square"></i> Editeaza</a>
+ *@
+
+                                    <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#commModal" data-url="@Url.Action("EditComm", new { commId= @comm.Id })">
+                                        Modifica
+                                    </button>
+ 
                                     <form method="post" action="/Comments/Delete/@comm.Id">
                                         <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Sterge</button>
                                     </form>
