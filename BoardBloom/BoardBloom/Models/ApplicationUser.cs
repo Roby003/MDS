@@ -28,6 +28,8 @@ namespace BoardBloom.Models
         // pentru popularea unui dropdown list
         
 
+        // nu cred ca ar trebui sa existe o lista cu toate roluri in user
+
         [NotMapped]
         public IEnumerable<SelectListItem>? AllRoles { get; set; }
 

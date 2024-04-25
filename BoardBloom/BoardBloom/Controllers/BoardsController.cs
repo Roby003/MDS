@@ -99,7 +99,7 @@ namespace BoardBloom.Controllers
 		}
 
 		// Afisarea tuturor bloomurilor pe care utilizatorul le-a salvat
-		// in categorii
+		// in board-uri
 
 		[Authorize(Roles = "User,Admin")]
 		public IActionResult Show(int id)
@@ -186,12 +186,13 @@ namespace BoardBloom.Controllers
 		}
 
 		[Authorize(Roles = "User,Admin")]
+		// admin ar trb scos
 		public IActionResult Edit(int id)
 		{
 			Board categ = db.Boards.Where(cat => cat.Id == id)
 										.First();
 
-			if (categ.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+			if (categ.UserId == _userManager.GetUserId(User))
 			{
 				return View(categ);
 			}

@@ -217,6 +217,7 @@ namespace BoardBloom.Controllers
         }
 
         [HttpPost]
+        // asta cred ca ar trebui sa fie facut doar de userul care a facut board-ul
         public IActionResult RemoveFromBoard(int bloomId, int boardId)
         {
             // luam BC-ul 
@@ -237,7 +238,7 @@ namespace BoardBloom.Controllers
                         db.BloomBoards.Remove(bloomBoard);
                         db.SaveChanges();
 
-                        TempData["message"] = "Bloom a fost sters din boarul selectata";
+                        TempData["message"] = "Bloom a fost sters din boarul selectat";
                         TempData["messageType"] = "alert-success";
                     }
                     catch (Exception ex)
@@ -248,12 +249,12 @@ namespace BoardBloom.Controllers
                 }
                 else
                 {
-                    TempData["message"] = "Bloomul nu a fost gasit in boardul selectata";
+                    TempData["message"] = "Bloomul nu a fost gasit in boardul selectat";
                     TempData["messageType"] = "alert-danger";
                 }
             }
 
-            TempData["message"] = "Bloomul a fost sters din boardul selectata";
+            TempData["message"] = "Bloomul a fost sters din boardul selectat";
             TempData["messageType"] = "alert-success";
             return Redirect("/Boards/Show/" + board.Id);
         }
@@ -320,6 +321,7 @@ namespace BoardBloom.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
+        // eu aici as zice ca admin-ul nu are de ce sa editeze un board doar sa il stearga daca e impotriba TOS
         public IActionResult Edit(int id)
         {
 
@@ -330,7 +332,7 @@ namespace BoardBloom.Controllers
 
 
 
-            if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+            if (bloom.UserId == _userManager.GetUserId(User))
             {
                 return View(bloom);
             }
@@ -345,7 +347,7 @@ namespace BoardBloom.Controllers
         }
 
 
-
+        // theo- same ca mai sus
         // Verificam rolul utilizatorilor care au dreptul sa editeze
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
@@ -359,7 +361,7 @@ namespace BoardBloom.Controllers
             if (ModelState.IsValid)
             {
                 // permisia
-                if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+                if (bloom.UserId == _userManager.GetUserId(User))
                 {
 
                     bloom.Title = requestBloom.Title;

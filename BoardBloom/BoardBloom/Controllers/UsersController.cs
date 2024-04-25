@@ -53,19 +53,26 @@ namespace BoardBloom.Controllers
 
         public async Task<ActionResult> Edit(string id)
         {
+            if (id != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index");
+            }
             ApplicationUser user = db.Users.Find(id);
 
+
+            // metoda asta e cea mai ciudata pe care am vazut o vreodata
             user.AllRoles = GetAllRoles();
 
             var roleNames = await _userManager.GetRolesAsync(user); // Lista de nume de roluri
 
             // Cautam ID-ul rolului in baza de date
             var currentUserRole = _roleManager.Roles
-                                              .Where(r => roleNames.Contains(r.Name))
-                                              .Select(r => r.Id)
-                                              .First(); // Selectam 1 singur rol
+                                                .Where(r => roleNames.Contains(r.Name))
+                                                .Select(r => r.Id)
+                                                .First(); // Selectam 1 singur rol
             ViewBag.UserRole = currentUserRole;
-
+            
+            
             return View(user);
         }
 
@@ -108,6 +115,10 @@ namespace BoardBloom.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
+            if (id != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index");
+            }
             var user = db.Users
                          .Include("Comments")
                          .Include("Blooms")
