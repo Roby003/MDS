@@ -1,0 +1,63 @@
+@model BoardBloom.Models.Bloom
+@{
+    Layout = null;
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Blooms/_BloomPartial.css" />
+</head>
+
+<div class="bloom-card">
+    <div class="bloom-header">
+        <img class="bloom-header-profile-image" src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg" alt="profile image" />
+        <div class="bloom-header-info">
+            <a href="@Url.Action("UserProfile", "Users", new { userId = Model.User.Id })">
+                <h4 class="bloom-header-title">@Model.User.UserName</h4>
+            </a>  
+            <p class="bloom-header-date">@Model.Date</p>
+        </div>
+    </div>
+
+    <div class="bloom-main">
+        @if(IsImage(Model.Image))
+        {
+            <img class="bloom-main-image" src="@Model.Image" alt="bloom image" />
+        }
+        else if(IsEmbeddedLink(Model.Image))
+        {
+            <iframe class="bloom-main-video"
+            controls
+            src="@Url.Content(Model.Image)"
+            frameborder="0"
+            allowfullscreen>
+            </iframe>    
+        }
+
+        <div class="bloom-main-actions">
+            <a class="bloom-main-action-link" href="">Share</a>
+            <form class="bloom-main-likes" method="POST" action="@Url.Action("Like", "Blooms")">
+                <input type="hidden" name="bloomId" value="@Model.Id" />
+                <button class="bloom-main-action-link" role="submit">Like</button>
+                <p class="bloom-footer-likes">@Model.TotalLikes</p>
+            </form>
+        </div>
+    </div>
+
+    <div class="bloom-footer">
+        <p class="bloom-footer-description">@Model.Content</p>
+    </div>
+</div>
+
+@functions {
+    private bool IsImage(string url)
+    {
+        var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+        var extension = url.Substring(url.LastIndexOf('.')).ToLower();
+        return imageExtensions.Contains(extension);
+    }
+
+    private bool IsEmbeddedLink(string url) 
+    {
+        return url.Contains("youtube.com") || url.Contains("vimeo.com") || url.Contains("youtu.be");
+    }
+}

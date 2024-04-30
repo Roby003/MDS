@@ -1,0 +1,107 @@
+.comment-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 16px;
+    padding: 16px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    width: 100%;
+}
+
+.comment-card * {
+    margin: 0;
+    padding: 0;
+}
+
+.comment-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.comment-header-profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.comment-header-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 5px;
+    width: 100%;
+}
+
+.comment-header-title {
+    color: var(--content-primary);
+    font-size: 16px;
+}
+
+.comment-header-date {
+    color: var(--content-secondary);
+    font-size: 12px;
+}
+
+.comment-header-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    display: none;
+    transition: display 0.3s ease;
+}
+
+.comment-card:hover .comment-header-actions {
+    display: flex;
+}
+
+.comment-edit-button {
+    padding: 8px;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--accent-primary);
+    color: var(--content-primary);
+    font-size: 14px;
+}
+
+.comment-delete-button {
+    padding: 8px;
+    border: none;
+    border-radius: 12px;
+    color: red;
+    background-color: none;
+    font-size: 14px;
+}
+
+.comment-main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.comment-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    width: 100%;
+}
+
+.comment-main-content {
+    color: var(--content-primary);
+    font-size: 14px;
+    word-wrap: break-word;
+    text-wrap: wrap;
+    width: 100%;
+}

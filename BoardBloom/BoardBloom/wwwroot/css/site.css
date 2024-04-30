@@ -1,18 +1,43 @@
-html {
-  font-size: 14px;
+:root {
+  --content-primary: #3C3631;
+  --content-secondary: #A0A7AC;
+  --accent-primary: #B6B3EB;
+  --content-white: #f1f1f1;
+  --background-primary: #ffffff;
+  --background-secondary: #f4f3fb;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+body, html {
+  font-family: 'SanFrancisco', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-secondary);
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+a {
+  text-decoration: none;
+  color: var(--content-primary);
 }
 
-body {
-  margin-bottom: 60px;
+a:hover {
+  text-decoration: underline;
+  color: var(--accent-primary);
+} 
+
+button {
+  font-family: 'SanFrancisco', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--content-white);
+  border: none;
+  cursor: pointer;
+  background-color: var(--background-primary);
+}
+
+button:hover {
+  color: var(--accent-primary);
+  text-decoration: underline;
 }

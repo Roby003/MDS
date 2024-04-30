@@ -1,0 +1,126 @@
+﻿.bloom-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    width: 30%;
+    min-width: 400px;
+    height: 100%;
+    flex: 1;
+    aspect-ratio: 1;
+}
+
+.bloom-card * {
+    margin: 0;
+    padding: 0;
+}
+
+.bloom-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.bloom-header-profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.bloom-header-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 5px;
+}
+
+.bloom-header-title {
+    color: var(--content-primary);
+    font-size: 16px;
+}
+
+.bloom-header-date {
+    color: var(--content-secondary);
+    font-size: 12px;
+}
+
+.bloom-main {
+    height: 100%;
+    width: 100%;
+}
+
+.bloom-main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.bloom-main-video {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.bloom-main-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.bloom-main-likes {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-main-action-link {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.bloom-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    gap: 16px;
+    width: 100%;
+}
+
+.bloom-footer-description {
+    color: var(--content-primary);
+    font-size: 14px;
+}
+
+.bloom-footer-likes {
+    color: var(--content-white);
+    font-size: 12px;
+    font-weight: 500;
+    background-color: var(--accent-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
