@@ -1,86 +1,38 @@
 ﻿@model BoardBloom.Models.Bloom
 
-<br />
+<head>
+    <link rel="stylesheet" href="~/css/Blooms/BloomNew.css" />
+</head>
 
-<h2 class="mb-5 text-center" style="font-family: 'Rubik Doodle Shadow', cursive;">Adaugare Bloom</h2>
+<div class="new-bloom-wrapper">
+    <h1 class="new-bloom-title">Spawn a new beautiful<br/><span class="new-bloom-title-span">Bloom</span></h1>
 
+    <form class="new-bloom-form" method="POST" action="@Url.Action("New", "Blooms")">
+        <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            class="new-bloom-form-input" 
+            placeholder="Title"
+            required 
+        />
 
-<br />
+        <input 
+            type="text"
+            id="image" 
+            name="image"
+            class="new-bloom-form-input" 
+            placeholder="Image URL"
+            required 
+        />
 
-@{
-    // // Get the current URL
-    // var currentUrl = (string)ViewBag.URL;
+        <textarea
+            id="content" 
+            name="content"
+            class="new-bloom-form-textarea"
+            placeholder="Content"
+            required></textarea>
 
-    // // Split the URL into segments
-    // var urlSegments = currentUrl.Split('/');
-
-    // // Get the last segment (which should be the last parameter)
-    // var lastParameter = urlSegments[urlSegments.Length - 1];
-}
-
-
-<div style="background-color: #fff; padding: 20px; width: 800px; margin: 0 auto; display: flex; align-items: center;">
-
-    <div style="flex: 1; text-align: center;">
-        <h2 style="font-family: 'Rubik Doodle Shadow', cursive; margin-bottom: 10px;">Formularul de adugare pentru bloomuri</h2>
-
-    </div>
-
-    <div style="flex: 1; padding-left: 20px;">
-        @using (Html.BeginForm("New", "Blooms", FormMethod.Post, new { enctype = "multipart/form-data", style = "max-width: 500px;" }))
-        {
-            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-
-            <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                @Html.LabelFor(model => model.Title, "Titlu Bloom")
-                <br />
-                @Html.TextBoxFor(model => model.Title, new { @class = "form-control", style = "border: 2px solid #3838b2; width: 100%;" })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
-
-            <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                @Html.LabelFor(model => model.Content, "Continut Bloomului")
-                <br />
-                @Html.TextAreaFor(model => model.Content, new { @class = "form-control", style = "border: 2px solid #3838b2; width: 100%;" })
-                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-            </div>
-
-            @*  @if (ViewBag.Url_Link == true)
-        {
-        <label>IMGS</label>
-        <a class="btn btn" href="/blooms/new/true">LOCAL</a>
-        <a class="btn btn" href="/blooms/new/false">EXTERN</a>
-
-        <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-        <label for="BloomImage" style="color: #3838b2;">Select Image</label>
-        <input type="file" name="BloomImage" id="BloomImage" class="form-control" style="border: 2px solid #3838b2; width: 100%;" />
-        </div>
-        }
-        else
-        {
-        <label>IMGS_###</label>
-        <a class="btn btn" href="/blooms/new/true">LOCAL</a>
-        <a class="btn btn" href="#">EXTERN</a>
-
-        <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-        <label for="EBD" style="color: #3838b2;">Or Enter Image URL</label>
-        <input type="text" name="EBD" id="EBD" class="form-control" style="border: 2px solid #3838b2; width: 100%;" placeholder="Enter Image URL" />
-        </div>
-        } *@
-
-            <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                <label for="BloomImage" style="color: #3838b2;">Select Image</label>
-                <input type="file" name="BloomImage" id="BloomImage" class="form-control" style="border: 2px solid #3838b2; width: 100%;" />
-            </div>
-
-            <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                <label for="EBD" style="color: #3838b2;">Or Enter Image URL</label>
-                <input type="text" name="EBD" id="EBD" class="form-control" style="border: 2px solid #3838b2; width: 100%;" placeholder="Enter Image URL" />
-            </div>
-
-
-
-            <button class="btn" style="background-color: #3838b2; color: #ffffff; width: 100%;" type="submit">Adauga bloom</button>
-        }
-    </div>
+        <button class="new-bloom-form-submit" type="submit">Create</button>
+    </form>
 </div>

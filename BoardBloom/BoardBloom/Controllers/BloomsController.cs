@@ -130,6 +130,13 @@ namespace BoardBloom.Controllers
                                       .Where(c => c.UserId == _userManager.GetUserId(User))
                                       .ToList();
 
+            var isLiked = db.Likes
+                .Where(l => l.BloomId == id)
+                .Where(l => l.UserId == _userManager.GetUserId(User))
+                .Count() > 0;
+
+            ViewBag.IsLiked = isLiked;
+
             SetAccessRights();
 
             if (TempData.ContainsKey("message"))
@@ -531,6 +538,19 @@ namespace BoardBloom.Controllers
                 db.SaveChanges();
 
                 ViewData["UserLikes"] = GetCurrentUserLikes();
+            }
+            else
+            {
+                var like = db.Likes.FirstOrDefault(l => l.BloomId == bloomId && l.UserId == userId);
+
+                var bloom = db.Blooms.Find(bloomId);
+                
+                if(like != null)
+                {
+                    bloom.TotalLikes--;
+                    db.Likes.Remove(like);
+                    db.SaveChanges();
+                }
             }
 
             return RedirectToAction("Show", new { id = bloomId });

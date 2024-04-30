@@ -67,8 +67,8 @@
     padding: 8px;
     border: none;
     border-radius: 12px;
-    background-color: var(--accent-primary);
     color: var(--content-primary);
+    background-color: none;
     font-size: 14px;
 }
 

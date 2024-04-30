@@ -3,11 +3,16 @@
     Layout = null;
 }
 
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
 <head>
     <link rel="stylesheet" href="~/css/Blooms/_BloomPartial.css" />
+    <script src="~/js/Bloom/_BloomPartial.js"></script>
 </head>
 
-<div class="bloom-card">
+<div class="bloom-card" id="@Model.Id" onclick="() => { handleTap(@Model.Id) }">
     <div class="bloom-header">
         <img class="bloom-header-profile-image" src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg" alt="profile image" />
         <div class="bloom-header-info">
@@ -15,6 +20,19 @@
                 <h4 class="bloom-header-title">@Model.User.UserName</h4>
             </a>  
             <p class="bloom-header-date">@Model.Date</p>
+        </div>
+        
+        <div class="bloom-header-actions">
+            @if (UserManager.GetUserId(User) == Model.User.Id)
+            {
+                <a class="bloom-more-button">
+                    <img class="bloom-more-icon" src="https://www.svgrepo.com/show/335225/ellipsis.svg" alt="actions icon" />
+                </a>
+            }
+
+            <a class="bloom-save-button">
+                <img class="bloom-save-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-save-3251597-2724646.png" alt="save icon" />
+            </a>
         </div>
     </div>
 
@@ -31,15 +49,28 @@
             frameborder="0"
             allowfullscreen>
             </iframe>    
+        } else {
+            <p class="bloom-main-text">@Model.Title</p>
         }
 
         <div class="bloom-main-actions">
-            <a class="bloom-main-action-link" href="">Share</a>
             <form class="bloom-main-likes" method="POST" action="@Url.Action("Like", "Blooms")">
                 <input type="hidden" name="bloomId" value="@Model.Id" />
-                <button class="bloom-main-action-link" role="submit">Like</button>
-                <p class="bloom-footer-likes">@Model.TotalLikes</p>
-            </form>
+                <button class="bloom-main-action-link" role="submit">
+                    <div class="bloom-footer-like">
+                        <p class="bloom-footer-likes">@Model.TotalLikes</p>
+                        @if(ViewBag.IsLiked != null && ViewBag.IsLiked == true) {
+                            <img class="bloom-footer-like-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png" alt="like icon" />
+                        } else {
+                            <img class="bloom-footer-like-icon" src="https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png" alt="like icon" />
+                        }
+                    </div>
+                </button>
+            </form> 
+
+            <a class="bloom-main-action-link" href="#">
+                <img class="bloom-share-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-arrow-1976201-1674187.png" alt="share icon" />
+            </a>
         </div>
     </div>
 

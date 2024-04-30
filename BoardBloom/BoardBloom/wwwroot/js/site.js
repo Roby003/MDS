@@ -42,3 +42,19 @@
         });
     })
 })
+
+const handlesBloomsTap = () => {
+    const blooms = document.getElementsByClassName('bloom-card');
+    for (let i = 0; i < blooms.length; i++) {
+        const id = blooms[i].id;
+        blooms[i].addEventListener('click', () => {
+            if (!window.location.href.includes('/Blooms/Show')) {
+                window.location.href = `/Blooms/Show/${id}`;
+            }
+        });
+    }
+}
+
+window.onload = () => {
+    handlesBloomsTap();
+} 

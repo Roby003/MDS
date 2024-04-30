@@ -10,9 +10,16 @@
 
         <div class="bloom-comments-section">
             <div class="bloom-comments">
-                @foreach (var comment in Model.Comments)
+                @if (Model.Comments.Count == 0)
                 {
-                    @Html.Partial("_CommentPartial", comment)
+                    <p class="bloom-comments-empty">No comments yet.</p>
+                }
+                else
+                {
+                    @foreach (var comment in Model.Comments)
+                    {
+                        @Html.Partial("_CommentPartial", comment)
+                    }
                 }
             </div>
 

@@ -5,13 +5,21 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
+    margin: 0;
     background-color: var(--background-primary);
     border-radius: 12px;
-    width: 30%;
-    min-width: 400px;
+    width: 100%;
     height: 100%;
+    max-width: 33vw;
     flex: 1;
-    aspect-ratio: 1;
+    transition: all 0.5s;
+    /* aspect-ratio: 1; */
+}
+
+.bloom-card:hover {
+    box-shadow: 0 0 8px 2px var(--accent-primary);
+    background-color: var(--accent-secondary);
+    cursor: pointer;
 }
 
 .bloom-card * {
@@ -20,6 +28,7 @@
 }
 
 .bloom-header {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -52,8 +61,50 @@
     font-size: 12px;
 }
 
+.bloom-header-actions {
+    position: absolute;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-save-button {
+    color: var(--accent-primary);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.bloom-save-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--accent-primary);
+}
+
+.bloom-more-button {
+    display: none;
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.bloom-more-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--content-primary);
+}
+
+.bloom-card:hover .bloom-more-button {
+    display: block;
+}
+
 .bloom-main {
-    height: 100%;
     width: 100%;
 }
 
@@ -71,6 +122,32 @@
     border-radius: 12px;
     object-fit: cover;
     aspect-ratio: 1;
+}
+
+.bloom-main-video * {
+    margin: 0;
+    padding: 0;
+}
+
+.bloom-main-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background-color: var(--bloom-gray);
+    color: var(--content-primary);
+    font-size: 24px;
+    font-weight: 500;
+    padding: 16px;
+    text-wrap: wrap;
+    text-align: center;
+    word-break: break-all;
+    transition: all 0.5s;
 }
 
 .bloom-main-actions {
@@ -98,6 +175,12 @@
     text-decoration: none;
 }
 
+.bloom-share-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--content-primary);
+}
+
 .bloom-footer {
     display: flex;
     flex-direction: row;
@@ -110,17 +193,39 @@
 .bloom-footer-description {
     color: var(--content-primary);
     font-size: 14px;
+    flex: 1;
+}
+
+.bloom-footer-like {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
 }
 
 .bloom-footer-likes {
-    color: var(--content-white);
-    font-size: 12px;
+    color: var(--content-primary);
+    font-size: 14px;
     font-weight: 500;
-    background-color: var(--accent-primary);
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
     display: flex;
     justify-content: center;
     align-items: center;
+    text-decoration: none;
+}
+
+.bloom-footer-like-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.bloom-footer-like:hover .bloom-footer-likes {
+    text-decoration: none;
+    color: var(--accent-primary);
+
+}
+
+.bloom-footer-like:hover .bloom-footer-like-icon {
+    fill: var(--accent-primary);
 }
