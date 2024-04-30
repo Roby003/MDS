@@ -527,7 +527,7 @@ namespace BoardBloom.Controllers
                 ViewData["UserLikes"] = GetCurrentUserLikes();
             }
 
-            return RedirectToAction("Index", new { id = bloomId });
+            return RedirectToAction("Show", new { id = bloomId });
 
         }
 

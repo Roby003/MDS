@@ -51,7 +51,7 @@ namespace BoardBloom.Controllers
             {
                 TempData["message"] = "Nu aveti dreptul sa stergeti comentariul";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index", "Blooms");
+                return Redirect("/Blooms/Show/" + comm.BloomId);
             }
         }
 
@@ -100,6 +100,25 @@ namespace BoardBloom.Controllers
                 TempData["message"] = "Nu aveti dreptul sa faceti modificari";
                 TempData["messageType"] = "alert-danger";
                 return RedirectToAction("Index", "Blooms");
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult New(Comment comm)
+        {
+            comm.UserId = _userManager.GetUserId(User);
+            comm.Date = System.DateTime.Now;
+
+            if (ModelState.IsValid)
+            {
+                db.Comments.Add(comm);
+                db.SaveChanges();
+                return Redirect("/Blooms/Show/" + comm.BloomId);
+            }
+            else
+            {
+                return Redirect("/Blooms/Show/" + comm.BloomId);
             }
         }
     }

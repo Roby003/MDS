@@ -67,14 +67,16 @@ namespace BoardBloom.Models
                             Title = "Bloom 1",
                             Content = "Content 1",
                             Date = DateTime.Now,
-                            UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0"
+                            UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0",
+                            Image = "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
                         },
                         new Bloom
                         {
                             Title = "Bloom 2",
                             Content = "Content 2",
                             Date = DateTime.Now,
-                            UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0"
+                            UserId = "8e445865-a24d-4543-a6c6-9443d048cdb0",
+                            Image = "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
                         }
                     );
                 }
