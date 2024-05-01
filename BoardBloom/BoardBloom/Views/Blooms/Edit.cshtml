@@ -1,162 +1,52 @@
 ﻿@model BoardBloom.Models.Bloom
 
-<h2 class="text-center mt-5" style="font-family: 'Rubik Doodle Shadow', cursive;">Editare Bloom</h2>
-<br />
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
+<head>
+    <link rel="stylesheet" href="~/css/Blooms/BloomEdit.css" />
+    <script src="~/js/Bloom/BloomEdit.js"></script>
+</head>
 
-<style>
+<div class="edit-bloom-wrapper">
+    <h1 class="edit-bloom-title">Change your<br/><span class="edit-bloom-title-span">Bloom</span></h1>
+     <div class="edit-bloom-forms-wrapper">
+            <div class="edit-bloom-form" style="display: flex;">
+                <input 
+                    type="text"
+                    id="image" 
+                    name="image"
+                    class="edit-bloom-form-input" 
+                    placeholder="Image URL"
+                    value="@Model.Image"
+                    required 
+                />
 
-    .div1 {
-        border: 2px solid #3838b2;
-    }
+                <input
+                    type="text"
+                    id="title" 
+                    name="title"
+                    class="edit-bloom-form-input" 
+                    placeholder="Title"
+                    value="@Model.Title"
+                    required
+                />
 
-</style>
-
-
-<div class="div1"
-     style="background-color: #fff;
-          padding: 20px; width: 900px; margin: 0 auto;
-          display: flex; ">
-
-    <div style="flex: 1; ">
-
-        <div class="col-md-6" style="margin-left: -10px;">
-
-            <form action="@Url.Action("Edit", "Blooms", new { id = Model.Id })" method="post" enctype="multipart/form-data">
-
-                <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                    @Html.Label("Title", "Titlul Bloomului")
-                    <br />
-                    @Html.EditorFor(m => m.Title, new
-                        {
-                            htmlAttributes = new
-                            {
-                                @class = "form-control",
-                                style = "border: 2px solid #3838b2; width: 100%;"
-                            }
-                        })
-
-                    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger" })
-
-                </div>
-
-                <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                    @Html.Label("Content", "Continut Bloom-ului")
-                    <br />
-                    @Html.Editor("Content", new
-                        {
-                            htmlAttributes = new
-                            {
-                                @class = "form-control",
-                                style = "border: 2px solid #3838b2; width: 100%;"
-                            }
-                        })
-
-                    @Html.ValidationMessageFor(m => m.Content, null, new { @class = "text-danger" })
-
-
-                </div>
-
-                <div class="div4">
-                    @if (!string.IsNullOrEmpty(Model.Image))
-                    {
-                        @* <label for="CurrentImage">Imagine: </label>
-                    <br />
-                    <img src="@Url.Content(Model.Image)" alt="Current Image" class="img-thumbnail" />
-                    <br /> *@
-
-                        <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                            <label for="UpdatedImage">Selectati o imagine</label>
-                            <input type="file"
-                                   accept=".png,.jpg,.jpeg,.gif,.tif,.mp4"
-                                   name="UpdatedImage"
-                                   id="UpdatedImage"
-                                   class="form-control"
-                                   style="border:2px  solid #3838b2; width: 100%;"
-                                   onchange="document.getElementById('previewImage').src = window.URL.createObjectURL(this.files[0])" />
-                        </div>
-                    }
-
-                    else
-                    {
-                        <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                            <label for="UpdatedImage">Selectati o imagine</label>
-                            <input type="file"
-                                   accept=".png,.jpg,.jpeg,.gif,.tif,.mp4"
-                                   name="UpdatedImage"
-                                   id="UpdatedImage"
-                                   class="form-control"
-                                   style="border:2px  solid #3838b2; width: 100%;"
-                                   onchange="document.getElementById('previewImage').src = window.URL.createObjectURL(this.files[0])" />
-                        </div>
-                    }
-
-
-                </div>
-
-                <div>
-                    <div style="border: 2px solid #3838b2; padding: 10px; margin-bottom: 10px; width: 400px;">
-                        <label for="EBD" style="color: #3838b2;">Or Enter Image URL</label>
-                        <input type="text" name="EBD" id="EBD" class="form-control" style="border: 2px solid #3838b2; width: 100%;" placeholder="Enter Image URL" />
-                    </div>
-                </div>
-
-                <button class="btn" style="background-color: #3838b2; color: #ffffff; width: 100%;" type="submit">Modifica bookmark-ul</button>
-
-
-            </form>
-        </div>
-
-
-    </div>
-
-
-    <div style="flex: 1; padding-left: 20px;">
-
-
-        <div style="flex: 1; padding-left: 20px;">
-
-            <div style="border: 2px solid #3838b2;
-                padding: 10px;
-                margin-bottom: 10px;
-                text-align: center;">
-                @if (!string.IsNullOrEmpty(Model.Image))
-                {
-                    <label for="CurrentImage">Imaginea curenta: </label>
-                    <br />
-                    <img src="@Url.Content(Model.Image)"
-                         alt="Current Image"
-                         class="img-thumbnail"
-                         style="max-width: 100%; max-height: 200px;" />
-                }
-                else
-                {
-
-                }
+                <textarea
+                    id="content" 
+                    name="content"
+                    class="edit-bloom-form-textarea"
+                    placeholder="Content"
+                    required>@Model.Content</textarea>
+                
+                <input type="hidden" name="userId" id="userId" value="@UserManager.GetUserId(User)" />
+                <input type="hidden" name="date" id="date" value="@DateTime.Now" />
+                <input type="hidden" name="title" id="title" value="placeholder_text" />
+                <input type="hidden" name="id" id="id" value="@Model.Id" />
+                <button class="edit-bloom-form-submit" onclick="nextStep()">Preview</button>
             </div>
+     </div>
 
-            <br />
-
-            <div style="border: 3px dotted #3838b2;
-                padding: 10px;
-                margin-bottom: 10px;
-                text-align: center;">
-                <label for="CurrentImage">Noua Imagine: </label>
-                <br />
-                <img id="previewImage"
-                     style="max-width: 100%;
-                    max-height: 200px;
-                    margin-top: 10px;" src="" />
-            </div>
-
-        </div>
-
-
-
-
-    </div>
-
-
-
+     <div id=preview-area></div>
 </div>
-

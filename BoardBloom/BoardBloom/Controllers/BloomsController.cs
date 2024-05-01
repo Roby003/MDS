@@ -5,8 +5,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BoardBloom.Data;
 using BoardBloom.Models;
+using Microsoft.AspNetCore.Mvc.Razor;
 using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 
 namespace BoardBloom.Controllers
@@ -21,11 +26,14 @@ namespace BoardBloom.Controllers
 
         private IWebHostEnvironment _env;
 
+        private readonly ICompositeViewEngine _viewEngine;
+
         public BloomsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IWebHostEnvironment env
+            IWebHostEnvironment env,
+            ICompositeViewEngine viewEngine
             )
         {
             db = context;
@@ -35,6 +43,8 @@ namespace BoardBloom.Controllers
             _roleManager = roleManager;
 
             _env = env;
+
+            _viewEngine = viewEngine;
         }
 
 
@@ -126,10 +136,6 @@ namespace BoardBloom.Controllers
                                          .Where(bl => bl.Id == id)
                                          .First();
 
-            ViewBag.UserBoards = db.Boards
-                                      .Where(c => c.UserId == _userManager.GetUserId(User))
-                                      .ToList();
-
             var isLiked = db.Likes
                 .Where(l => l.BloomId == id)
                 .Where(l => l.UserId == _userManager.GetUserId(User))
@@ -145,130 +151,9 @@ namespace BoardBloom.Controllers
                 ViewBag.Alert = TempData["messageType"];
             }
 
+
+            ViewBag.isBloomEditable = true;
             return View(bloom);
-        }
-
-
-        // Adaugarea unui comentariu 
-        [HttpPost]
-        [Authorize(Roles = "User,Admin")]
-        public IActionResult Show([FromForm] Comment comment)
-        {
-            comment.Date = DateTime.Now;
-            comment.UserId = _userManager.GetUserId(User);
-
-            if (ModelState.IsValid)
-            {
-                db.Comments.Add(comment);
-                db.SaveChanges();
-                return Redirect("/Blooms/Show/" + comment.BloomId);
-            }
-
-            else
-            {
-                /*//aici prob bug
-                Bloom bloom = db.Blooms.Include("User")
-                                         .Include("Comments")
-                                         //.Include("Likes")
-                                         .Include("Comments.User")
-                                         .Where(bloom => bloom.Id == comment.BloomId)
-                                         .First();
-
-
-                // Adaugam bloom-urile utilizatorului pentru dropdown
-                ViewBag.Boards = db.Boards
-                                          .Where(c => c.UserId == _userManager.GetUserId(User))
-                                          .ToList();
-
-                SetAccessRights();
-
-                return View(bloom);*/
-
-                //bug fix
-                return Redirect("/Blooms/Show/" + comment.BloomId);
-
-            }
-        }
-
-        [HttpPost]
-        public IActionResult AddBoard([FromForm] BloomBoard bloomBoard)
-        {
-            // Daca modelul este valid
-            if (ModelState.IsValid)
-            {
-
-                // Verificam daca avem deja bloom in board
-                if (db.BloomBoards
-                    .Where(bl => bl.BloomId == bloomBoard.BloomId)
-                    .Where(bl => bl.BoardId == bloomBoard.BoardId)
-                    .Count() > 0)
-                {
-                    TempData["message"] = "Acest bloom este deja adaugat in acest board";
-                    TempData["messageType"] = "alert-danger";
-                }
-                else
-                {
-
-                    db.BloomBoards.Add(bloomBoard);
-
-                    db.SaveChanges();
-
-                    // Adaugam un mesaj de succes
-                    TempData["message"] = "Bloom-ul a fost adaugat in board-ul selectat";
-                    TempData["messageType"] = "alert-success";
-                }
-
-            }
-            else
-            {
-                TempData["message"] = "Nu s-a putut adauga bloom-ul in board";
-                TempData["messageType"] = "alert-danger";
-            }
-
-
-            return Redirect("/Blooms/Show/" + bloomBoard.BloomId);
-        }
-
-        [HttpPost]
-        public IActionResult RemoveFromBoard(int bloomId, int boardId)
-        {
-            // luam BC-ul 
-            var bloomBoard = db.BloomBoards
-                .FirstOrDefault(bb => bb.BloomId == bloomId && bb.BoardId == boardId);
-
-            var board = db.Boards
-                           .Where(br => br.Id == boardId)
-                           .FirstOrDefault();
-
-            if (board.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
-            {
-                if (bloomBoard != null)
-                {
-                    try
-                    {
-
-                        db.BloomBoards.Remove(bloomBoard);
-                        db.SaveChanges();
-
-                        TempData["message"] = "Bloom a fost sters din boarul selectata";
-                        TempData["messageType"] = "alert-success";
-                    }
-                    catch (Exception ex)
-                    {
-                        TempData["message"] = "Nu s-a putut sterge bloomul din board. Eroare: " + ex.Message;
-                        TempData["messageType"] = "alert-danger";
-                    }
-                }
-                else
-                {
-                    TempData["message"] = "Bloomul nu a fost gasit in boardul selectata";
-                    TempData["messageType"] = "alert-danger";
-                }
-            }
-
-            TempData["message"] = "Bloomul a fost sters din boardul selectata";
-            TempData["messageType"] = "alert-success";
-            return Redirect("/Boards/Show/" + board.Id);
         }
 
         // Se afiseaza formularul in care se vor completa datele unui bloom
@@ -287,166 +172,75 @@ namespace BoardBloom.Controllers
             return View(bloom);
         }
 
-
-
-        [HttpPost]
-        [Authorize(Roles = "User,Admin")]
-        public IActionResult New(Bloom bloom, IFormFile? BloomImage, string? EBD)
-        {
-            bloom.Date = DateTime.Now;
-
-
-            bloom.UserId = _userManager.GetUserId(User);
-            bloom.User = db.ApplicationUsers.Find(bloom.UserId);
-
-            if (BloomImage != null && BloomImage.Length > 0 && BloomImage is IFormFile)
-            {
-                var storagePath = Path.Combine(_env.WebRootPath, "images", BloomImage.FileName);
-                var databaseFileName = "/images/" + BloomImage.FileName;
-
-                using (var fileStream = new FileStream(storagePath, FileMode.Create))
-                {
-                    BloomImage.CopyTo(fileStream);
-                }
-
-                bloom.Image = databaseFileName;
-            }
-            else if (EBD != null && EBD.Length > 0)
-            {
-
-                bloom.Image = EBD;
-            }
-
-            if (ModelState.IsValid)
-            {
-                
-                db.Blooms.Add(bloom);
-                db.SaveChanges();
-                TempData["message"] = "Bloom-ul a fost adaugat";
-                TempData["messageType"] = "alert-success";
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return View(bloom);
-            }
-        }
-
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id)
         {
-
-            Bloom bloom = db.Blooms.Where(bl => bl.Id == id)
-                                        .First();
-
-            var usr = db.ApplicationUsers.Find(_userManager.GetUserId(User));
-
-
+            Bloom bloom = db.Blooms.Find(id);
 
             if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
                 return View(bloom);
             }
-
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui bloom care nu va apartine";
+                TempData["message"] = "Nu aveti dreptul sa editati un bloom care nu va apartine";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index");
+
+                return RedirectToAction("Index", "Home");
             }
-
-        }
-
+        }   
 
 
-        // Verificam rolul utilizatorilor care au dreptul sa editeze
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult Edit(int id, Bloom requestBloom, IFormFile? UpdatedImage, string? EBD)
+        public IActionResult Edit(Bloom bloom)
         {
-
-            Bloom bloom = db.Blooms.Find(id);
-
-            requestBloom.Image = bloom.Image;
-
             if (ModelState.IsValid)
             {
-                // permisia
-                if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
-                {
+                var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
 
-                    bloom.Title = requestBloom.Title;
-                    bloom.Content = requestBloom.Content;
+                var oldBloom = db.Blooms.Find(bloom.Id);
+                oldBloom.Title = bloom.Title;
+                oldBloom.Content = bloom.Content;
+                oldBloom.Image = bloom.Image;
 
-                    if (UpdatedImage != null && UpdatedImage.Length > 0)
-                    {
+                db.SaveChanges();
 
-                        var storagePath = Path.Combine(_env.WebRootPath, "images", UpdatedImage.FileName);
-                        var databaseFileName = "/images/" + UpdatedImage.FileName;
-
-
-                        using (var fileStream = new FileStream(storagePath, FileMode.Create))
-                        {
-                            UpdatedImage.CopyTo(fileStream);
-                        }
-
-                        bloom.Image = databaseFileName;
-                    }
-                    else if (EBD != null && EBD.Length > 0)
-                    {
-
-                        bloom.Image = EBD;
-                    }
-
-
-
-                    db.SaveChanges();
-
-                    TempData["message"] = "Bloom-ul a fost modificat";
-                    TempData["messageType"] = "alert-success";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unui bloom care nu va apartine";
-                    TempData["messageType"] = "alert-danger";
-                    return RedirectToAction("Index");
-                }
+                return RedirectToAction("Show", new { id = bloom.Id });
             }
             else
             {
-
-                return View(requestBloom);
+                // If ModelState is not valid, return BadRequest with ModelState errors
+                return BadRequest(ModelState);
             }
         }
-
-
 
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public ActionResult Delete(int id)
         {
-            Bloom bloom = db.Blooms.Include("Comments")
-                                         .Include("Likes")
-                                         .Where(bl => bl.Id == id)
-                                         .First();
+            Bloom bloom = db.Blooms.Find(id);
 
             if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
+                db.Likes.RemoveRange(db.Likes.Where(l => l.BloomId == id));
+                db.Comments.RemoveRange(db.Comments.Where(c => c.BloomId == id));
+
                 db.Blooms.Remove(bloom);
-                db.Likes.RemoveRange(bloom.Likes);
                 db.SaveChanges();
+
                 TempData["message"] = "Bloom-ul a fost sters";
                 TempData["messageType"] = "alert-success";
-                return RedirectToAction("Index");
-            }
 
+                return RedirectToAction("Index", "Home");
+            }
             else
             {
                 TempData["message"] = "Nu aveti dreptul sa stergeti un bloom care nu va apartine";
                 TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index");
+
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -465,35 +259,6 @@ namespace BoardBloom.Controllers
 
             ViewBag.UserCurent = _userManager.GetUserId(User);
         }
-
-
-        [NonAction]
-        public IEnumerable<SelectListItem> GetAllBoards()
-        {
-            var selectList = new List<SelectListItem>();
-
-            string userId = _userManager.GetUserId(User);
-
-            var boards = db.Boards
-                            .Where(br => br.UserId == userId);
-            // .ToList();
-
-
-            foreach (var board in boards)
-            {
-                // adaugam in lista elementele necesare pentru dropdown
-                // id-ul boardului si denumirea acesteia
-                selectList.Add(new SelectListItem
-                {
-                    Value = board.Id.ToString(),
-                    Text = board.Name.ToString()
-                });
-            }
-
-            return selectList;
-        }
-
-
 
         public List<int?> GetCurrentUserLikes()
         {
@@ -552,56 +317,10 @@ namespace BoardBloom.Controllers
                     db.SaveChanges();
                 }
             }
-
+            
             return RedirectToAction("Show", new { id = bloomId });
-
         }
 
-        [HttpPost]
-        public IActionResult Unlike(int bloomId)
-        {
-
-            var userId = _userManager.GetUserId(User);
-
-            var like = db.Likes.FirstOrDefault(l => l.BloomId == bloomId && l.UserId == userId);
-
-            if (like != null)
-            {
-                var bloom = db.Blooms.Find(bloomId);
-
-                bloom.TotalLikes--;
-
-                db.Likes.Remove(like);
-                db.SaveChanges();
-
-                ViewData["UserLikes"] = GetCurrentUserLikes();
-            }
-
-
-            return RedirectToAction("Index", new { id = bloomId });
-        }
-
-        [NonAction]
-        public IEnumerable<SelectListItem> GetAllLikes()
-        {
-
-            var selectList = new List<SelectListItem>();
-
-            var likes = from lk in db.Likes
-                            //where lk.BloomId = bloomId
-                        select lk;
-
-            foreach (var like in likes)
-            {
-
-                selectList.Add(new SelectListItem
-                {
-                    Value = like.Id.ToString(),
-                    Text = like.BloomId.ToString()
-                });
-            }
-            return selectList;
-        }
         [HttpGet]
         public IActionResult EditComm(int commId)
         {
@@ -638,6 +357,77 @@ namespace BoardBloom.Controllers
             }
                 db.SaveChanges();
                 return PartialView("CommEditModal", c);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult Preview([FromBody] Bloom bloom)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
+
+                Bloom previewBloom = new Bloom
+                {
+                    Title = bloom.Title,
+                    Content = bloom.Content,
+                    Image = bloom.Image,
+                    Date = DateTime.Now,
+                    User = user,
+                    Likes = new List<Like>(),
+                    Comments = new List<Comment>(),
+                    TotalLikes = 0,
+                    UserId = user.Id,
+                    BloomBoards = new List<BloomBoard>(),
+                };
+
+                ViewBag.isBloomEditable = false;
+
+                // Render the partial view to a string
+                var viewResult = _viewEngine.FindView(ControllerContext, "_BloomPartial", false);
+                var viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), ModelState);
+                viewData.Model = previewBloom;
+
+                using (var writer = new StringWriter())
+                {
+                    var viewContext = new ViewContext(ControllerContext, viewResult.View, viewData, TempData, writer, new HtmlHelperOptions());
+                    viewResult.View.RenderAsync(viewContext).GetAwaiter().GetResult();
+                    var html = writer.ToString();
+
+                    // Return the HTML in the API response
+                    return Ok(new { html });
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult NewBloom([FromBody] Bloom bloom)
+        {
+            var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
+
+            Bloom newBloom = new Bloom
+            {
+                Title = bloom.Title,
+                Content = bloom.Content,
+                Image = bloom.Image,
+                Date = DateTime.Now,
+                User = user,
+                Likes = new List<Like>(),
+                Comments = new List<Comment>(),
+                TotalLikes = 0,
+                UserId = user.Id,
+                BloomBoards = new List<BloomBoard>(),
+            };
+
+            db.Blooms.Add(newBloom);
+            db.SaveChanges();
+
+            return Ok(new { id = newBloom.Id });
         }
     }
 }

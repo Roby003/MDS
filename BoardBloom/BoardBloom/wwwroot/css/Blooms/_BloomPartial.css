@@ -13,7 +13,6 @@
     max-width: 33vw;
     flex: 1;
     transition: all 0.5s;
-    /* aspect-ratio: 1; */
 }
 
 .bloom-card:hover {
@@ -102,6 +101,44 @@
 
 .bloom-card:hover .bloom-more-button {
     display: block;
+}
+
+.bloom-more-menu {
+    display: none;
+}
+
+.bloom-card:hover .bloom-more-button:hover + .bloom-more-menu,
+.bloom-card:hover .bloom-more-menu:hover {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 2px 2px 10px var(--content-secondary);
+    width: 100px;
+}
+
+.bloom-more-edit-button, .bloom-more-delete-button {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-more-edit-button:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.bloom-more-delete-button:hover {
+    color: red;
+    text-decoration: none;
 }
 
 .bloom-main {

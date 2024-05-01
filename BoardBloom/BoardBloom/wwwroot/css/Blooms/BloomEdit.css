@@ -1,4 +1,4 @@
-.new-bloom-wrapper {
+.edit-bloom-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9,61 +9,20 @@
     gap: 24px;
 }
 
-.new-bloom-title {
+.edit-bloom-title {
     color: var(--content-secondary);
     text-align: center;
     font-size: 32px;
     font-weight: 800;
 }
 
-.new-bloom-title-span {
+.edit-bloom-title-span {
     font-weight: 900;
     color: var(--accent-primary);
 }
 
-.new-bloom-tabview {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    border-radius: 12px;
-}
 
-.new-bloom-tabview-buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-    padding: 24px;
-    background-color: var(--background-primary);
-    border-radius: 12px 12px 0px 0px;
-}
-
-.new-bloom-tabview-button {
-    width: 100%;
-    height: 48px;
-    background-color: var(--background-primary);
-    color: var(--content-secondary);
-    box-shadow: 4px 4px 4px 4px var(--background-secondary);
-    font-size: 12px;
-    font-weight: 200;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.5s;
-}
-
-.new-bloom-tabview-button:hover, .new-bloom-tabview-button-active {
-    color: var(--content-primary);
-    text-decoration: none;
-    border: none;
-    background-color: var(--background-secondary);
-    box-shadow: 2px 2px 4px var(--accent-primary);
-}
-
-.new-bloom-forms-wrapper {
+.edit-bloom-forms-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -72,10 +31,10 @@
     width: 100%;
     padding: 24px;
     background-color: var(--background-primary);
-    border-radius: 0px 0px 12px 12px;
+    border-radius: 12px;
 }
 
-.new-bloom-form {
+.edit-bloom-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -87,7 +46,7 @@
     border-radius: 12px;
 }
 
-.new-bloom-form-input {
+.edit-bloom-form-input {
     width: 60%;
     height: 48px;
     border-radius: 12px;
@@ -95,16 +54,13 @@
     font-size: 12px;
     color: var(--content-secondary);
     transition: all 0.5s;
-    border: none;
-    box-shadow: 1px 1px 4px var(--content-secondary);
 }
 
-.new-bloom-form-input::placeholder {
+.edit-bloom-form-input::placeholder {
     color: var(--content-secondary);
 }
 
-.new-bloom-form-input:focus {
-    border: 1px solid var(--accent-primary);
+.edit-bloom-form-input:focus {
     color: var(--content-primary);
     font-size: 14px;
     border: none;
@@ -112,12 +68,9 @@
     box-shadow: 1px 1px 4px var(--accent-primary);
 }
 
-.new-bloom-form-textarea {
+.edit-bloom-form-textarea {
     width: 60%;
     height: 120px;
-    border: 1px solid var(--content-secondary);
-    border: none;
-    box-shadow: 1px 1px 4px var(--content-secondary);
     border-radius: 12px;
     padding: 12px;
     font-size: 12px;
@@ -128,19 +81,19 @@
     scrollbar-color: var(--accent-primary) var(--background-primary);
 }
 
-.new-bloom-form-textarea::placeholder {
+.edit-bloom-form-textarea::placeholder {
     color: var(--content-secondary);
 }
 
-.new-bloom-form-textarea:focus {
+.edit-bloom-form-textarea:focus {
+    color: var(--content-primary);
+    font-size: 14px;
     border: none;
     outline: none;
     box-shadow: 1px 1px 4px var(--accent-primary);
-    color: var(--content-primary);
-    font-size: 14px;
 }
 
-.new-bloom-form-submit {
+.edit-bloom-form-submit {
     width: 60%;
     height: 48px;
     background-color: var(--background-secondary);
@@ -153,7 +106,7 @@
     transition: all 0.5s;
 }
 
-.new-bloom-form-submit:hover {
+.edit-bloom-form-submit:hover {
     color: var(--content-primary);
     text-decoration: none;
     box-shadow: 1px 1px 4px var(--accent-primary);
@@ -169,7 +122,7 @@
     gap: 16px;
 }
 
-.new-bloom-preview-buttons {
+.edit-bloom-preview-buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -181,7 +134,7 @@
     padding: 12px 18px;
 }
 
-.new-bloom-preview-form {
+.edit-bloom-preview-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -190,7 +143,7 @@
     width: 100%;
 }
 
-.new-bloom-preview-back, .new-bloom-preview-submit {
+.edit-bloom-preview-back, .edit-bloom-preview-submit {
     width: 100%;
     height: 48px;
     background-color: var(--background-primary);
@@ -203,7 +156,7 @@
     transition: all 0.5s;
 }
 
-.new-bloom-preview-back:hover, .new-bloom-preview-submit:hover {
+.edit-bloom-preview-back:hover, .edit-bloom-preview-submit:hover {
     color: var(--content-primary);
     text-decoration: none;
     border: none;

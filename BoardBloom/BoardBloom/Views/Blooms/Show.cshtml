@@ -16,7 +16,7 @@
                 }
                 else
                 {
-                    @foreach (var comment in Model.Comments)
+                    @foreach (var comment in Model.Comments.OrderByDescending(c => c.Date))
                     {
                         @Html.Partial("_CommentPartial", comment)
                     }

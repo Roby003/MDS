@@ -23,16 +23,31 @@
         </div>
         
         <div class="bloom-header-actions">
-            @if (UserManager.GetUserId(User) == Model.User.Id)
+            @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable &&  UserManager.GetUserId(User) == Model.User.Id)
             {
                 <a class="bloom-more-button">
                     <img class="bloom-more-icon" src="https://www.svgrepo.com/show/335225/ellipsis.svg" alt="actions icon" />
                 </a>
+                <div class="bloom-more-menu">
+                    <a class="bloom-more-edit-button" href="@Url.Action("Edit", "Blooms", new {id = @Model.Id})">Edit</A>
+                    
+                    <form method="POST" action="@Url.Action("Delete", "Blooms", new {id = @Model.Id})">
+                        <input type="hidden" name="bloomId" value="@Model.Id" />
+                        <button class="bloom-more-delete-button">Delete</button>
+                    </form>
+                </div>
             }
-
-            <a class="bloom-save-button">
+        
+            @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable == true)
+            {
+                <a class="bloom-save-button">
+                    <img class="bloom-save-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-save-3251597-2724646.png" alt="save icon" />
+                </a>
+            }
+            else
+            {
                 <img class="bloom-save-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-save-3251597-2724646.png" alt="save icon" />
-            </a>
+            }
         </div>
     </div>
 
@@ -54,23 +69,39 @@
         }
 
         <div class="bloom-main-actions">
-            <form class="bloom-main-likes" method="POST" action="@Url.Action("Like", "Blooms")">
-                <input type="hidden" name="bloomId" value="@Model.Id" />
-                <button class="bloom-main-action-link" role="submit">
-                    <div class="bloom-footer-like">
-                        <p class="bloom-footer-likes">@Model.TotalLikes</p>
-                        @if(ViewBag.IsLiked != null && ViewBag.IsLiked == true) {
-                            <img class="bloom-footer-like-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png" alt="like icon" />
-                        } else {
-                            <img class="bloom-footer-like-icon" src="https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png" alt="like icon" />
-                        }
-                    </div>
-                </button>
-            </form> 
+            @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable == true)
+            {
+                <form class="bloom-main-likes" method="POST" action="@Url.Action("Like", "Blooms")">
+                    <input type="hidden" name="bloomId" value="@Model.Id" />
+                    <button class="bloom-main-action-link" role="submit">
+                        <div class="bloom-footer-like">
+                            <p class="bloom-footer-likes">@Model.TotalLikes</p>
+                            @if(ViewBag.IsLiked != null && ViewBag.IsLiked == true) {
+                                <img class="bloom-footer-like-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png" alt="like icon" />
+                            } else {
+                                <img class="bloom-footer-like-icon" src="https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png" alt="like icon" />
+                            }
+                        </div>
+                    </button>
+                </form> 
+            }
+            else {
+                <div class="bloom-footer-like">
+                    <p class="bloom-footer-likes">@Model.TotalLikes</p>
+                    <img class="bloom-footer-like-icon" src="https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png" alt="like icon" />
+                </div>
+            }
 
-            <a class="bloom-main-action-link" href="#">
+            @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable == true)
+            {
+                <a class="bloom-main-action-link" href="#">
+                    <img class="bloom-share-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-arrow-1976201-1674187.png" alt="share icon" />
+                </a>
+            }
+            else 
+            {
                 <img class="bloom-share-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-arrow-1976201-1674187.png" alt="share icon" />
-            </a>
+            }
         </div>
     </div>
 
@@ -83,6 +114,10 @@
     private bool IsImage(string url)
     {
         var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+        if(url.LastIndexOf('.') == -1)
+        {
+            return false;
+        }
         var extension = url.Substring(url.LastIndexOf('.')).ToLower();
         return imageExtensions.Contains(extension);
     }

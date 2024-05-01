@@ -42,10 +42,11 @@ namespace BoardBloom.Controllers
         {
              List<Bloom> blooms = db.Blooms
                 .Include(b => b.User)
-                .Take(9)
+                .Take(12)
                 .ToList();
 
             ViewBag.Blooms = blooms;
+            ViewBag.isBloomEditable = true;
 
             return View();
         }
@@ -67,10 +68,6 @@ namespace BoardBloom.Controllers
             {
                 return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
-
-            
         }
-
-
     }
 }
