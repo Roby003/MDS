@@ -320,45 +320,7 @@ namespace BoardBloom.Controllers
             
             return RedirectToAction("Show", new { id = bloomId });
         }
-
-        [HttpGet]
-        public IActionResult EditComm(int commId)
-        {
-            Comment comm = db.Comments.Find(commId);
-            if (comm == null)
-                return RedirectToAction("Index", "Blooms");
-
-
-            if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
-            {
-                return PartialView("CommEditModal",comm);
-            }
-
-            else
-            {
-                TempData["message"] = "Nu aveti dreptul sa editati comentariul";
-                TempData["messageType"] = "alert-danger";
-                return RedirectToAction("Index", "Blooms");
-            }
-        }
-
-        [HttpPost]
-        public IActionResult EditComm(Comment reqComm)
-        {
-            Comment c = db.Comments.Find(reqComm.Id);
-            if (c == null)
-            return RedirectToAction("Index", "Blooms");
-            if (ModelState.IsValid)
-            {
-             
-                    c.Content = reqComm.Content;
-                    TempData["message"] = "comment modified successfully";
-
-            }
-                db.SaveChanges();
-                return PartialView("CommEditModal", c);
-        }
-
+        
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Preview([FromBody] Bloom bloom)

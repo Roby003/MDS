@@ -77,24 +77,17 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User, Admin")]
-        public IActionResult Edit(int id, Comment requestComment)
+        public IActionResult Edit(int id, [FromForm] string content)
         {
             Comment comm = db.Comments.Find(id);
 
             if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
-                if (ModelState.IsValid)
-                {
-                    comm.Content = requestComment.Content;
+                comm.Content = content;
 
-                    db.SaveChanges();
+                db.SaveChanges();
 
-                    return Redirect("/Blooms/Show/" + comm.Bloom);
-                }
-                else
-                {
-                    return View(requestComment);
-                }
+                return Redirect("/Blooms/Show/" + comm.BloomId);
             }
             else
             {
@@ -103,6 +96,7 @@ namespace BoardBloom.Controllers
                 return RedirectToAction("Index", "Blooms");
             }
         }
+
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]

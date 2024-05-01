@@ -54,7 +54,7 @@
     flex-direction: row;
     justify-content: start;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     display: none;
     transition: display 0.3s ease;
 }
@@ -64,7 +64,6 @@
 }
 
 .comment-edit-button {
-    padding: 8px;
     border: none;
     border-radius: 12px;
     color: var(--content-primary);
@@ -72,13 +71,24 @@
     font-size: 14px;
 }
 
+.comment-edit-button:hover {
+    color: var(--accent-primary);
+    cursor: pointer;
+    text-decoration: none;
+}
+
 .comment-delete-button {
-    padding: 8px;
     border: none;
     border-radius: 12px;
-    color: red;
+    color: var(--content-primary);
     background-color: none;
     font-size: 14px;
+}
+
+.comment-delete-button:hover {
+    color: red;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .comment-main-image {
@@ -104,4 +114,82 @@
     word-wrap: break-word;
     text-wrap: wrap;
     width: 100%;
+}
+
+.comment-edit-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    width: 100%;
+}
+
+.comment-edit-textarea {
+    width: 100%;
+    height: 120px;
+    border: 1px solid var(--content-secondary);
+    border: none;
+    box-shadow: 1px 1px 4px var(--content-secondary);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--content-secondary);
+    resize: none;
+    transition: all 0.5s;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-primary) var(--background-primary);
+}
+
+.comment-edit-textarea:focus {
+    border: none;
+    outline: none;
+    box-shadow: 1px 1px 4px var(--accent-primary);
+    color: var(--content-primary);
+    font-size: 14px;
+}
+
+.comment-edit-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.comment-edit-submit {
+    border: none;
+    color: var(--content-secondary);
+    font-size: 14px;
+    background-color: none;
+    box-shadow: 2px 4px var(--background-secondary);
+    border-radius: 12px;
+    padding: 4px 6px;
+    transition: all 0.5s;
+}
+
+.comment-edit-submit:hover {
+    color: var(--content-primary);
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 2px 4px var(--accent-primary);
+}
+
+.comment-edit-cancel {
+    border: none;
+    color: var(--content-secondary);
+    font-size: 14px;
+    background-color: none;
+    box-shadow: 2px 4px var(--background-secondary);
+    border-radius: 12px;
+    padding: 4px 6px;
+    transition: all 0.5s;
+}
+
+.comment-edit-cancel:hover {
+    color: red;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 2px 4px red;
 }

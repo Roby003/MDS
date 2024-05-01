@@ -62,7 +62,8 @@
     gap: 12px;
     width: 100%;
     overflow-y: scroll;
-    height: 60vh;
+    min-height: 500px;
+    max-height: 60vh;
     scrollbar-color: var(--accent-primary) var(--background-secondary);
     scrollbar-width: thin;
 }
