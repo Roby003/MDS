@@ -1,0 +1,44 @@
+@model BoardBloom.Models.Board
+
+@using System.Collections
+@using BoardBloom.Models
+
+@{
+    Layout = null;
+    var blooms = new List<Bloom>(); // Using List<Bloom> to dynamically add blooms
+    if (Model.BloomBoards != null)
+    {
+        foreach (var bloomBoard in Model.BloomBoards)
+        {
+            if (bloomBoard.Bloom != null)
+            {
+                blooms.Add(bloomBoard.Bloom);
+            }
+        }
+    }
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Boards/_BoardPreviewPartial.css" />
+</head>
+
+<div class="board-preview-wrapper" id="@Model.Id">
+    <div class="board-preview-card">
+        @{
+            var maxElements = blooms.Count > 4 ? 4 : blooms.Count;
+            @for(int i = 0; i < maxElements; i++)
+            {
+                @Html.Partial("_BloomPreviewPartial", new BoardBloom.ViewModels.BloomsPreviewViewModel { Bloom = blooms[i], BoardId = Model.Id })
+            }
+            @for(int i = maxElements; i < 4; i++)
+            {
+               <div class="bloom-empty-preview"></div>
+            }
+        }
+    </div>
+
+    <div class="board-preview-overlay">
+        <p class="board-preview-overlay-title">@Model.Name</p>
+    </div>
+</div>
+

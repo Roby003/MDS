@@ -85,22 +85,20 @@
 }
 
 .bloom-more-button {
-    display: none;
+    display: block;
     color: var(--content-primary);
     font-size: 12px;
     font-weight: 500;
     border-radius: 6px;
     cursor: pointer;
+    transition: all 0.5s;
 }
 
 .bloom-more-icon {
     width: 24px;
     height: 24px;
     fill: var(--content-primary);
-}
-
-.bloom-card:hover .bloom-more-button {
-    display: block;
+    transition: all 0.5s;
 }
 
 .bloom-more-menu {
@@ -122,6 +120,7 @@
     padding: 8px;
     box-shadow: 2px 2px 10px var(--content-secondary);
     width: 100px;
+    transition: all 0.5s;
 }
 
 .bloom-more-edit-button, .bloom-more-delete-button {

@@ -15,6 +15,10 @@
     // <p>CurrentUserId: @currentUserId</p>
 }
 
+<head>
+    <script src="~/js/Board/BoardIndex.js"></script>
+</head>
+
 
 <h3 style="text-align: center; font-family: 'Rubik Doodle Shadow', cursive;">@ViewBag.UserName</h3>
 <br />
@@ -98,6 +102,15 @@
         border: 2px solid purple;
         transition: background-color 0.3s;
     }
+
+    .boards-wrapper {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 20px 10vw;
+        width: 100%;
+
+    }
 </style>
 
 <script>
@@ -119,30 +132,9 @@
     }
 </script>
 
-<div class="row">
-    @foreach (var board in ViewBag.Boards)
+<div class="boards-wrapper">
+    @foreach (Board board in ViewBag.Boards)
     {
-        <div class="col-4 mb-4">
-            <div class="card" onmouseover="handleHover(this)" onmouseout="resetColor(this)">
-
-                <div class="card-body">
-
-                    <h5 class="card-title" name="Name">@board.Name</h5>
-
-                    <div><i class="bi bi-person"> Creat de: </i> @board.User.UserName</div>
-
-                    <br />
-                    <div class="d-flex flex-row justify-content-between p-3 border-1 border-top">
-                        <a class="btn btn-sm" style="background-color: #3838b2; color: #ffffff;" href="/Boards/Show/@board.Id">Afisare Board</a>
-                        @if (currentUserId != null && currentUserId == userCurent || ViewBag.EsteAdmin)
-                        {
-                            <form method="post" action="/Boards/Delete/@board.Id">
-                                <button class="btn btn-danger" type="submit">Sterge Boardul</button>
-                            </form>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
+        @Html.Partial("_BoardPreviewPartial", board);
     }
 </div>

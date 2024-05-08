@@ -66,35 +66,26 @@ namespace BoardBloom.Controllers
 			}
 
 			SetAccessRights();
+			var boards = db.Boards
+				.Include(b => b.User)  // Include the User associated with the Board
+				.Include(b => b.BloomBoards)  // Include the join table entries
+					.ThenInclude(bb => bb.Bloom)  // Include the Blooms associated via the join table
+				.Where(b => b.UserId == userId)  // Filter by User ID
+				.ToList();
 
-			if (User.IsInRole("User"))
-			{
-				var boards = from categ in db.Boards.Include("User")
-							   .Where(b => b.UserId == userId)
-								 select categ;
+			ViewBag.Boards = boards;
+			ViewBag.IsBloomPreviewable = false;
 
-				ViewBag.Boards = boards;
+			return View();
 
-				return View();
-			}
-			else
-			if (User.IsInRole("Admin"))
-			{
-				var boards = from categ in db.Boards.Include("User")
-								 .Where(b => b.UserId == userId)
-								 select categ;
-
-				ViewBag.Boards = boards;
-
-				return View();
-			}
-
+			/*
 			else
 			{
 				TempData["message"] = "Nu aveti drepturi asupra bloomi";
 				TempData["messageType"] = "alert-danger";
 				return RedirectToAction("Index", "Blooms");
 			}
+			*/
 
 		}
 
@@ -113,48 +104,24 @@ namespace BoardBloom.Controllers
 
 			SetAccessRights();
 
-			int _perPage = 5;
+			var blooms = db.BloomBoards
+					.Where(bb => bb.BoardId == id)
+					.Include(bb => bb.Bloom)
+					.ThenInclude(b => b.Comments)
+					.Include(bb => bb.Board)
+					.Select(bb => bb.Bloom)
+					.ToList(); 
+							
+			ViewBag.Blooms = blooms;
 
-			var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-
-			ViewBag.CurrentPage = currentPage;
-
-			var offset = 0;
-
-			if (!currentPage.Equals(0))
-			{
-				offset = (currentPage - 1) * _perPage;
-			}
-
-			var BookCat = db.BloomBoards.Include(bc => bc.Bloom)
-				.Where(bc => bc.BoardId == id).ToList();
-
-			var blooms = BookCat.Select(bc => bc.Bloom);
-
-			var paginatedBlooms = blooms.Skip(offset).Take(_perPage);
-
-			int totalItems = blooms.Count();
-
-			ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
-
-			var boards = db.Boards
-								  .Include("BloomBoards.Bloom.User")
-								  .Include("User")
-								  .Where(c => c.Id == id)
-								  .FirstOrDefault();
-
-
-			if (boards == null)
-			{
-				TempData["message"] = "Resursa cautata nu poate fi gasita";
-				TempData["messageType"] = "alert-danger";
-				return RedirectToAction("Index", "Blooms");
-			}
-
-
-			return View(boards);
-
-
+			var board = db.Boards
+					.Where(b => b.Id == id)
+					.Include(b => b.BloomBoards)
+					.ThenInclude(bb => bb.Bloom)
+					.FirstOrDefault();
+					
+			ViewBag.IsBloomPreviewable = true;
+			return View(board);
 		}
 
 
@@ -266,6 +233,36 @@ namespace BoardBloom.Controllers
 				TempData["message"] = "Nu aveti dreptul sa stergeti un bloom care nu va apartine";
 				TempData["messageType"] = "alert-danger";
 				return RedirectToAction("Index", new { categ.UserId });
+			}
+		}
+
+		[Authorize(Roles = "User,Admin")]
+		[HttpPost]
+		public IActionResult RemoveBloomFromBoard( int id, [FromForm] int bloomId)
+		{
+			var bloomBoard = db.BloomBoards
+								.Where(bb => bb.BoardId == id && bb.BloomId == bloomId)
+								.FirstOrDefault();
+
+			var board = db.Boards
+						.Where(b => b.Id == id)
+						.Include(b => b.BloomBoards)
+						.ThenInclude(bb => bb.Bloom)
+						.FirstOrDefault();
+
+			if (board.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+			{
+				db.BloomBoards.Remove(bloomBoard);
+				db.SaveChanges();
+				TempData["message"] = "Bloomul a fost sters din categoria";
+				TempData["messageType"] = "alert-success";
+				return RedirectToAction("Show", new { id });
+			}
+			else
+			{
+				TempData["message"] = "Nu aveti dreptul sa stergeti un bloom care nu va apartine";
+				TempData["messageType"] = "alert-danger";
+				return RedirectToAction("Show", new { id });
 			}
 		}
 
