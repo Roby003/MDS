@@ -24,3 +24,26 @@
     align-items: center;
     width: 100%;
 }
+
+.board-index-new-button {
+    position: absolute;
+    bottom: 32px;
+    right: 64px;
+    font-size: 32px;
+    color: var(--content-primary);
+    background-color: var(--background-primary);
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s, color 0.2s;
+}
+
+.board-index-new-button:hover {
+    background-color: var(--accent-primary);
+    color: var(--background-primary);
+    text-decoration: none;
+}

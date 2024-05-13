@@ -269,6 +269,56 @@ namespace BoardBloom.Controllers
 			}
 		}
 
+		[Authorize(Roles = "User,Admin")]
+		[HttpPost]
+		public IActionResult AddBloomToBoards(int id, [FromQuery] string boardsIds)
+		{
+			var bloom = db.Blooms
+						.Where(b => b.Id == id)
+						.Include(b => b.BloomBoards)
+						.ThenInclude(bb => bb.Board)
+						.FirstOrDefault();
+
+			foreach(string boardId in boardsIds.Split(","))
+			{
+				var board = db.Boards
+							.Where(b => b.Id == int.Parse(boardId))
+							.Include(b => b.BloomBoards)
+							.ThenInclude(bb => bb.Bloom)
+							.FirstOrDefault();
+
+				if (board.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+				{
+					if(db.BloomBoards.Any(bb => bb.BoardId == board.Id && bb.BloomId == bloom.Id))
+					{
+						db.BloomBoards.Remove(db.BloomBoards.FirstOrDefault(bb => bb.BoardId == board.Id && bb.BloomId == bloom.Id));
+						db.SaveChanges();
+					} else 
+					{
+						var bloomBoard = new BloomBoard
+						{
+							BloomId = bloom.Id,
+							BoardId = board.Id
+						};
+
+						if(!db.BloomBoards.Any(bb => bb.BloomId == bloom.Id && bb.BoardId == board.Id))
+						{
+							db.BloomBoards.Add(bloomBoard);
+							db.SaveChanges();
+						}
+					}
+				}
+				else
+				{
+					TempData["message"] = "Nu aveti dreptul sa adaugati un bloom in categoria care nu va apartine";
+					TempData["messageType"] = "alert-danger";
+					return StatusCode(403);
+				}
+			}
+
+			return Ok();
+		}
+
 
 		// Conditiile de afisare a butoanelor 
 		private void SetAccessRights()
@@ -284,23 +334,22 @@ namespace BoardBloom.Controllers
 
 			ViewBag.UserCurent = _userManager.GetUserId(User);
 		}
-
 		[Authorize(Roles = "User,Admin")]
-		public IActionResult GetAllUserBoards([FromQuery] string userId)
+		public IActionResult GetAllUserBoards([FromQuery] string userId, [FromQuery] string bloomId)
 		{
-			var options = new JsonSerializerOptions
-			{
-				ReferenceHandler = ReferenceHandler.Preserve
-			};
-
 			var boards = db.Boards
-				.Include(b => b.User)
-				.Include(b => b.BloomBoards)
-					.ThenInclude(bb => bb.Bloom)
 				.Where(b => b.UserId == userId)
+				.Include(b => b.User)
 				.ToList();
-				
-			return Json(boards, options);
+
+			var json = Json(boards.Select(board => new
+			{
+				board,
+				bloomsCount = db.BloomBoards.Where(bb => bb.BoardId == board.Id).Count(),
+				saved = db.BloomBoards.Any(bb => bb.BoardId == board.Id && bb.BloomId == int.Parse(bloomId))
+			}));
+
+			return json;
 		}
 	}
 }

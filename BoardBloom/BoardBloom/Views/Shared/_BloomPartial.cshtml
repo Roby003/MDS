@@ -40,17 +40,17 @@
         
             @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable == true)
             {
-                <button class="bloom-save-button" onmouseover="onSaveButtonClick('@Model.Id', '@Model.UserId')">
+                <button class="bloom-save-button" onmouseover="onSaveButtonClick('@Model.Id', '@UserManager.GetUserId(User)')">
                     <img class="bloom-save-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-save-3251597-2724646.png" alt="save icon" />
                 </button>
-                <form class="bloom-save-menu" method="POST" action="@Url.Action("Save", "Blooms")">
+                <div class="bloom-save-menu">
                     <div class="bloom-save-options">      
                     </div>
                     <div class="bloom-save-actions">
-                        <div class="bloom-cancel-button">Cancel</div>
-                        <button class="bloom-save-button" type="submit">Save</button>
+                        <div class="bloom-cancel-button" onClick="cancel()">Cancel</div>
+                        <button class="bloom-save-button" type="submit" onclick="handleSaveSubmit(@Model.Id)">Save</button>
                     </div>
-                </form>
+                </div>
             }
             else
             {

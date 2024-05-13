@@ -13,7 +13,7 @@
     <h1 class="edit-board-title">Edit your Board</h1>
 
     <div class="edit-board-form-wrapper">
-        <form class="edit-board-form" method="POST" action="/Boards/edit/">
+        <form class="edit-board-form" method="POST" action="/Boards/Edit/@Model.Id">
             <input 
                 type="text" 
                 name="name" 
@@ -30,7 +30,7 @@
                 required>@Model.Note</textarea>
             
             <input type="hidden" name="userId" id="userId" value="@UserManager.GetUserId(User)" />
-            <button class="edit-board-form-submit" type="submit">Create</button>
+            <button class="edit-board-form-submit" type="submit">Save</button>
         </form>
     </div>
 </div>
