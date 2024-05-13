@@ -189,7 +189,7 @@
 .bloom-main-actions {
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: start;
     align-items: center;
     gap: 16px;
     width: 100%;
@@ -264,4 +264,75 @@
 
 .bloom-footer-like:hover .bloom-footer-like-icon {
     fill: var(--accent-primary);
+}
+
+.bloom-save-menu {
+    display: none;
+}
+
+.bloom-card:hover .bloom-save-button:hover + .bloom-save-menu,
+.bloom-card:hover .bloom-save-menu:hover {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 2px 2px 10px var(--content-secondary);
+    width: 200px;
+    transition: all 0.5s;
+}
+
+.bloom-save-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 4px;
+}
+
+.bloom-save-option span {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-save-option:hover span {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.bloom-save-option input {
+    
+}
+
+.bloom-save-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-cancel-button, .bloom-save-button {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-cancel-button:hover {
+    color: red;
+    text-decoration: none;
+}
+
+.bloom-save-button:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
 }

@@ -1,5 +1,4 @@
 window.addEventListener("load", () => {
-  console.log("BoardPreviewPartial.js loaded");
   const boardsPreview = document.getElementsByClassName(
     "board-preview-wrapper"
   );

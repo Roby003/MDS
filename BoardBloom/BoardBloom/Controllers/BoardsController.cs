@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 namespace BoardBloom.Controllers
@@ -155,8 +157,9 @@ namespace BoardBloom.Controllers
 		[Authorize(Roles = "User,Admin")]
 		public IActionResult Edit(int id)
 		{
-			Board categ = db.Boards.Where(cat => cat.Id == id)
-										.First();
+			Board categ = db.Boards
+				.Where(c => c.Id == id)
+				.FirstOrDefault();
 
 			if (categ.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
 			{
@@ -280,6 +283,24 @@ namespace BoardBloom.Controllers
 			ViewBag.EsteAdmin = User.IsInRole("Admin");
 
 			ViewBag.UserCurent = _userManager.GetUserId(User);
+		}
+
+		[Authorize(Roles = "User,Admin")]
+		public IActionResult GetAllUserBoards([FromQuery] string userId)
+		{
+			var options = new JsonSerializerOptions
+			{
+				ReferenceHandler = ReferenceHandler.Preserve
+			};
+
+			var boards = db.Boards
+				.Include(b => b.User)
+				.Include(b => b.BloomBoards)
+					.ThenInclude(bb => bb.Bloom)
+				.Where(b => b.UserId == userId)
+				.ToList();
+				
+			return Json(boards, options);
 		}
 	}
 }

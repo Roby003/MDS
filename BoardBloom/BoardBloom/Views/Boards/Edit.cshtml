@@ -1,21 +1,36 @@
 ﻿@model BoardBloom.Models.Board
 
-<h2 class="text-center mt-5"
-	style="font-family: 'Rubik Doodle Shadow', cursive;">
-	Editare Board</h2>
-<br />
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager	
+@inject UserManager<ApplicationUser> UserManager
 
 
-<form method="post"
-	  action="/Boards/Edit/@Model.Id">
-	<label>Nume</label>
-	<br />
-	<input type="text" name="Name" value="@Model.Name" />
-	<br /><br />
-	<label>Note</label>
-	<br />
-	<input type="text" name="Note" value="@Model.Note" />
-	<br /><br />
+<head>
+    <link rel="stylesheet" href="~/css/Boards/BoardEdit.css" />
+</head>
 
-    <button class="btn" style="background-color: #3838b2; color: #ffffff; width: 100%;" type="submit">Modifica board-ul</button>
-</form>
+<div class="edit-board-wrapper">
+    <h1 class="edit-board-title">Edit your Board</h1>
+
+    <div class="edit-board-form-wrapper">
+        <form class="edit-board-form" method="POST" action="/Boards/edit/">
+            <input 
+                type="text" 
+                name="name" 
+                class="edit-board-form-input" 
+                placeholder="Name"
+                required 
+				value="@Model.Name"
+            />
+
+            <textarea
+                name="note"
+                class="edit-board-form-textarea"
+                placeholder="Description"
+                required>@Model.Note</textarea>
+            
+            <input type="hidden" name="userId" id="userId" value="@UserManager.GetUserId(User)" />
+            <button class="edit-board-form-submit" type="submit">Create</button>
+        </form>
+    </div>
+</div>

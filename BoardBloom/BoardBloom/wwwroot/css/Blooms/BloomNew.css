@@ -10,13 +10,14 @@
 }
 
 .new-bloom-title {
-    color: var(--content-secondary);
-    text-align: center;
     font-size: 32px;
-    font-weight: 800;
+    font-weight: 600;
+    color: var(--content-primary);
+    text-align: center;
 }
 
 .new-bloom-title-span {
+    font-size: 24px;
     font-weight: 900;
     color: var(--accent-primary);
 }

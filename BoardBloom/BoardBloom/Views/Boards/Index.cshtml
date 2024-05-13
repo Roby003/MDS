@@ -1,140 +1,16 @@
-﻿@model BoardBloom.Models.Board
-@using Microsoft.AspNetCore.Identity
-
-<br />
-
-
-@{
-    ViewBag.Title = "Index";
-}
-@{
-    var userCurent = ViewBag.UserCurent;
-    var currentUserId = ViewBag.CurrentUserId;
-
-    // <p>UserCurent: @userCurent</p>
-    // <p>CurrentUserId: @currentUserId</p>
-}
+﻿@using BoardBloom.Models    
 
 <head>
-    <script src="~/js/Board/BoardIndex.js"></script>
+    <link rel="stylesheet" href="~/css/Boards/BoardIndex.css" />
 </head>
 
+<div class="board-index-wrapper">
+    <h1 class="board-index-title">Your saved boards</h1>
 
-<h3 style="text-align: center; font-family: 'Rubik Doodle Shadow', cursive;">@ViewBag.UserName</h3>
-<br />
-
-@if (ViewBag.UserProfilePicture != null)
-{
-    <div style="text-align: center;">
-
-        <img style="width:200px;height:200px;
-                    object-fit:cover;
-                    border-radius:30px; border: 5px solid purple;"
-             src="data:image/*;base64,@(Convert.ToBase64String(ViewBag.UserProfilePicture))">
-
+    <div class="board-index-boards">
+        @foreach (Board board in ViewBag.Boards)
+        {
+            @Html.Partial("_BoardPreviewPartial", board)
+        }
     </div>
-}
-
-
-
-<div class="d-flex justify-content-center flex-row mt-5">
-    <div class="mr-2" style="margin-right: 10px;">
-        <a class="btn" style="background-color: #3838b2; color: #ffffff;"
-           href="@Url.Action("Index", "Boards", new { userId = currentUserId })">
-            <i class="bi bi-tags"></i> Board-uri
-        </a>
-    </div>
-
-    <div class="mr-2" style="margin-right: 10px;">
-        <a class="btn" style="background-color: #3838b2; color: #ffffff;"
-           href="@Url.Action("UserProfile", "Users", new { userId = currentUserId })">
-            <i class="bi bi-journal-bookmark-fill"></i> Bloom-uri
-        </a>
-    </div>
-
-
-    @if (ViewBag.UserCurent == currentUserId)
-    {
-        <div>
-            <a class="btn" style="background-color: #3838b2; color: #ffffff;"
-               asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                <i class="bi bi-person-circle"></i> @User.Identity?.Name!
-            </a>
-
-        </div>
-    }
-</div>
-
-<br />
-<br />
-<br />
-
-
-<h3 style="text-align: center; font-family: 'Rubik Doodle Shadow', cursive;">Boards</h3>
-
-<br />
-
-@if (TempData["message"] != null)
-{
-    <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
-        @ViewBag.Message
-    </div>
-}
-
-<br />
-
-@if (currentUserId != null && currentUserId == userCurent)
-{
-    <div class="d-flex justify-content-center align-items-center">
-        <a class="btn btn rounded-pill mb-5" style="background-color: #3838b2; color: #ffffff;" href="/Boards/New">
-            <i class="bi bi-plus"></i> Adaugare board
-
-        </a>
-
-    </div>
-}
-
-
-
-
-<style>
-    .card {
-        border: 2px solid purple;
-        transition: background-color 0.3s;
-    }
-
-    .boards-wrapper {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        padding: 20px 10vw;
-        width: 100%;
-
-    }
-</style>
-
-<script>
-
-    function getRandomIndex() {
-        return Math.floor(Math.random() * 3);
-    }
-
-
-    function handleHover(element) {
-        const colors = ['#DCD0FF', '#D8BFD8', '#FFF0F5', '#674ea7'];
-        const randomIndex = getRandomIndex();
-        element.style.backgroundColor = colors[randomIndex];
-    }
-
-
-    function resetColor(element) {
-        element.style.backgroundColor = '';
-    }
-</script>
-
-<div class="boards-wrapper">
-    @foreach (Board board in ViewBag.Boards)
-    {
-        @Html.Partial("_BoardPreviewPartial", board);
-    }
-</div>
+</div> 

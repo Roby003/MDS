@@ -111,5 +111,5 @@
 
 .bloom-preview-remove-button:hover {
     color: red;
-    text-decoration: underline;
+    text-decoration: none;
 }

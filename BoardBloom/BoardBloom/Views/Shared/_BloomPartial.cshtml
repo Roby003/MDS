@@ -9,9 +9,10 @@
 
 <head>
     <link rel="stylesheet" href="~/css/Blooms/_BloomPartial.css" />
+    <script src="~/js/Bloom/_BloomPartial.js"></script>
 </head>
 
-<div class="bloom-card" id="@Model.Id" onclick="() => { handleTap(@Model.Id) }">
+<div class="bloom-card" id="@Model.Id" onclick="() => { handleTap(@Model.Id) }" userId=@Model.UserId> 
     <div class="bloom-header">
         <img class="bloom-header-profile-image" src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg" alt="profile image" />
         <div class="bloom-header-info">
@@ -39,9 +40,17 @@
         
             @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable == true)
             {
-                <a class="bloom-save-button">
+                <button class="bloom-save-button" onmouseover="onSaveButtonClick('@Model.Id', '@Model.UserId')">
                     <img class="bloom-save-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-save-3251597-2724646.png" alt="save icon" />
-                </a>
+                </button>
+                <form class="bloom-save-menu" method="POST" action="@Url.Action("Save", "Blooms")">
+                    <div class="bloom-save-options">      
+                    </div>
+                    <div class="bloom-save-actions">
+                        <div class="bloom-cancel-button">Cancel</div>
+                        <button class="bloom-save-button" type="submit">Save</button>
+                    </div>
+                </form>
             }
             else
             {
