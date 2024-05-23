@@ -1,4 +1,5 @@
-let cachedBoards = undefined;
+/*let cachedBoards = undefined;*/
+
 
 async function onSaveButtonClick(bloomId, userId) {
     const bloom = document.getElementById(bloomId);
@@ -64,3 +65,45 @@ async function handleSaveSubmit(bloomId) {
         alert('An error occurred while saving the bloom!');
     }
 }
+
+async function checkIfLiked() {
+    const blooms = document.getElementsByClassName("bloom-card");
+    for (let i = 0; i < blooms.length; i++) {
+        const bloom = blooms[i];
+        const id = bloom.id;
+        console.log(id)
+        var url = `Blooms/CheckLike?bloomId=${id}`
+        const bloomFooterLike = bloom.getElementsByClassName("bloom-footer-like")[0].getElementsByTagName("img")[0];
+        console.log(bloomFooterLike)
+        await fetch(url).then(response => response.json()).then(data => {
+            var redHeartsrc = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png"
+            if (data.liked === true)
+                bloomFooterLike.src = redHeartsrc;
+
+        })
+    }
+}
+async function handleLikeClick(event, bloomId) {
+    event.preventDefault();
+/*    console.log(bloomId);
+*/    event.stopPropagation();
+    var url = `/Blooms/Like?bloomId=${bloomId}`
+    var id = `likeCount_${bloomId}`
+    /* console.log(id);*/
+    await fetch(url, { method: 'POST' }).then(response => response.json()).then(data => {
+        document.getElementById(id).textContent = data.likeCount;
+        var redHeartsrc = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png"
+        var whiteHeartsrc = "https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png"
+        var heartIcon = document.getElementById(`likeIcon_${bloomId}`)
+
+
+        if (data.userLikedPost == true) {
+            heartIcon.src = redHeartsrc;
+        } else {
+            heartIcon.src = whiteHeartsrc;
+        }
+
+    })
+}
+
+window.addEventListener('load', checkIfLiked());

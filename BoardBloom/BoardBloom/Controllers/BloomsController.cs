@@ -281,11 +281,11 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult Like(int bloomId)
+        public IActionResult Like([FromQuery]int bloomId)
         {
-
-            string userId = _userManager.GetUserId(User);
-
+            var bloom = db.Blooms.Find(bloomId);
+            var userId = _userManager.GetUserId(User);
+            var userLikedPost = false;
 
             if (!db.Likes.Any(l => l.BloomId == bloomId && l.UserId == userId))
             {
@@ -295,7 +295,6 @@ namespace BoardBloom.Controllers
                     BloomId = bloomId,
                     UserId = userId
                 };
-                var bloom = db.Blooms.Find(bloomId);
 
                 bloom.TotalLikes++;
 
@@ -303,12 +302,12 @@ namespace BoardBloom.Controllers
                 db.SaveChanges();
 
                 ViewData["UserLikes"] = GetCurrentUserLikes();
+                userLikedPost = true;
             }
             else
             {
                 var like = db.Likes.FirstOrDefault(l => l.BloomId == bloomId && l.UserId == userId);
 
-                var bloom = db.Blooms.Find(bloomId);
                 
                 if(like != null)
                 {
@@ -317,8 +316,20 @@ namespace BoardBloom.Controllers
                     db.SaveChanges();
                 }
             }
+            return Json(new { LikeCount = bloom.TotalLikes, userLikedPost=userLikedPost });
             
-            return RedirectToAction("Show", new { id = bloomId });
+        }
+        [Authorize(Roles ="User,Admin")]
+        public IActionResult CheckLike(int bloomId)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var liked = false;
+            if(db.Likes.Any(l => l.BloomId == bloomId && l.UserId == userId))
+            {
+                liked = true;
+            }
+            return Json(new { liked = liked });
         }
         
         [HttpPost]

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BoardBloom.Controllers
 {
@@ -77,9 +78,9 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User, Admin")]
-        public IActionResult Edit(int id, [FromForm] string content)
+        public IActionResult Edit([FromQuery]int id, [FromForm] string content)
         {
-            Comment comm = db.Comments.Find(id);
+            Comment comm =db.Comments.Include("User").Where(c => c.Id == id).First();
 
             if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
@@ -87,7 +88,7 @@ namespace BoardBloom.Controllers
 
                 db.SaveChanges();
 
-                return Redirect("/Blooms/Show/" + comm.BloomId);
+                return PartialView("_CommentPartial", comm);
             }
             else
             {
@@ -116,5 +117,23 @@ namespace BoardBloom.Controllers
                 return Redirect("/Blooms/Show/" + comm.BloomId);
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult GetComm([FromQuery]int id)
+        {
+            Comment comm = db.Comments.Include("User").Where(c => c.Id == id).First();
+            if (comm != null)
+            {
+                return PartialView("_CommentPartial", comm);
+            }
+            else
+            {
+                ViewBag.Error = "comm id is not valid";
+                return RedirectToAction("Index", "Home");
+            }
+
+        }
+
     }
 }

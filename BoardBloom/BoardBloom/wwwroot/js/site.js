@@ -31,7 +31,7 @@
 
                 if (isValid) {
                         placeholderElement.find('.modal').modal('hide');
-                        location.reload();
+                       /* location.reload();*/
                     
                    
                     
@@ -58,3 +58,5 @@ const handlesBloomsTap = () => {
 window.onload = () => {
     handlesBloomsTap();
 } 
+
+

@@ -76,22 +76,22 @@
             <p class="bloom-main-text">@Model.Title</p>
         }
 
-        <div class="bloom-main-actions">
+        <div class="bloom-main-actions" >
             @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable == true)
             {
-                <form class="bloom-main-likes" method="POST" action="@Url.Action("Like", "Blooms")">
-                    <input type="hidden" name="bloomId" value="@Model.Id" />
-                    <button class="bloom-main-action-link" role="submit">
+                
+                    <a class="bloom-main-action-link" id="like-button" onclick="handleLikeClick(event,@Model.Id)" onmouseover="on_load()"> 
                         <div class="bloom-footer-like">
-                            <p class="bloom-footer-likes">@Model.TotalLikes</p>
+                            <p id ='likeCount_@Model.Id' class="bloom-footer-likes">@Model.TotalLikes</p>
                             @if(ViewBag.IsLiked != null && ViewBag.IsLiked == true) {
-                                <img class="bloom-footer-like-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png" alt="like icon" />
+                                <img class="bloom-footer-like-icon" id='likeIcon_@Model.Id' src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png" alt="like icon" />
                             } else {
-                                <img class="bloom-footer-like-icon" src="https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png" alt="like icon" />
+                                <img class="bloom-footer-like-icon" id='likeIcon_@Model.Id' src="https://icons.veryicon.com/png/o/miscellaneous/ui-basic-linear-icon/like-106.png" alt="like icon" />
                             }
+
                         </div>
-                    </button>
-                </form> 
+                    </a>
+               
             }
             else {
                 <div class="bloom-footer-like">
