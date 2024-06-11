@@ -11,11 +11,11 @@ namespace BoardBloom.Data
         {
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Board> Boards { get; set; }
-        public DbSet<BloomBoard> BloomBoards{ get; set; }
-        public DbSet<Bloom> Blooms { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Like> Likes { get; set; }
+        public virtual DbSet<Board> Boards { get; set; }
+        public virtual DbSet<BloomBoard> BloomBoards{ get; set; }
+        public virtual DbSet<Bloom> Blooms { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 {

@@ -72,7 +72,7 @@ namespace BoardBloom.Controllers
 
             var blooms = db.Blooms.Include("User").OrderByDescending(b => b.TotalLikes);
 
-            if (TempData.ContainsKey("message"))
+            if (TempData != null &&TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
@@ -145,7 +145,7 @@ namespace BoardBloom.Controllers
 
             SetAccessRights();
 
-            if (TempData.ContainsKey("message"))
+            if (TempData!= null && TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
@@ -176,6 +176,7 @@ namespace BoardBloom.Controllers
         public IActionResult Edit(int id)
         {
             Bloom bloom = db.Blooms.Find(id);
+            var _=_userManager.GetUserId(User);
 
             if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
@@ -183,8 +184,11 @@ namespace BoardBloom.Controllers
             }
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa editati un bloom care nu va apartine";
-                TempData["messageType"] = "alert-danger";
+                if (TempData != null)
+                {
+                    TempData["message"] = "Nu aveti dreptul sa editati un bloom care nu va apartine";
+                    TempData["messageType"] = "alert-danger";
+                }
 
                 return RedirectToAction("Index", "Home");
             }
@@ -229,16 +233,22 @@ namespace BoardBloom.Controllers
 
                 db.Blooms.Remove(bloom);
                 db.SaveChanges();
-
-                TempData["message"] = "Bloom-ul a fost sters";
-                TempData["messageType"] = "alert-success";
+                if (TempData != null)
+                {
+                    TempData["message"] = "Bloom-ul a fost sters";
+                    TempData["messageType"] = "alert-success";
+                }
+          
 
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                TempData["message"] = "Nu aveti dreptul sa stergeti un bloom care nu va apartine";
-                TempData["messageType"] = "alert-danger";
+                if (TempData != null)
+                {
+                    TempData["message"] = "Nu aveti dreptul sa stergeti un bloom care nu va apartine";
+                    TempData["messageType"] = "alert-danger";
+                }
 
                 return RedirectToAction("Index", "Home");
             }
