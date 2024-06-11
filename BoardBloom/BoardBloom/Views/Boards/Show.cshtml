@@ -1,4 +1,7 @@
 ﻿@model BoardBloom.Models.Board
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @using BoardBloom.ViewModels
 
@@ -15,20 +18,24 @@
                     <p class="board-description">@Model.Note</p>
                 }
             </div>
-            <div class="board-header-actions">
-                <a class="bloom-more-button">
-                    <img class="bloom-more-icon" src="https://www.svgrepo.com/show/335225/ellipsis.svg" alt="actions icon" />
-                </a>
-                <div class="bloom-more-menu">
-                    <a class="bloom-more-edit-button" href="@Url.Action("Edit", "Boards", new {id = @Model.Id})">Edit</a>
-                    
-                    <form method="POST" action="@Url.Action("Delete", "Boards", new {id = @Model.Id})">
-                        <input type="hidden" name="bloomId" value="@Model.Id" />
-                        <button class="bloom-more-delete-button">Delete</button>
-                    </form>
+
+            @if (ViewBag.isBoardEditable != null && ViewBag.isBoardEditable && UserManager.GetUserId(User) == Model.UserId)
+            {            
+                <div class="board-header-actions">
+                    <a class="bloom-more-button">
+                        <img class="bloom-more-icon" src="https://www.svgrepo.com/show/335225/ellipsis.svg" alt="actions icon" />
+                    </a>
+                    <div class="bloom-more-menu">
+                        <a class="bloom-more-edit-button" href="@Url.Action("Edit", "Boards", new {id = @Model.Id})">Edit</a>
+                        
+                        <form method="POST" action="@Url.Action("Delete", "Boards", new {id = @Model.Id})">
+                            <input type="hidden" name="bloomId" value="@Model.Id" />
+                            <button class="bloom-more-delete-button">Delete</button>
+                        </form>
+                    </div>
+                    <p class="board-header-paragraph">@Model.BloomBoards.Count() saved posts</p>
                 </div>
-                <p class="board-header-paragraph">@Model.BloomBoards.Count() saved posts</p>
-            </div>
+            }
         </div>
 
         <div class="board-body">
