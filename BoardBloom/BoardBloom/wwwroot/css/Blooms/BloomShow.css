@@ -1,0 +1,114 @@
+.bloom-show-wrapper {
+    display: flex;
+    align-self: center;
+}
+
+.bloom-card:hover {
+    box-shadow: none !important;
+    background-color: var(--background-primary) !important;
+    cursor: default !important;
+}
+
+.bloom-card {
+    min-width: 450px;
+}
+
+.bloom-show {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 0 25vw;
+    overflow: hidden;
+}
+
+.bloom-show * {
+    margin: 0;
+    padding: 0;
+}
+
+.bloom-comments-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: start;
+    gap: 16px;
+    max-width: 50%;
+    height: 100%;
+    flex: 1;
+    min-width: 450px;
+}
+
+.bloom-comments-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    color: var(--content-primary);
+    font-size: 16px;
+}
+
+.bloom-comments {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 12px;
+    width: 100%;
+    overflow-y: scroll;
+    min-height: 500px;
+    max-height: 60vh;
+    scrollbar-color: var(--accent-primary) var(--background-secondary);
+    scrollbar-width: thin;
+}
+
+.bloom-comment-form {
+    padding: 16px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-comment-form textarea {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    background-color: var(--background-secondary);
+    color: var(--content-primary);
+    font-size: 14px;
+    resize: none;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.bloom-comment-form textarea:focus {
+    outline: none;
+}
+
+.bloom-comment-form button {
+    padding: 8px;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--accent-primary);
+    color: var(--content-white);
+    font-size: 16px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

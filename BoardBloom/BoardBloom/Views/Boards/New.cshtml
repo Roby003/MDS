@@ -1,36 +1,34 @@
 ﻿@model BoardBloom.Models.Board
 
-<br />
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
-<h2 class="mb-5 text-center"
-    style="font-family: 'Rubik Doodle Shadow', cursive;">
-    Adaugare Board
-</h2>
+<head>
+    <link rel="stylesheet" href="~/css/Boards/BoardNew.css" />
+</head>
 
-<br />
+<div class="new-board-wrapper">
+    <h1 class="new-board-title">Create a new board<br/><span class="new-board-title-span">- save your thoughts in -</span></h1>
 
+    <div class="new-board-form-wrapper">
+        <form class="new-board-form" method="POST" action="/Boards/New/">
+            <input 
+                type="text" 
+                name="name" 
+                class="new-board-form-input" 
+                placeholder="Name"
+                required 
+            />
 
-@using (Html.BeginForm(actionName: "New", controllerName: "Boards", method: FormMethod.Post))
-{
-
-    @Html.Label("Name", "Denumire board")
-    <br />
-
-    @Html.TextBox("Name", null, new { @class = "form-control" })
-
-    @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
-
-    <br />
-
-    @Html.Label("Note", "Nota creatorului")
-    <br />
-
-    @Html.TextBox("Note", null, new { @class = "form-control" })
-
-    @Html.ValidationMessageFor(m => m.Note, null, new { @class = "text-danger" })
-    <br />
-    <br />
-
-    <button class="btn btn" style="background-color: #3838b2; color: #ffffff;" type="submit">Adauga board</button>
-
-}
+            <textarea
+                name="note"
+                class="new-board-form-textarea"
+                placeholder="Description"
+                required></textarea>
+            
+            <input type="hidden" name="userId" id="userId" value="@UserManager.GetUserId(User)" />
+            <button class="new-board-form-submit" type="submit">Create</button>
+        </form>
+    </div>
+</div>

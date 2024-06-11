@@ -4,7 +4,7 @@
 
 namespace BoardBloom.Migrations
 {
-    public partial class init_24_4_12 : Migration
+    public partial class m3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

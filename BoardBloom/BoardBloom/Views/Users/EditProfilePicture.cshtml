@@ -1,0 +1,25 @@
+@model BoardBloom.Models.ApplicationUser
+
+@{
+    Layout = "_Layout";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Users/EditProfilePicture.css" />
+    <script src="~/js/User/EditProfilePicture.js"></script>
+</head>
+
+<div class="edit-profile-picture-wrapper">
+    <h2 class="edit-profile-picture-title">Edit Profile Picture</h2>
+    <form class="edit-profile-picture-form" method="post" action="/Users/ChangeProfilePicture/@Model.Id" enctype="multipart/form-data">
+        <img class="edit-profile-picture-preview" src="@(Model.ProfilePicture != null ? "data:image/png;base64," + Convert.ToBase64String(Model.ProfilePicture) : "https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg")" alt="profile image" style="width:200px;height:200px;
+                object-fit:cover;" />
+        <input class="edit-profile-picture-upload" type="file"
+            alt="Submit" 
+            name="file"
+            accept="image/png, image/jpeg"
+        />
+
+        <input class="edit-profile-picture-submit" type="submit" value="Change Profile Picture" />
+    </form>
+</div>

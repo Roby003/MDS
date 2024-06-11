@@ -1,0 +1,40 @@
+﻿@model BoardBloom.Models.Comment
+
+<script>
+    $('.close').on('click', function () {
+        $('#commModal').modal('hide');
+    });
+</script>
+<div class="modal fade" id="commModal" tabindex="-1" role="dialog" aria-labelledby="commModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommModalLabel">Modifica comentariul</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form asp-action="EditComm" id="comment_form" >
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    <input name="Id" type="hidden" value="@Model.Id" />
+
+                    @Html.Label("Content", "Continut comentariu")
+
+                    <br />
+
+                    @Html.TextArea("Content", new { @class = "form-control" })
+                    <br />
+
+                    @Html.ValidationMessage("Content", null, new { @class = "text-danger" })
+                
+                </form>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-success" data-save="modal" id="test_id">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

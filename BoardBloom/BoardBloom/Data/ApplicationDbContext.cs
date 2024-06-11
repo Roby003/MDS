@@ -11,11 +11,11 @@ namespace BoardBloom.Data
         {
         }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Board> Boards { get; set; }
-        public DbSet<BloomBoard> BloomBoards{ get; set; }
-        public DbSet<Bloom> Blooms { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Like> Likes { get; set; }
+        public virtual DbSet<Board> Boards { get; set; }
+        public virtual DbSet<BloomBoard> BloomBoards{ get; set; }
+        public virtual DbSet<Bloom> Blooms { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
@@ -28,12 +28,14 @@ namespace BoardBloom.Data
             modelBuilder.Entity<BloomBoard>()
              .HasOne(bb => bb.Bloom)
              .WithMany(b => b.BloomBoards)
-             .HasForeignKey(bb => bb.BloomId);
+             .HasForeignKey(bb => bb.BloomId)
+             .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BloomBoard>()
                 .HasOne(bb => bb.Board)
                 .WithMany(b => b.BloomBoards)
-                .HasForeignKey(bb => bb.BoardId);
+                .HasForeignKey(bb => bb.BoardId)
+                .OnDelete(DeleteBehavior.Cascade); ;
         }
     }
 }

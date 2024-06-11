@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoardBloom.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421144307_init_24_4_1.2")]
-    partial class init_24_4_12
+    [Migration("20240611202100_presnt1")]
+    partial class presnt1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.22")
+                .HasAnnotation("ProductVersion", "6.0.24")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -392,11 +392,13 @@ namespace BoardBloom.Migrations
                 {
                     b.HasOne("BoardBloom.Models.Bloom", "Bloom")
                         .WithMany("BloomBoards")
-                        .HasForeignKey("BloomId");
+                        .HasForeignKey("BloomId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("BoardBloom.Models.Board", "Board")
                         .WithMany("BloomBoards")
-                        .HasForeignKey("BoardId");
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Bloom");
 

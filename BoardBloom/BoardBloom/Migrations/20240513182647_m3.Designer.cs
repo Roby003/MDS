@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoardBloom.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240421143904_init_24_4")]
-    partial class init_24_4
+    [Migration("20240513182647_m3")]
+    partial class m3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.22")
+                .HasAnnotation("ProductVersion", "6.0.24")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -145,13 +145,15 @@ namespace BoardBloom.Migrations
                     b.Property<int?>("BloomId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BoardId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("BoardDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id", "BloomId", "BoardId");
+                    b.Property<int?>("BoardId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloomId");
 
                     b.HasIndex("BoardId");
 
@@ -390,15 +392,11 @@ namespace BoardBloom.Migrations
                 {
                     b.HasOne("BoardBloom.Models.Bloom", "Bloom")
                         .WithMany("BloomBoards")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BloomId");
 
                     b.HasOne("BoardBloom.Models.Board", "Board")
                         .WithMany("BloomBoards")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BoardId");
 
                     b.Navigation("Bloom");
 
