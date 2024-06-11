@@ -1,0 +1,52 @@
+.edit-profile-picture-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.edit-profile-picture-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.edit-profile-picture-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.edit-profile-picture-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.edit-profile-picture-upload {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    color: var(--accent-primary);
+}
+
+.edit-profile-picture-submit {
+    
+    background-color: var(--content-white);
+    color: var(--accent-primary);
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.edit-profile-picture-submit:hover {
+    background-color: var(--accent-primary);
+    color: var(--content-white);
+}

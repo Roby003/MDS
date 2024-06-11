@@ -25,9 +25,8 @@
         </div>
 
         <div class="comment-header-actions">
-            @if (UserManager.GetUserId(User) == Model.User.Id)
+            @if (UserManager.GetUserId(User) == Model.User.Id || User.IsInRole("Admin"))
             {
-
                 <button class="comment-edit-button" onclick="onEditTap(@Model.Id)">Edit</button>
                 <form method="post" action="@Url.Action("Delete", "Comments", new { id = Model.Id })">
                     <button class="comment-delete-button" type="submit">Delete</button>

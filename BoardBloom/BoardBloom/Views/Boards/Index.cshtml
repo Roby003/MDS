@@ -7,12 +7,17 @@
 <div class="board-index-wrapper">
     <h1 class="board-index-title">Your saved boards</h1>
 
-    <div class="board-index-boards">
-        @foreach (Board board in ViewBag.Boards)
-        {
-            @Html.Partial("_BoardPreviewPartial", board)
-        }
-    </div>
+    @if (ViewBag.Boards == null || ViewBag.Boards.Count == 0)
+    {
+        <p class="board-index-no-boards">No boards found</p>
+    } else {
+        <div class="board-index-boards">
+            @foreach (Board board in ViewBag.Boards)
+            {
+                @Html.Partial("_BoardPreviewPartial", board)
+            }
+        </div>
+    }
 </div> 
 
 <a class="board-index-new-button" href="/Boards/New">+</a>
