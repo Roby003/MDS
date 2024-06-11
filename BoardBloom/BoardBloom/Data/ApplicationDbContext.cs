@@ -28,12 +28,14 @@ namespace BoardBloom.Data
             modelBuilder.Entity<BloomBoard>()
              .HasOne(bb => bb.Bloom)
              .WithMany(b => b.BloomBoards)
-             .HasForeignKey(bb => bb.BloomId);
+             .HasForeignKey(bb => bb.BloomId)
+             .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BloomBoard>()
                 .HasOne(bb => bb.Board)
                 .WithMany(b => b.BloomBoards)
-                .HasForeignKey(bb => bb.BoardId);
+                .HasForeignKey(bb => bb.BoardId)
+                .OnDelete(DeleteBehavior.Cascade); ;
         }
     }
 }

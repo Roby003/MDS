@@ -2,7 +2,6 @@ using BoardBloom.Data;
 using BoardBloom.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using YourProjectNamespace.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

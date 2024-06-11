@@ -107,6 +107,7 @@
 
 .user-profile-boards > * {
     min-width: 300px;
+    max-width: 30vw;
 }
 
 .user-profile-blooms {

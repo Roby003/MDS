@@ -19,7 +19,7 @@
                 }
             </div>
 
-            @if (ViewBag.isBoardEditable != null && ViewBag.isBoardEditable && UserManager.GetUserId(User) == Model.UserId)
+            @if (UserManager.GetUserId(User) == Model.UserId || User.IsInRole("Admin"))
             {            
                 <div class="board-header-actions">
                     <a class="bloom-more-button">

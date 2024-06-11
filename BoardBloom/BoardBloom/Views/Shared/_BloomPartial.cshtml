@@ -23,7 +23,7 @@
         </div>
         
         <div class="bloom-header-actions">
-            @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable &&  UserManager.GetUserId(User) == Model.User.Id)
+            @if (ViewBag.isBloomEditable != null && ViewBag.isBloomEditable &&  (UserManager.GetUserId(User) == Model.User.Id || User.IsInRole("Admin")))
             {
                 <a class="bloom-more-button">
                     <img class="bloom-more-icon" src="https://www.svgrepo.com/show/335225/ellipsis.svg" alt="actions icon" />
