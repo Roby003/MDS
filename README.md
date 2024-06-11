@@ -45,7 +45,7 @@ With BoardBloom, users can create, share, and find "Blooms," or visual material 
 
 2. *As a visitor (registered or not), I want to view all bookmarks added to the platform, allowing me to explore content without restrictions.*
 
-3. *As a user, I want to see the most recent and popular posts on the main page, with pagination implemented for better navigation.*
+3. *As a user, I want to see the most recent and popular posts on the main page for better navigation.*
 
 4. *As a registered user, I need to add posts with title, description, and embedded media (text, images, and videos) to the platform, expanding the content available to the community.*
    
@@ -55,13 +55,12 @@ With BoardBloom, users can create, share, and find "Blooms," or visual material 
 
 7. *As a registered user, I need to organize posts into bookmarks on my personal page, allowing me to personalize my experience and find content easily.*
 
-8. *As a user, I want to search for bookmarks by title, description, or categories, with the results sorted alphabetically by title, making it easy to find specific content.*
+8. *As an administrator, I am responsible for content moderation, including the ability to delete inappropriate bookmarks or comments, ensuring the platform remains a safe and welcoming space.*
 
-9. *As an administrator, I am responsible for content moderation, including the ability to delete inappropriate bookmarks or comments, ensuring the platform remains a safe and welcoming space.*
+9. *As an administrator, I want to ban users from the application interface, mainting organizing groups.*
 
-10. *As an administrator, I want to ban users from the application interface, mainting organizing groups.*
+10. *As a developer, I need to design a database schema that supports users, roles, posts, bookmarks, comments, categories, and search functionality, ensuring scalability and performance.*
 
-11. *As a developer, I need to design a database schema that supports users, roles, posts, bookmarks, comments, categories, and search functionality, ensuring scalability and performance.*
 # Backlog
 The development of the app was monitored using Trello.The following screenshot shows the Trello board used to track the progress of the project during development.
 ![SS aici](/ReadMeImages/Trello.png)
