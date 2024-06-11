@@ -70,6 +70,7 @@ The development of the app was monitored using Trello.The following screenshot s
 
 - Home Page Design
   - Multiple cards (with photo, user, description, like count and date of posting).
+
 ![ss](/ReadMeImages/HomePage.png)
 
 - View Bloom Design 
@@ -77,30 +78,36 @@ The development of the app was monitored using Trello.The following screenshot s
   - Comment list
   - Form for adding comments
   - One button for accessing user profile(the username)
+
 ![ss](/ReadMeImages/ViewBloom.png)
   
 - Other options for blooms
   - Form for editing comments  
+
     ![ss](/ReadMeImages/EditComment.png)
 
   - Form for adding bloom to board
+
     ![ss](/ReadMeImages/AddBloomToBoard.png)
 
 - Create Bloom Design
   - Two buttons(for choosing the type of post)
   - Two text fields(one for description and one for image url/text(for text post)) 
   - One button for preview
+
 ![ss](/readmeImages/CreateBloom.png)
 
 - Edit Bloom Design
   - One field for description 
   - One field for image url/text(for text post)
+
 ![ss](/ReadMeImages/EditBloom.png)
 
 - Preview Bloom
   - One card showing the bloom
   - Button for returning to editing 
   - Button for applying the changes/posting  
+
 ![ss](/ReadMeImages/PreviewBloom.png)
 
 - Create Board Design 
@@ -112,21 +119,25 @@ The development of the app was monitored using Trello.The following screenshot s
 - Boards Design
   - Cards showing the preview of boards(clickable-redirects to view board)
   - Button for adding a new board
+
 ![ss](/ReadMeImages/Boards.png)
 
 - View Board Design
   - Image preview of the saved blooms (clickable-redirects to view bloom)
   - Two buttons for editing and deleting(shown by hovering on the 3 dots)
   - Remove button for deleting a bloom from the board (shown by hovering on the bloom image)
+
 ![ss](/ReadMeImages/ViewBoards.png)
 
 - Edit Board Design
   - Two fields(one for Name and one for Description)
   - One button to save the board
+
 ![ss](/ReadMeImages/EditBoard.png)
 
 - Profile Page Design
  -....
+ 
 ![ss]()
 
 # UML Diagram
