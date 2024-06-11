@@ -63,7 +63,7 @@ namespace BoardBloom.Controllers
         {
             Comment comm = db.Comments.Find(id);
 
-            if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+            if (comm.UserId == _userManager.GetUserId(User))
             {
                 return View(comm);
             }
@@ -82,7 +82,7 @@ namespace BoardBloom.Controllers
         {
             Comment comm =db.Comments.Include("User").Where(c => c.Id == id).First();
 
-            if (comm.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+            if (comm.UserId == _userManager.GetUserId(User))
             {
                 comm.Content = content;
 

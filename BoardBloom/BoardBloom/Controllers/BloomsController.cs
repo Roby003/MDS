@@ -153,7 +153,6 @@ namespace BoardBloom.Controllers
                 ViewBag.Alert = TempData["messageType"];
             }
 
-
             ViewBag.isBloomEditable = true;
             return View(bloom);
         }
@@ -169,9 +168,13 @@ namespace BoardBloom.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
+        // eu aici as zice ca admin-ul nu are de ce sa editeze un board doar sa il stearga daca e impotriba TOS
         public IActionResult Edit(int id)
         {
-            Bloom bloom = db.Blooms.Find(id);
+            Bloom bloom = db.Blooms
+                .Include(b => b.User)
+                .Where(b => b.Id == id)
+                .FirstOrDefault();
             var _=_userManager.GetUserId(User);
 
             // Check if the current user can edit the post
@@ -190,31 +193,38 @@ namespace BoardBloom.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }   
-
-
+        
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(Bloom bloom)
         {
             if (ModelState.IsValid)
             {
-                var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
-
                 // Find the bloom in the database
                 var oldBloom = db.Blooms.Find(bloom.Id);
-                oldBloom.Title = bloom.Title;
-                oldBloom.Content = bloom.Content;
-                oldBloom.Image = bloom.Image;
 
-                db.SaveChanges();
+                if (oldBloom != null)
+                {
+                    oldBloom.Title = bloom.Title;
+                    oldBloom.Content = bloom.Content;
+                    oldBloom.Image = bloom.Image;
 
-                return RedirectToAction("Show", new { id = bloom.Id });
+                    db.SaveChanges();
+
+                    return RedirectToAction("Show", new { id = bloom.Id });
+                }
+                else
+                {
+                    return NotFound(); // Return a 404 Not Found response if the bloom is not found in the database
+                }
             }
             else
             {
                 // If ModelState is not valid, return BadRequest with ModelState errors
                 return BadRequest(ModelState);
             }
+
+            return BadRequest();
         }
 
 
@@ -254,7 +264,7 @@ namespace BoardBloom.Controllers
 
 
         // Conditiile de afisare a butoanelor 
-        private void SetAccessRights()
+        public void SetAccessRights()
         {
             ViewBag.AfisareButoane = false;
 
