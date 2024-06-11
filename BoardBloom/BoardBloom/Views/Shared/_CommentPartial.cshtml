@@ -1,0 +1,41 @@
+@model BoardBloom.Models.Comment
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    Layout = null;
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Comments/_CommentPartial.css" />
+    <script src="~/js/Comment/_CommentPartial.js"></script>
+</head>
+
+<div class="comment-card" id=comment-@Model.Id>
+    <input type="hidden" class="comment-id" value="@Model.Id" />
+    <div class="comment-header">
+        <img class="comment-header-profile-image" src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg" alt="profile image" />
+        <div class="comment-header-info">
+            <a href="@Url.Action("UserProfile", "Users", new { userId = Model.User.Id })">
+                <h4 class="comment-header-title">@Model.User.UserName</h4>
+            </a>  
+            <p class="comment-header-date">@Model.Date</p>
+        </div>
+
+        <div class="comment-header-actions">
+            @if (UserManager.GetUserId(User) == Model.User.Id || User.IsInRole("Admin"))
+            {
+                <button class="comment-edit-button" onclick="onEditTap(@Model.Id)">Edit</button>
+                <form method="post" action="@Url.Action("Delete", "Comments", new { id = Model.Id })">
+                    <button class="comment-delete-button" type="submit">Delete</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="comment-main">
+        <p class="comment-main-content">@Model.Content</p>
+    </div>
+</div>

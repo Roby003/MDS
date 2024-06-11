@@ -1,0 +1,49 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+<head>
+    <link rel="stylesheet" href="~/css/Account/Login.css" />
+</head>
+
+<form class="user-login" id="account" method="post">
+    <div class="user-login-wrapper">
+        <div class="user-login-header">
+            <h1>@ViewData["Title"]</h1>
+            <p>Welcome back<br/>to your<br/>bloom realm.</p>
+        </div>
+
+        <hr />
+
+        <div class="user-login-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="user-login-form-input">
+                <input asp-for="Input.Email" class=".user-login-form-input" autocomplete="username" aria-required="true" />
+                <label asp-for="Input.Email" class="form-label"></label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="user-login-form-input">
+                <input asp-for="Input.Password" class=".user-login-form-input" autocomplete="current-password" aria-required="true" />
+                <label asp-for="Input.Password" class="form-label"></label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div>
+                <div class="">
+                    <label asp-for="Input.RememberMe" class="user-login-checkbox">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button id="login-submit" type="submit" class="user-login-button">Log in</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

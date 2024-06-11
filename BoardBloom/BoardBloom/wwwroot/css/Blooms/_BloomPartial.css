@@ -1,0 +1,339 @@
+﻿
+.bloom-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    margin: 0;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    max-width: 33vw;
+    flex: 1;
+    transition: all 0.5s;
+}
+
+.bloom-card:hover {
+    box-shadow: 0 0 8px 2px var(--accent-primary);
+    background-color: var(--accent-secondary);
+    cursor: pointer;
+}
+
+.bloom-card * {
+    margin: 0;
+    padding: 0;
+}
+
+.bloom-header {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.bloom-header-profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.bloom-header-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 5px;
+}
+
+.bloom-header-title {
+    color: var(--content-primary);
+    font-size: 16px;
+}
+
+.bloom-header-date {
+    color: var(--content-secondary);
+    font-size: 12px;
+}
+
+.bloom-header-actions {
+    position: absolute;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-save-button {
+    color: var(--accent-primary);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.bloom-save-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--accent-primary);
+}
+
+.bloom-more-button {
+    display: block;
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.bloom-more-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--content-primary);
+    transition: all 0.5s;
+}
+
+.bloom-more-menu {
+    display: none;
+}
+
+.bloom-card:hover .bloom-more-button:hover + .bloom-more-menu,
+.bloom-card:hover .bloom-more-menu:hover {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 2px 2px 10px var(--content-secondary);
+    width: 100px;
+    transition: all 0.5s;
+}
+
+.bloom-more-edit-button, .bloom-more-delete-button {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-more-edit-button:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.bloom-more-delete-button:hover {
+    color: red;
+    text-decoration: none;
+}
+
+.bloom-main {
+    width: 100%;
+}
+
+.bloom-main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.bloom-main-video {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.bloom-main-video * {
+    margin: 0;
+    padding: 0;
+}
+
+.bloom-main-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background-color: var(--bloom-gray);
+    color: var(--content-primary);
+    font-size: 24px;
+    font-weight: 500;
+    padding: 16px;
+    text-wrap: wrap;
+    text-align: center;
+    word-break: break-all;
+    transition: all 0.5s;
+}
+
+.bloom-main-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.bloom-main-likes {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-main-action-link {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.bloom-share-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--content-primary);
+}
+
+.bloom-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    gap: 16px;
+    width: 100%;
+}
+
+.bloom-footer-description {
+    color: var(--content-primary);
+    font-size: 14px;
+    flex: 1;
+}
+
+.bloom-footer-like {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.bloom-footer-likes {
+    color: var(--content-primary);
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.bloom-footer-like-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.bloom-footer-like:hover .bloom-footer-likes {
+    text-decoration: none;
+    color: var(--accent-primary);
+
+}
+
+.bloom-footer-like:hover .bloom-footer-like-icon {
+    fill: var(--accent-primary);
+}
+
+.bloom-save-menu {
+    display: none;
+}
+
+.bloom-card:hover .bloom-save-button:hover + .bloom-save-menu,
+.bloom-card:hover .bloom-save-menu:hover {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 2px 2px 10px var(--content-secondary);
+    width: 200px;
+    transition: all 0.5s;
+}
+
+.bloom-save-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 4px;
+}
+
+.bloom-save-option span {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-save-option:hover span {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.bloom-save-option input {
+    
+}
+
+.bloom-save-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+}
+
+.bloom-cancel-button, .bloom-save-button {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-cancel-button:hover {
+    color: red;
+    text-decoration: none;
+}
+
+.bloom-save-button:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
+}

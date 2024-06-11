@@ -201,60 +201,116 @@ namespace BoardBloom.Controllers
 
             var blooms = db.Blooms.Include("User")
                             .Where(b => b.UserId == userId )
-                            .OrderByDescending(a => a.TotalLikes);
+                            .OrderByDescending(a => a.TotalLikes)
+                            .ToList();
 
-            int totalItems = blooms.Count();
+            ViewBag.Blooms = blooms;
+            
+            var user = db.Users.Find(userId);
 
-            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+            var boards = db.Boards.Include("BloomBoards")
+                            .Where(b => b.UserId == userId)
+                            .ToList();
 
-            ViewBag.CurrentPage = currentPage;
+            ViewBag.Boards = boards;
 
-            var offset = 0;
+            return View(user);
+        }
 
-            if (!currentPage.Equals(0))
-            {
-                offset = (currentPage - 1) * _perPage;
-            }
-
-            var paginatedBlooms = blooms.Skip(offset).Take(_perPage);
-
-            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
-
-            // userii si blooms
-
-            if (userId == null)
-            {
-                userId = _userManager.GetUserId(User);
-            }
-
-            var user = db.Users.Include(u => u.Blooms).SingleOrDefault(u => u.Id == userId);
-
-
-            // .Where(u => u.Id == userId)
-            // .FirstOrDefault(u => u.Id == userId);
+        [HttpGet]
+        public async Task<IActionResult> EditProfilePicture(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-
                 return NotFound();
             }
 
-            var boards = db.Boards
-                .Include("User")
-                .ToList();
-
-            ViewBag.Boards = boards.ToList();
-
-            ViewBag.UserCurent = _userManager.GetUserId(User);
-
-            //bloom urile placute de user
-            var likedBlooms = db.Likes
-               .Where(l => l.UserId == userId)
-                .Select(l => l.Bloom)
-                .ToList();
-
-            ViewBag.Blooms = paginatedBlooms;
-
             return View(user);
+        }
+
+       [HttpPost]
+        public async Task<IActionResult> ChangeProfilePicture(string id, [FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                // Handle the case where no file was uploaded
+                ModelState.AddModelError("File", "Please upload a file.");
+                return RedirectToAction("EditProfilePicture", new { id = id });
+            }
+
+            // Ensure the file is an image
+            if (!file.ContentType.StartsWith("image/"))
+            {
+                ModelState.AddModelError("File", "Only image files are allowed.");
+                return RedirectToAction("EditProfilePicture", new { id = id });
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                // Handle the case where the user does not exist
+                return NotFound();
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+
+                // Check the size of the image; adjust size limit as necessary
+                if (memoryStream.Length < 2097152)  // less than 2 MB
+                {
+                    user.ProfilePicture = memoryStream.ToArray();
+                }
+                else
+                {
+                    ModelState.AddModelError("File", "The file is too large.");
+                    return RedirectToAction("EditProfilePicture", new { id = id });
+                }
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("UserProfile", new { userId = user.Id });
+            }
+            else
+            {
+                // Handle errors during update
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return RedirectToAction("EditProfilePicture", new { id = id });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProfilePicture(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                // Handle the case where the user does not exist
+                return NotFound();
+            }
+
+            user.ProfilePicture = null;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            else
+            {
+                // Handle errors during update
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return BadRequest();
+            }
         }
     }
 }
