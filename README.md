@@ -95,7 +95,7 @@ The development of the app was monitored using Trello.The following screenshot s
   - Two text fields(one for description and one for image url/text(for text post)) 
   - One button for preview
 
-![ss](/readmeImages/CreateBloom.png)
+![ss](/ReadMeImages/CreateBloom.png)
 
 - Edit Bloom Design
   - One field for description 
@@ -137,7 +137,7 @@ The development of the app was monitored using Trello.The following screenshot s
 
 - Profile Page Design
  -....
- 
+
 ![ss]()
 
 # UML Diagram
