@@ -106,6 +106,7 @@ The development of the app was monitored using Trello.The following screenshot s
 - Create Board Design 
   - Two fields(one for Name and one for Description)
   - One button to create the board
+  
 ![ss](/ReadMeImages/CreateBoard.png)
 
 - Boards Design
