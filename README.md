@@ -150,7 +150,7 @@ The development of the app was monitored using Trello.The following screenshot s
 - Login Form Page Design
   - Two field (one for email and one for password)
   - A checkbox for remembering the account
-  - A button logging in
+  - A button for logging in
 
 ![ss]()
 
