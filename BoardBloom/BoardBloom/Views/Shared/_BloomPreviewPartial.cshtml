@@ -48,7 +48,7 @@
                     <img class="bloom-preview-info-icon" src="https://cdn.iconscout.com/icon/free/png-256/free-comment-2652894-2202811.png" alt="comment icon" />
                 </div>
             </div>
-            @if(SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.Bloom.UserId)
+            @if(SignInManager.IsSignedIn(User))
             {
                 <form class="bloom-preview-form" method="POST" action="/Boards/RemoveBloomFromBoard/@Model.BoardId">
                     <input type="hidden" name="bloomId" value="@Model.Bloom.Id" />

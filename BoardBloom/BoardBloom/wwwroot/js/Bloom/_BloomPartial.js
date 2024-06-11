@@ -22,8 +22,14 @@ async function onSaveButtonClick(bloomId, userId) {
                     };
                 }));
         });
-    
+    console.log(boards, boards.isEmpty);
     saveMenu.innerHTML = '';
+    if (boards.isEmpty) {
+        const noBoardsElement = document.createElement('div');
+        noBoardsElement.classList.add('bloom-save-option');
+        noBoardsElement.innerHTML = 'No boards found';
+        saveMenu.appendChild(noBoardsElement);
+    } else {
     boards.forEach(board => {
         const boardElement = document.createElement('div');
         boardElement.classList.add('board-save-option');
@@ -33,7 +39,8 @@ async function onSaveButtonClick(bloomId, userId) {
             <span>${board.name} (${board.noOfPosts})</span>
             </label>`;
         saveMenu.appendChild(boardElement);
-    });
+        });
+    }
     cachedBoards = boards;
 };
 
