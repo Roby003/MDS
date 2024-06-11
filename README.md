@@ -135,7 +135,22 @@ The development of the app was monitored using Trello.The following screenshot s
 ![ss](/ReadMeImages/EditBoard.png)
 
 - Profile Page Design
- -....
+  - Section for user specifics(profile image, email, number of blooms and boards)
+  - Cards showing user's boards
+  - Cards showing user's blooms
+
+![ss]()
+
+- Register Form Page Design
+  - Three fields (one for email, one for password and one for confirming the password)
+  - One button for confirming registration
+
+![ss]()
+
+- Login Form Page Design
+  - Two field (one for email and one for password)
+  - A checkbox for remembering the account
+  - A button logging in
 
 ![ss]()
 
