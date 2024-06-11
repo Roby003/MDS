@@ -139,20 +139,20 @@ The development of the app was monitored using Trello.The following screenshot s
   - Cards showing user's boards
   - Cards showing user's blooms
 
-![ss]()
+![ss](/ReadMeImages/UserProfile.png)
 
 - Register Form Page Design
   - Three fields (one for email, one for password and one for confirming the password)
   - One button for confirming registration
 
-![ss]()
+![ss](/ReadMeImages/Register.png)
 
 - Login Form Page Design
   - Two field (one for email and one for password)
   - A checkbox for remembering the account
   - A button for logging in
 
-![ss]()
+![ss](/ReadMeImages/LogIn.png)
 
 # UML Diagram
 ```mermaid

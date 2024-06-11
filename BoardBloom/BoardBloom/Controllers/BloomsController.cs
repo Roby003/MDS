@@ -55,7 +55,7 @@ namespace BoardBloom.Controllers
 
             var search = "";
 
-
+            // IF there is a search query in the URL
             if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
             {
                 search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
@@ -69,17 +69,17 @@ namespace BoardBloom.Controllers
                                       .ToList();
 
 
-
+            
             var blooms = db.Blooms.Include("User").OrderByDescending(b => b.TotalLikes);
 
+            // setting the message for the user
             if (TempData != null &&TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
             }
 
-
-
+            // Pagination
             var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
 
             var offset = 0;
@@ -96,6 +96,7 @@ namespace BoardBloom.Controllers
             ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
 
 
+            // If there is a search query in the URL
             if (search != "")
             {
                 ViewBag.PaginationBaseUrl = "/Blooms/Index/?search=" + search + "&page";
@@ -136,6 +137,7 @@ namespace BoardBloom.Controllers
                                          .Where(bl => bl.Id == id)
                                          .First();
 
+            // Check if the current user has liked the post
             var isLiked = db.Likes
                 .Where(l => l.BloomId == id)
                 .Where(l => l.UserId == _userManager.GetUserId(User))
@@ -157,15 +159,9 @@ namespace BoardBloom.Controllers
         }
 
         // Se afiseaza formularul in care se vor completa datele unui bloom
-
         [Authorize(Roles = "User,Admin")]
         public IActionResult New(/*bool? url_link*/)
         {
-            //ViewBag.Url_Link = true;
-
-
-
-            //if (url_link == false) ViewBag.Url_Link = false;
 
             Bloom bloom = new Bloom();
 
@@ -178,6 +174,7 @@ namespace BoardBloom.Controllers
             Bloom bloom = db.Blooms.Find(id);
             var _=_userManager.GetUserId(User);
 
+            // Check if the current user can edit the post
             if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
             {
                 return View(bloom);
@@ -203,6 +200,7 @@ namespace BoardBloom.Controllers
             {
                 var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
 
+                // Find the bloom in the database
                 var oldBloom = db.Blooms.Find(bloom.Id);
                 oldBloom.Title = bloom.Title;
                 oldBloom.Content = bloom.Content;
@@ -335,6 +333,7 @@ namespace BoardBloom.Controllers
             var userId = _userManager.GetUserId(User);
 
             var liked = false;
+            // Check if the user has liked the post
             if(db.Likes.Any(l => l.BloomId == bloomId && l.UserId == userId))
             {
                 liked = true;
@@ -350,6 +349,7 @@ namespace BoardBloom.Controllers
             {
                 var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
 
+                // Create a new Bloom object with the data from the request
                 Bloom previewBloom = new Bloom
                 {
                     Title = bloom.Title,
@@ -372,7 +372,8 @@ namespace BoardBloom.Controllers
                 viewData.Model = previewBloom;
 
                 using (var writer = new StringWriter())
-                {
+                {   
+                    // Render the view to a string
                     var viewContext = new ViewContext(ControllerContext, viewResult.View, viewData, TempData, writer, new HtmlHelperOptions());
                     viewResult.View.RenderAsync(viewContext).GetAwaiter().GetResult();
                     var html = writer.ToString();
@@ -393,6 +394,7 @@ namespace BoardBloom.Controllers
         {
             var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
 
+            // Create a new Bloom object with the data from the request
             Bloom newBloom = new Bloom
             {
                 Title = bloom.Title,

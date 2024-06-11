@@ -53,7 +53,8 @@ namespace BoardBloom.Controllers
 							select usr.UserName).FirstOrDefault();
 
 			ViewBag.UserName = UserName;
-
+			
+			// Get the user's profile picture
 			var userPP = (from usr in db.Users
 						  where usr.Id == userId
 						  select usr.ProfilePicture).FirstOrDefault();
@@ -79,21 +80,10 @@ namespace BoardBloom.Controllers
 			ViewBag.IsBloomPreviewable = false;
 
 			return View();
-
-			/*
-			else
-			{
-				TempData["message"] = "Nu aveti drepturi asupra bloomi";
-				TempData["messageType"] = "alert-danger";
-				return RedirectToAction("Index", "Blooms");
-			}
-			*/
-
 		}
 
 		// Afisarea tuturor bloomurilor pe care utilizatorul le-a salvat
 		// in categorii
-
 		[Authorize(Roles = "User,Admin")]
 		public IActionResult Show(int id)
 		{
@@ -161,6 +151,7 @@ namespace BoardBloom.Controllers
 				.Where(c => c.Id == id)
 				.FirstOrDefault();
 
+			// If the current user can edit the category
 			if (categ.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
 			{
 				return View(categ);
@@ -212,6 +203,7 @@ namespace BoardBloom.Controllers
 									  .ThenInclude(bc => bc.Bloom)
 									  .FirstOrDefault(c => c.Id == id);
 
+			// If the current user can delete the category
 			if (categ.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
 			{
 				if (categ != null)
@@ -253,6 +245,7 @@ namespace BoardBloom.Controllers
 						.ThenInclude(bb => bb.Bloom)
 						.FirstOrDefault();
 
+			// If the current user can delete the category
 			if (board.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
 			{
 				db.BloomBoards.Remove(bloomBoard);
@@ -279,6 +272,7 @@ namespace BoardBloom.Controllers
 						.ThenInclude(bb => bb.Board)
 						.FirstOrDefault();
 
+			// iterate through the boards and add the bloom to them
 			foreach(string boardId in boardsIds.Split(","))
 			{
 				var board = db.Boards
@@ -342,6 +336,7 @@ namespace BoardBloom.Controllers
 				.Include(b => b.User)
 				.ToList();
 
+			// return the boards and the number of blooms in each board
 			var json = Json(boards.Select(board => new
 			{
 				board,

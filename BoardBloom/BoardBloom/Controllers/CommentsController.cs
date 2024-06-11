@@ -121,7 +121,8 @@ namespace BoardBloom.Controllers
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
         public IActionResult GetComm([FromQuery]int id)
-        {
+        {   
+            // Get the comment
             Comment comm = db.Comments.Include("User").Where(c => c.Id == id).First();
             if (comm != null)
             {

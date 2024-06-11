@@ -210,6 +210,8 @@ namespace BoardBloom.Controllers
 
             var boards = db.Boards.Include("BloomBoards")
                             .Where(b => b.UserId == userId)
+                            .Include("User")
+                            .Include("BloomBoards.Bloom")
                             .ToList();
 
             ViewBag.Boards = boards;
