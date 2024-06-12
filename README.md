@@ -32,7 +32,7 @@ With BoardBloom, users can create, share, and find "Blooms," or visual material 
 
 # Demo
 
-## Link demo YouTube: [here](https://youtu.be/V1rxKJ7bHVo).
+## Link demo YouTube: [here](https://www.youtube.com/watch?v=-lX3BnoPyTg).
 
 # System Requirements
 
