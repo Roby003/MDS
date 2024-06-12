@@ -414,3 +414,324 @@ Testing is crucial to ensure the reliability and performance of BoardBloom. Impl
 
 
 - ChaptGPT-4o for creating the UML Diagram for documentation: https://chatgpt.com/share/f4804ad3-87cd-4412-8f40-2be17e36e33e
+  
+# Unit testing
+
+1. Index Action
+Description
+
+Tests if the Index action returns a ViewResult with the expected list of Bloom entities filtered by a search term.
+Code Snippet
+
+```c#
+[Fact]
+public void Index_ReturnsViewResult_WithExpectedData()
+{
+    // Arrange
+    var fakeBlooms = new List<Bloom>
+    {
+        new Bloom { Id = 1, Title = "Bloom 1", Content = "Content 1", TotalLikes = 10, UserId = "user1" },
+        new Bloom { Id = 2, Title = "Bloom 2", Content = "Content 2", TotalLikes = 20, UserId = "user2" }
+    }.AsQueryable();
+
+    var fakeLikes = new List<Like>
+    {
+        new Like { Id = 1, BloomId = 1, UserId = "user1" },
+        new Like { Id = 2, BloomId = 2, UserId = "user1" }
+    }.AsQueryable();
+
+    var mockBloomDbSet = CreateMockDbSet(fakeBlooms);
+    var mockLikeDbSet = CreateMockDbSet(fakeLikes);
+
+    _mockContext.Setup(c => c.Blooms).Returns(mockBloomDbSet.Object);
+    _mockContext.Setup(c => c.Likes).Returns(mockLikeDbSet.Object);
+
+    var queryCollection = new QueryCollection(new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
+    {
+        { "search", "Bloom" },
+        { "page", "1" }
+    });
+
+    var mockHttpContext = new Mock<HttpContext>();
+    mockHttpContext.Setup(c => c.Request.Query).Returns(queryCollection);
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = mockHttpContext.Object
+    };
+
+    _mockUserManager.Setup(um => um.GetUserId(It.IsAny<ClaimsPrincipal>())).Returns("user1");
+
+    // Act
+    var result = _controller.Index() as ViewResult;
+
+    // Assert
+    Assert.NotNull(result);
+    Assert.IsType<ViewResult>(result);
+
+    var viewDataBloomsEnumerable = result?.ViewData["blooms"] as IEnumerable<Bloom>;
+    var viewDataBlooms = viewDataBloomsEnumerable?.AsQueryable();
+    Assert.NotNull(viewDataBlooms);
+    Assert.Equal(fakeBlooms.Count(), viewDataBlooms?.Count());
+}
+```
+
+2. Show Action
+Description
+
+Tests if the Show action returns a ViewResult containing the correct Bloom for the provided ID.
+
+csharp
+
+[Fact]
+public void Show_ReturnsViewResult_WithBloom()
+{
+    // Arrange
+    var fakeLikes = new List<Like>
+    {
+        new Like { Id = 1, BloomId = 1, UserId = "user1" }
+    }.AsQueryable();
+    
+    var bloom = new Bloom
+    {
+        Id = 1,
+        Title = "Bloom 1",
+        Content = "Content 1",
+        UserId = "user1",
+        Likes = fakeLikes.ToList()
+    };
+
+    var mockBloomDbSet = CreateMockDbSet(new List<Bloom> { bloom }.AsQueryable());
+
+    _mockContext.Setup(c => c.Blooms).Returns(mockBloomDbSet.Object);
+
+    var mockLikesDbSet = CreateMockDbSet(fakeLikes.AsQueryable());
+    _mockContext.Setup(c => c.Likes).Returns(mockLikesDbSet.Object);
+
+    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, "user1")
+    }, "mock"));
+
+    _mockUserManager.Setup(um => um.GetUserId(user)).Returns("user1");
+
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = user }
+    };
+
+    // Act
+    var result = _controller.Show(1) as ViewResult;
+
+    // Assert
+    var viewResult = Assert.IsType<ViewResult>(result);
+    var model = Assert.IsType<Bloom>(viewResult.Model);
+    Assert.Equal("Bloom 1", model.Title);
+}
+
+3. New Action
+Description
+
+Tests if the New action returns a ViewResult with an empty Bloom model.
+Code Snippet
+
+```c#
+
+
+[Fact]
+public void New_ReturnsViewResult_WithEmptyBloom()
+{
+    // Act
+    var result = _controller.New() as ViewResult;
+
+    // Assert
+    var viewResult = Assert.IsType<ViewResult>(result);
+    var model = Assert.IsType<Bloom>(viewResult.Model);
+    Assert.Null(model.Title);
+    Assert.Null(model.Content);
+}
+```
+
+4. Edit Action (Authorized User)
+Description
+
+Tests if the Edit action returns a ViewResult with the correct Bloom when accessed by an authorized user.
+Code Snippet
+
+```c#
+
+[Fact]
+public void Edit_ReturnsViewResult_WithBloomForAuthorizedUser()
+{
+    // Arrange
+    var bloom = new Bloom { Id = 1, Title = "Bloom 1", Content = "Content 1", UserId = "user1" };
+    _mockContext.Setup(db => db.Blooms.Find(1)).Returns(bloom);
+
+    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, "user1")
+    }, "mock"));
+
+    _mockUserManager.Setup(um => um.GetUserId(user)).Returns("user1");
+
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = user }
+    };
+
+    // Act
+    var result = _controller.Edit(1) as ViewResult;
+
+    // Assert
+    var viewResult = Assert.IsType<ViewResult>(result);
+    var model = Assert.IsType<Bloom>(viewResult.Model);
+    Assert.Equal("Bloom 1", model.Title);
+}
+```
+
+5. Edit Action (Unauthorized User)
+Description
+
+Tests if the Edit action returns a redirect to the home page when accessed by an unauthorized user.
+Code Snippet
+```c#
+
+[Fact]
+public void Edit_ReturnsRedirectToHomeForUnauthorizedUser()
+{
+    // Arrange
+    var bloom = new Bloom { Id = 1, Title = "Bloom 1", Content = "Content 1", UserId = "user2" };
+    _mockContext.Setup(db => db.Blooms.Find(1)).Returns(bloom);
+
+    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, "user1")
+    }, "mock"));
+
+    _mockUserManager.Setup(um => um.GetUserId(user)).Returns("user1");
+
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = user }
+    };
+
+    // Act
+    var result = _controller.Edit(1) as RedirectToActionResult;
+
+    // Assert
+    Assert.IsType<RedirectToActionResult>(result);
+    Assert.Equal("Index", result.ActionName);
+    Assert.Equal("Home", result.ControllerName);
+}
+```
+6. Delete Action (Unauthorized User)
+Description
+
+Tests if the Delete action returns a redirect to the home page when accessed by an unauthorized user.
+Code Snippet
+
+```c#
+
+[Fact]
+public void Delete_ReturnsRedirectToHomeForUnauthorizedUser()
+{
+    // Arrange
+    var bloom = new Bloom { Id = 1, Title = "Bloom 1", Content = "Content 1", UserId = "user2" };
+    _mockContext.Setup(db => db.Blooms.Find(1)).Returns(bloom);
+
+    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, "user1")
+    }, "mock"));
+
+    _mockUserManager.Setup(um => um.GetUserId(user)).Returns("user1");
+
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = user }
+    };
+
+    // Act
+    var result = _controller.Delete(1) as RedirectToActionResult;
+
+    // Assert
+    Assert.IsType<RedirectToActionResult>(result);
+    Assert.Equal("Index", result.ActionName);
+    Assert.Equal("Home", result.ControllerName);
+}
+```
+
+7. Delete Action (Authorized User)
+Description
+
+Tests if the Delete action removes the specified Bloom and returns a redirect to the home page for an authorized user.
+Code Snippet
+
+```c#
+
+[Fact]
+public void Delete_RemovesBloomAndReturnsRedirectForAuthorizedUser()
+{
+    // Arrange
+    var bloom = new Bloom { Id = 1, Title = "Bloom 1", Content = "Content 1", UserId = "user1" };
+    _mockContext.Setup(db => db.Blooms.Find(1)).Returns(bloom);
+
+    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, "user1")
+    }, "mock"));
+
+    _mockUserManager.Setup(um => um.GetUserId(user)).Returns("user1");
+
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = user }
+    };
+
+    // Act
+    var result = _controller.Delete(1) as RedirectToActionResult;
+
+    // Assert
+    Assert.IsType<RedirectToActionResult>(result);
+    Assert.Equal("Index", result.ActionName);
+    Assert.Equal("Home", result.ControllerName);
+    _mockContext.Verify(db => db.Blooms.Remove(bloom), Times.Once);
+    _mockContext.Verify(db => db.SaveChanges(), Times.Once);
+}
+```
+
+8. Create Action
+Description
+
+Tests if the Create action successfully adds a new Bloom and redirects to the Index action.
+Code Snippet
+
+csharp
+```c#
+[Fact]
+public void Create_AddsBloomAndReturnsRedirectToIndex()
+{
+    // Arrange
+    var bloom = new Bloom { Title = "New Bloom", Content = "New Content", UserId = "user1" };
+
+    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, "user1")
+    }, "mock"));
+
+    _mockUserManager.Setup(um => um.GetUserId(user)).Returns("user1");
+
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = user }
+    };
+
+    // Act
+    var result = _controller.Create(bloom) as RedirectToActionResult;
+
+    // Assert
+    Assert.IsType<RedirectToActionResult>(result);
+    Assert.Equal("Index", result.ActionName);
+    _mockContext.Verify(db => db.Blooms.Add(It.IsAny<Bloom>()), Times.Once);
+    _mockContext.Verify(db => db.SaveChanges(), Times.Once);
+}
+```
