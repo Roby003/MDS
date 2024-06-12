@@ -22,7 +22,7 @@
 8. [Data Access Layer](#data-access-layer)
 9. [Security](#security)
 10. [Deployment](#deployment)
-11. [Testing](#testing)
+11. [Testing](#unit-testing)
 11. [AI use](#ai-used-to-help-with-development)
 
 
@@ -395,15 +395,6 @@ To deploy BoardBloom:
 - Run database migrations to set up the database schema.
 - Launch the application and verify all features are working correctly.
 
-# Testing
-Testing is crucial to ensure the reliability and performance of BoardBloom. Implement unit tests and integration tests to cover the following areas:
-
-- Models: Validate data integrity and business logic.
-- Controllers: Test all controller actions for expected behavior.
-- Views: Ensure views render correctly with the right data.
-- Security: Verify authentication and authorization mechanisms.
-- Example Unit Test: BloomControllerTests
-
 
 # AI used to help with development
 
@@ -415,7 +406,15 @@ Testing is crucial to ensure the reliability and performance of BoardBloom. Impl
 
 - ChaptGPT-4o for creating the UML Diagram for documentation: https://chatgpt.com/share/f4804ad3-87cd-4412-8f40-2be17e36e33e
   
-# Unit testing
+# Unit Testing
+
+Testing is crucial to ensure the reliability and performance of BoardBloom. Implement unit tests and integration tests to cover the following areas:
+
+- Models: Validate data integrity and business logic.
+- Controllers: Test all controller actions for expected behavior.
+- Views: Ensure views render correctly with the right data.
+- Security: Verify authentication and authorization mechanisms.
+- Example Unit Test: BloomControllerTests
 
 1. Index Action
 Description
@@ -480,7 +479,7 @@ Description
 
 Tests if the Show action returns a ViewResult containing the correct Bloom for the provided ID.
 
-csharp
+```c#
 
 [Fact]
 public void Show_ReturnsViewResult_WithBloom()
@@ -527,7 +526,7 @@ public void Show_ReturnsViewResult_WithBloom()
     var model = Assert.IsType<Bloom>(viewResult.Model);
     Assert.Equal("Bloom 1", model.Title);
 }
-
+```
 3. New Action
 Description
 
