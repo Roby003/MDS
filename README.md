@@ -45,9 +45,9 @@ BoardBloom is designed to be a platform for discovering, creating, and sharing v
 | Profile Page | A specific page where the user can show his collections. | Done |
 | Efficient Editing | Ability to edit a post afte posting it | Done |
 | User-Post interaction| Ability of the user to interact with posts through likes and comments | Done |
-| Efficient Search Function | Precise search fot finding post realted to specific topics. | Not Done |
-| Profile Page customization| ABility to cusomize a users profile page. | Not Done |
-| Comunities | Group chats the are created around a topic where peope can share pictures with memebrs of that comunity only | Not Done | 
+| Efficient Search Function | Precise search for finding posts realted to specific topics. | Not Done |
+| Profile Page customization| Ability to cusomize a users profile page. | Not Done |
+| Comunities | Group chats the are created around a topic where peope can share pictures with members of that comunity only | Not Done | 
 
 # Demo
 
