@@ -1,34 +1,53 @@
 # Table of Contents
 
 1. [BoardBloom](#boardbloom)
-2. [System Requirements](#system-requirements)
-2. [Demo](#demo)
-2. [Stories](#stories)
-2. [App Design](#app-design)
-2. [UML Diagram](#uml-diagram)
-3. [Architecture Overview](#architecture-overview)
-4. [Data Model](#data-model)
+2. [Product Vision](#product-vision)
+3. [System Requirements](#system-requirements)
+4. [Demo](#demo)
+5. [Stories](#stories)
+6. [App Design](#app-design)
+7. [UML Diagram](#uml-diagram)
+8. [Architecture Overview](#architecture-overview)
+9. [Data Model](#data-model)
    <!-- - [User](#user)
    - [Bloom](#bloom)
    - [Board](#board)
    - [Comment](#comment)
    - [Like](#like) -->
-5. [Controllers](#controllers)
+10. [Controllers](#controllers)
    <!-- - [UserController](#usercontroller)
    - [BloomController](#bloomcontroller)
    - [BoardController](#boardcontroller)
    - [CommentController](#commentcontroller) -->
-6. [Views](#views)
-8. [Data Access Layer](#data-access-layer)
-9. [Security](#security)
-10. [Deployment](#deployment)
-11. [Testing](#unit-testing)
-11. [AI use](#ai-used-to-help-with-development)
+11. [Views](#views)
+12. [Data Access Layer](#data-access-layer)
+13. [Security](#security)
+14. [Deployment](#deployment)
+15. [Testing](#unit-testing)
+16. [AI use](#ai-used-to-help-with-development)
 
 
 # BoardBloom
 
 With BoardBloom, users can create, share, and find "Blooms," or visual material on the web. Users get the option to save Blooms they like on their boards. Boards work as topical collections that let users group their Blooms corresponding to projects or interests. A user may create distinct boards, for instance, for dinner ideas, cars or haircuts. The main forms of engagement on the platform are creating boards and Blooms, while liking and commenting are supported as well.
+
+# Product Vision
+
+BoardBloom is designed to be a platform for discovering, creating, and sharing visual content online. Our goal is to make it easy and fun for users to organize their favorite images and ideas into boards that match their interests or projects. By offering a simple, engaging way to explore, save, and connect with content and other people, we strive to build a creative and inspiring space where everyone can share what they love and discover new ideas.
+
+| Functionalities | Description | Current State |
+| - | - | - |
+| User Authentication | Secure login/signup/logout for users. | Done |
+| Admin Role | Admin ability to add/remove/ban products, users and comments. | Done |
+| Home Page | The first page the user sees that contains the most popular posts | Done |
+| Posts(Blooms) | Repesents the user's post, complete with title, description, and  picture.| Done |
+| Posts(Boards) | Repesents the user's collection of saved blooms.| Done |
+| Profile Page | A specific page where the user can show his collections. | Done |
+| Efficient Editing | Ability to edit a post afte posting it | Done |
+| User-Post interaction| Ability of the user to interact with posts through likes and comments | Done |
+| Efficient Search Function | Precise search fot finding post realted to specific topics. | Not Done |
+| Profile Page customization| ABility to cusomize a users profile page. | Not Done |
+| Comunities | Group chats the are created around a topic where peope can share pictures with memebrs of that comunity only | Not Done | 
 
 # Demo
 
