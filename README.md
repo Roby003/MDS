@@ -80,7 +80,19 @@ BoardBloom is designed to be a platform for discovering, creating, and sharing v
 
 9. *As an administrator, I want to ban users from the application interface, mainting organizing groups.*
 
-10. *As a developer, I need to design a database schema that supports users, roles, posts, bookmarks, comments, categories, and search functionality, ensuring scalability and performance.*
+10. *As a developer, I need to design a database schema that supports communities, users, roles, posts, bookmarks, comments, categories, and search functionality, ensuring scalability and performance.*
+
+11. *As a registered user, I want to create a community with a name, description, and optional image, so I can build a shared space for specific interests.*
+
+12. *As a registered user, I want to join and leave communities, allowing me to choose the groups I want to participate in and engage with.*
+
+13. *As a community member, I want to share posts (text, images) within the community, allowing me to interact and share content with members who have similar interests.*
+
+14. *As a community member, I want to comment on and like posts shared within the community, fostering interaction and engagement within the group.*
+
+15. *As a user, I want to discover and search for communities by name or category, helping me find groups that match my interests.*
+
+16. *As an administrator, I need to view, manage, or delete any community if necessary, maintaining overall platform integrity and preventing abuse.*
 
 # Backlog
 The development of the app was monitored using Trello.The following screenshot shows the Trello board used to track the progress of the project during development.
