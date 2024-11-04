@@ -56,6 +56,15 @@ namespace BoardBloom.Data
                     j => j.HasOne<ApplicationUser>().WithMany().HasForeignKey("UserId"),
                     j => j.HasOne<Community>().WithMany().HasForeignKey("CommunityId"));
 
+            // relationship for moderators
+            modelBuilder.Entity<Community>()
+               .HasMany(c => c.Moderators)
+               .WithMany(u => u.ModeratedCommunities)
+               .UsingEntity<Dictionary<string, object>>(
+                   "ModeratorCommunity",
+                   j => j.HasOne<ApplicationUser>().WithMany().HasForeignKey("UserId"),
+                   j => j.HasOne<Community>().WithMany().HasForeignKey("CommunityId"));
+
         }
     }
 }

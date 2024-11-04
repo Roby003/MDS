@@ -12,12 +12,15 @@ namespace BoardBloom.Models
         [MinLength(1, ErrorMessage = "Numele comunitatii trebuie sa aiba cel putin un caracter")]
         public string Name { get; set; } = null!;
 
-        [Required(ErrorMessage ="")]
-        public string CreatedBy { get; set; } 
-        public virtual ApplicationUser CreatedByNavigation { get; set; } = null!;
-        public DateTime CreatedDate  { get; set; }
+        public string? Description { get; set; }
 
-        public virtual ICollection<ApplicationUser>? Users { get; set; } = new List<ApplicationUser>();
+        [Required(ErrorMessage = "")]
+        public string CreatedBy { get; set; } =null!;
+        public virtual ApplicationUser CreatedByNavigation { get; set; } = null!;
+        public DateTime CreatedDate { get; set; }
+
+        public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
+        public virtual ICollection<ApplicationUser> Moderators { get; set; } = new List<ApplicationUser>();
         public virtual ICollection<Bloom> Blooms { get; set; } = new List<Bloom>();
 
 

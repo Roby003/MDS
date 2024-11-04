@@ -400,7 +400,7 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult NewBloom([FromBody] Bloom bloom)
+        public IActionResult NewBloom([FromBody] Bloom bloom, [FromQuery] int? communityId) // poti adauga un bloom specific pt o comunitate
         {
             var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
 
@@ -417,6 +417,7 @@ namespace BoardBloom.Controllers
                 TotalLikes = 0,
                 UserId = user.Id,
                 BloomBoards = new List<BloomBoard>(),
+                CommunityId = communityId,
             };
 
             db.Blooms.Add(newBloom);
@@ -424,6 +425,8 @@ namespace BoardBloom.Controllers
 
             return Ok(new { id = newBloom.Id });
         }
+
+      
     }
 
     

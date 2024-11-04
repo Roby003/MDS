@@ -15,6 +15,7 @@ namespace BoardBloom.Models
         //comunitati
         public virtual ICollection<Community>? Communities { get; set; }
         public virtual ICollection<Community>? CreatedCommunities { get; set; }
+        public virtual ICollection<Community>? ModeratedCommunities { get; set; }
 
         public ICollection<Like> Likes { get; set; }
 

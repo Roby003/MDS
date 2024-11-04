@@ -275,7 +275,9 @@ namespace BoardBloom.Controllers
 						.FirstOrDefault();
 
 			// iterate through the boards and add the bloom to them
-			foreach(string boardId in boardsIds.Split(","))
+			if (String.Empty == boardsIds || boardsIds ==null)
+				return NotFound();
+            foreach (string boardId in boardsIds.Split(","))
 			{
 				var board = db.Boards
 							.Where(b => b.Id == int.Parse(boardId))

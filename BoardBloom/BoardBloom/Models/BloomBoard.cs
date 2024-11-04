@@ -13,7 +13,7 @@ namespace BoardBloom.Models
 
 		public int? BoardId { get; set; }
 
-		public virtual Bloom? Bloom{ get; set; }
+		public virtual Bloom? Bloom { get; set; }
 		public virtual Board? Board { get; set; }
 
 		public DateTime BoardDate { get; set; }
