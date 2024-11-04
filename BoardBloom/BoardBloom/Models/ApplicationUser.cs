@@ -12,6 +12,9 @@ namespace BoardBloom.Models
 
         // un user poate sa creeze mai multe colectii
          public virtual ICollection<Bloom>? Blooms { get; set; }
+        //comunitati
+        public virtual ICollection<Community>? Communities { get; set; }
+        public virtual ICollection<Community>? CreatedCommunities { get; set; }
 
         public ICollection<Like> Likes { get; set; }
 

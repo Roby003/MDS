@@ -13,12 +13,11 @@ namespace BoardBloom.Models
         public string Name { get; set; } = null!;
 
         [Required(ErrorMessage ="")]
-        public string CreatedBy { get; set; } = null!;
-        [Required]
+        public string CreatedBy { get; set; } 
         public virtual ApplicationUser CreatedByNavigation { get; set; } = null!;
         public DateTime CreatedDate  { get; set; }
 
-        public virtual ICollection<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
+        public virtual ICollection<ApplicationUser>? Users { get; set; } = new List<ApplicationUser>();
         public virtual ICollection<Bloom> Blooms { get; set; } = new List<Bloom>();
 
 
