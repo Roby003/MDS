@@ -159,11 +159,11 @@ namespace BoardBloom.Controllers
 
         // Se afiseaza formularul in care se vor completa datele unui bloom
         [Authorize(Roles = "User,Admin")]
-        public IActionResult New(/*bool? url_link*/)
+        public IActionResult New([FromQuery] int? communityId) 
         {
 
             Bloom bloom = new Bloom();
-
+            ViewBag.communityId = communityId;
             return View(bloom);
         }
 

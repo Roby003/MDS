@@ -9,6 +9,9 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using MessagePack.Formatters;
+using System.ComponentModel;
+using System.Diagnostics;
 
 
 namespace BoardBloom.Controllers
@@ -35,17 +38,28 @@ namespace BoardBloom.Controllers
             _roleManager = roleManager;
         }
 
-        [HttpPost]
-        //[Authorize(Roles = "User,Admin")]
-        public IActionResult New(Community community)
-        {
-            community.CreatedBy= _userManager.GetUserId(User);
-            community.CreatedDate = DateTime.Now;
 
-            if (ModelState.IsValid)
+        [HttpGet]
+        public IActionResult New()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> New([FromForm] Community community)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            ModelState.ClearValidationState(nameof(community));
+            community.CreatedDate = DateTime.Now;
+            community.CreatedBy = user.Id;
+
+
+            if (TryValidateModel(community, nameof(community)))
             {
+                AddUserToCommunity(ref community, user);
                 db.Communities.Add(community);
-                 db.SaveChangesAsync();
+                db.SaveChanges();
                 return Redirect("/Communities/Show/" + community.Id);
             }
             else
@@ -56,20 +70,25 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> Join([FromQuery]int id)
+        public async Task<IActionResult> Join([FromQuery] int id)
         {
             var community = db.Communities.Find(id);
+
+            var user = await _userManager.GetUserAsync(User);
             if (community == null)
             {
                 return NotFound();
             }
-            var user = await _userManager.GetUserAsync(User);
 
-            community.Users.Add(user);
-            await db.SaveChangesAsync();
+
+            AddUserToCommunity(ref community, user);
+
 
             return Redirect("/Communities/Show/" + community.Id);
         }
+
+
+
 
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
@@ -88,6 +107,29 @@ namespace BoardBloom.Controllers
             }
 
             return View(community);
+        }
+
+        [NonAction]
+        private int AddUserToCommunity(ref Community community, ApplicationUser user)
+        {
+            if (community.Users.Contains(user))
+            {
+                return 0;
+            }
+
+            if (community.CreatedBy == user.Id)
+            {
+                community.Moderators.Add(user);
+            }
+
+            community.Users.Add(user);
+
+
+            if (db.Entry(community).State == EntityState.Modified) // check if entity is tracked 
+            {
+                return db.SaveChanges();
+            }
+            else return 1;
         }
     }
 }
