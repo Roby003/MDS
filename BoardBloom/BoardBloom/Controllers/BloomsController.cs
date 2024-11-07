@@ -337,6 +337,7 @@ namespace BoardBloom.Controllers
             return Json(new { LikeCount = bloom.TotalLikes, userLikedPost=userLikedPost });
             
         }
+
         [Authorize(Roles ="User,Admin")]
         public IActionResult CheckLike(int bloomId)
         {

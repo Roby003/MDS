@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using MessagePack.Formatters;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 
 namespace BoardBloom.Controllers
@@ -43,6 +44,28 @@ namespace BoardBloom.Controllers
         public IActionResult New()
         {
             return View();
+        }
+
+
+
+        [HttpGet]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Index()
+        {
+            ViewBag.communities = await db.Communities.ToListAsync();
+
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> GetCommunitiesByName([FromQuery] string? name)
+        {
+            ViewBag.communities = await db.Communities.Where(c => c.Name.Contains(name ?? "")).ToListAsync();
+
+            return PartialView("_CommunitiesListPartial");
+
+
         }
 
         [HttpPost]
@@ -108,6 +131,9 @@ namespace BoardBloom.Controllers
 
             return View(community);
         }
+
+
+
 
         [NonAction]
         private int AddUserToCommunity(ref Community community, ApplicationUser user)
