@@ -20,7 +20,6 @@
 
             var actionUrl = form.attr('action');
             var dataToSend = form.serialize();
-            console.log(dataToSend);
             $.post(actionUrl, dataToSend).done(function (data) {
                 var newForm = $(data).find(formClass);
                 // Replace the content of the existing form

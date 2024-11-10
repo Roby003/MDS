@@ -1,4 +1,4 @@
-﻿
+﻿    
 using BoardBloom.Data;
 using BoardBloom.Models;
 
@@ -50,6 +50,7 @@ namespace BoardBloom.Controllers
         public async Task<IActionResult> New([FromForm] Community community)
         {
             var user = await _userManager.GetUserAsync(User);
+
             ModelState.ClearValidationState(nameof(community));
             community.CreatedDate = DateTime.Now;
             community.CreatedBy = user.Id;
@@ -101,14 +102,77 @@ namespace BoardBloom.Controllers
                 .Include(c => c.Blooms)
                 .FirstOrDefault(c => c.Id == id);
 
+
             if (community == null)
             {
                 return NotFound();
             }
 
+            ViewBag.IsUserInCommunity = community.Users.Contains(_userManager.GetUserAsync(User).Result);
+            ViewBag.IsUserModerator = community.Moderators.Contains(_userManager.GetUserAsync(User).Result);
+            ViewBag.IsUserCreator = community.CreatedBy == _userManager.GetUserAsync(User).Result.Id;
+
             return View(community);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> Leave([FromQuery] int id)
+        {
+            var community = db.Communities.Find(id);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (community == null)
+            {
+                return NotFound();
+            }
+
+            if (community.CreatedBy == user.Id)
+            {
+                return BadRequest("You cannot leave a community you created");
+            }
+
+            community.Users.Remove(user);
+            community.Moderators.Remove(user);
+
+            db.SaveChanges();
+
+            return Redirect("/Communities/Show/" + community.Id);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> MakeUserModerator([FromQuery] int communityId, [FromQuery] string userId)
+        {
+            var community = db.Communities.Find(communityId);
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (community == null)
+            {
+                return NotFound();
+            }
+
+            if (community.CreatedBy != _userManager.GetUserAsync(User).Result.Id)
+            {
+                return BadRequest("You cannot make a user moderator in a community you did not create");
+            }
+
+            if (community.Moderators.Contains(user))
+            {
+                return BadRequest("User is already a moderator");
+            }
+
+            community.Moderators.Add(user);
+
+            await db.SaveChangesAsync();
+
+            return Redirect("/Communities/Show/" + community.Id);
+        }
+
+
+
+        //all the logic for adding a user to a community,
+        //! community should be transmitted by reference in case it is not tracked by the db context
         [NonAction]
         private int AddUserToCommunity(ref Community community, ApplicationUser user)
         {
@@ -131,6 +195,8 @@ namespace BoardBloom.Controllers
             }
             else return 1;
         }
+
+
     }
 }
 

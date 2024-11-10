@@ -9,9 +9,7 @@ function onEditTap(id) {
 
     //-------
     const cardId = `comment-${id}`;
-    console.log(cardId);
     const commentCard = document.getElementById(`comment-${id}`);
-    console.log(commentCard);
     const text = commentCard.querySelector('.comment-main-content');
     const form = `
         <textarea class="comment-edit-textarea" name="content">${text.innerText}</textarea>
@@ -33,7 +31,6 @@ async function handleCommEdit(event, commId) {
     const form = document.querySelector('.comment-edit-form');
     const actionUrl = form.action;
 
-    console.log(actionUrl)
     const dataToSend = new FormData(form);
     const response = await fetch(actionUrl, {
         method: 'POST',
@@ -47,7 +44,6 @@ async function handleCommEdit(event, commId) {
 }
 async function onCancelTap(id) {
     //cancel no longer updates the comment
-    console.log(id)
     const commentCard = document.getElementById(`comment-${id}`);
 
     const url = `/Comments/GetComm?id=${id}`

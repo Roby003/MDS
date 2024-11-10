@@ -22,10 +22,11 @@ const backToEdit = () => {
     previewArea.style.display = 'none';
 }
 
-const createPost = () => {
+const createPost = (communityId) => {
     const xhr = new XMLHttpRequest();
-
-    xhr.open('POST', '/Blooms/NewBloom', true);
+    console.log('create post', communityId);
+    const path = communityId == undefined ? '/Blooms/NewBloom' : `/Blooms/NewBloom?communityId=${communityId}`;
+    xhr.open('POST', path, true);
 
     xhr.setRequestHeader('Content-Type', 'application/json');
 
@@ -51,13 +52,14 @@ const createPost = () => {
     xhr.send(data);
 }
 
-const nextStep = () => {
+const nextStep = (communityId) => {
+    
     const activeForm = document.querySelector('.new-bloom-form[style="display: flex;"]');
     if (!activeForm) {
         console.error('No active form found');
         return;
     }
-
+    console.log('next step', communityId);
     title = activeForm.querySelector('input[name="title"]').value;
     content = activeForm.querySelector('textarea[name="content"]').value;
     image = activeForm.querySelector('input[name="image"]').value;
@@ -86,8 +88,8 @@ const nextStep = () => {
             const previewForm = `
                 <div class="new-bloom-preview-buttons">
                     <button class="new-bloom-preview-back" onclick="backToEdit()">Back to edit</button>
-                   
-                    <button onclick="createPost()" class="new-bloom-preview-submit">Post</button>
+
+                    <button onclick="createPost(${communityId})" class="new-bloom-preview-submit">Post</button>
 
                 </div>
             `

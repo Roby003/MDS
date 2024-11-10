@@ -22,7 +22,6 @@ async function onSaveButtonClick(bloomId, userId) {
                     };
                 }));
         });
-    console.log(boards, boards.isEmpty);
     saveMenu.innerHTML = '';
     if (boards.isEmpty) {
         const noBoardsElement = document.createElement('div');
@@ -78,10 +77,8 @@ async function checkIfLiked() {
     for (let i = 0; i < blooms.length; i++) {
         const bloom = blooms[i];
         const id = bloom.id;
-        console.log(id)
         var url = `Blooms/CheckLike?bloomId=${id}`
         const bloomFooterLike = bloom.getElementsByClassName("bloom-footer-like")[0].getElementsByTagName("img")[0];
-        console.log(bloomFooterLike)
         await fetch(url).then(response => response.json()).then(data => {
             var redHeartsrc = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/WikiFont_uniE033_-_heart_-_red.svg/800px-WikiFont_uniE033_-_heart_-_red.svg.png"
             if (data.liked === true)

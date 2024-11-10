@@ -62,7 +62,7 @@
                 <input type="hidden" name="userId" id="userId" value="@UserManager.GetUserId(User)" />
                 <input type="hidden" name="date" id="date" value="@DateTime.Now" />
                 <input type="hidden" name="image" id="image" value="placeholder_image" />
-                <button class="new-bloom-form-submit" onclick="nextStep()">Preview</button>
+                <button class="new-bloom-form-submit" onclick="nextStep(@ViewBag.communityId)">Preview</button>
             </div>
 
         </div>

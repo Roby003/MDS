@@ -145,7 +145,7 @@ namespace BoardBloom.Tests
         public void New_ReturnsViewResult_WithEmptyBloom()
         {
             // Act
-            var result = _controller.New() as ViewResult;
+            var result = _controller.New(null) as ViewResult;
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);

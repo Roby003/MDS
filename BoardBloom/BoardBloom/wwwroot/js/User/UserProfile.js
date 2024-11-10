@@ -1,5 +1,4 @@
 async function deleteProfilePicture(userId) {
-    console.log(userId)
     const url = `/Users/DeleteProfilePicture/${userId}`;
     await fetch(url, {
         method: 'POST',

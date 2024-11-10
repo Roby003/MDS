@@ -69,11 +69,11 @@ namespace BoardBloom.Controllers
                                       .ToList();
 
 
-            
+
             var blooms = db.Blooms.Include("User").OrderByDescending(b => b.TotalLikes);
 
             // setting the message for the user
-            if (TempData != null &&TempData.ContainsKey("message"))
+            if (TempData != null && TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
@@ -147,7 +147,7 @@ namespace BoardBloom.Controllers
 
             SetAccessRights();
 
-            if (TempData!= null && TempData.ContainsKey("message"))
+            if (TempData != null && TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
                 ViewBag.Alert = TempData["messageType"];
@@ -159,7 +159,7 @@ namespace BoardBloom.Controllers
 
         // Se afiseaza formularul in care se vor completa datele unui bloom
         [Authorize(Roles = "User,Admin")]
-        public IActionResult New([FromQuery] int? communityId) 
+        public IActionResult New([FromQuery] int? communityId)
         {
 
             Bloom bloom = new Bloom();
@@ -175,7 +175,7 @@ namespace BoardBloom.Controllers
                 .Include(b => b.User)
                 .Where(b => b.Id == id)
                 .FirstOrDefault();
-            var _=_userManager.GetUserId(User);
+            var _ = _userManager.GetUserId(User);
 
             // Check if the current user can edit the post
             if (bloom.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
@@ -192,8 +192,8 @@ namespace BoardBloom.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
-        }   
-        
+        }
+
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(Bloom bloom)
@@ -246,7 +246,7 @@ namespace BoardBloom.Controllers
                     TempData["message"] = "Bloom-ul a fost sters";
                     TempData["messageType"] = "alert-success";
                 }
-          
+
 
                 return RedirectToAction("Index", "Home");
             }
@@ -299,7 +299,7 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult Like([FromQuery]int bloomId)
+        public IActionResult Like([FromQuery] int bloomId)
         {
             var bloom = db.Blooms.Find(bloomId);
             var userId = _userManager.GetUserId(User);
@@ -326,31 +326,31 @@ namespace BoardBloom.Controllers
             {
                 var like = db.Likes.FirstOrDefault(l => l.BloomId == bloomId && l.UserId == userId);
 
-                
-                if(like != null)
+
+                if (like != null)
                 {
                     bloom.TotalLikes--;
                     db.Likes.Remove(like);
                     db.SaveChanges();
                 }
             }
-            return Json(new { LikeCount = bloom.TotalLikes, userLikedPost=userLikedPost });
-            
+            return Json(new { LikeCount = bloom.TotalLikes, userLikedPost = userLikedPost });
+
         }
-        [Authorize(Roles ="User,Admin")]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult CheckLike(int bloomId)
         {
             var userId = _userManager.GetUserId(User);
 
             var liked = false;
             // Check if the user has liked the post
-            if(db.Likes.Any(l => l.BloomId == bloomId && l.UserId == userId))
+            if (db.Likes.Any(l => l.BloomId == bloomId && l.UserId == userId))
             {
                 liked = true;
             }
             return Json(new { liked = liked });
         }
-        
+
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Preview([FromBody] Bloom bloom)
@@ -382,7 +382,7 @@ namespace BoardBloom.Controllers
                 viewData.Model = previewBloom;
 
                 using (var writer = new StringWriter())
-                {   
+                {
                     // Render the view to a string
                     var viewContext = new ViewContext(ControllerContext, viewResult.View, viewData, TempData, writer, new HtmlHelperOptions());
                     viewResult.View.RenderAsync(viewContext).GetAwaiter().GetResult();
@@ -402,8 +402,19 @@ namespace BoardBloom.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult NewBloom([FromBody] Bloom bloom, [FromQuery] int? communityId) // poti adauga un bloom specific pt o comunitate
         {
-            var user = db.ApplicationUsers.Find(_userManager.GetUserId(User));
+            var user = _userManager.GetUserAsync(User).Result;
 
+            if (communityId != null)
+            {
+                var community = db.Communities.Include(c=>c.Users).FirstOrDefault(c=>c.Id==communityId);
+                if (community == null)
+                    return BadRequest(new { message = "Comunitatea nu exista" });
+
+                if (community.Users == null || !community.Users.Contains(user))
+                {
+                    return BadRequest(new { message = "Nu puteti posta in aceasta comunitate" });
+                }
+            }
             // Create a new Bloom object with the data from the request
             Bloom newBloom = new Bloom
             {
@@ -426,8 +437,8 @@ namespace BoardBloom.Controllers
             return Ok(new { id = newBloom.Id });
         }
 
-      
+
     }
 
-    
+
 }
