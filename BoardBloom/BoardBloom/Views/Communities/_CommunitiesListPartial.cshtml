@@ -1,8 +1,43 @@
-﻿
-    @{
-        foreach (var community in ViewBag.communities)
+﻿@using System.Linq;
+@{
+    var communities = ViewBag.communities;
+}
+
+<div class="communities-list">
+    @if (communities == null || !((List<BoardBloom.Models.Community>)communities).Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3 class="empty-state-title">No Communities Found</h3>
+            <p class="empty-state-description">Try adjusting your search or create a new community!</p>
+            <a href="/Communities/New" class="create-community-button">Create New Community</a>
+        </div>
+    }
+    else
+    {
+        @foreach (var community in communities)
         {
-            <div>@community.Name</div>
+            <div class="community-card">
+                <div class="community-card-header">
+                    <h2 class="community-name">@community.Name</h2>
+                    <span class="community-date">Created on @community.CreatedDate.ToString("MMM dd, yyyy")</span>
+                </div>
+
+                <p class="community-description">@(string.IsNullOrEmpty(community.Description) ? "No description available" : community.Description)</p>
+
+                <div class="community-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">@community.Users.Count</span>
+                        <span class="stat-label">Members</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">@community.Blooms.Count</span>
+                        <span class="stat-label">Blooms</span>
+                    </div>
+                </div>
+
+                <a href="/Communities/Show/@community.Id" class="view-community-button">View Community</a>
+            </div>
         }
     }
-
+</div>

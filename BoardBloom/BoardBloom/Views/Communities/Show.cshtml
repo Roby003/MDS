@@ -1,0 +1,177 @@
+﻿@model BoardBloom.Models.Community
+@{
+    ViewData["Title"] = Model.Name;
+    var isUserModerator = ViewBag.IsUserModerator;
+    var isUserCreator = ViewBag.IsUserCreator;
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Communities/CommunityShow.css" />
+</head>
+
+<div class="community-show-wrapper">
+    <!-- Community Banner -->
+    <div class="community-banner">
+        <div class="community-banner-content">
+            <div class="community-banner-left">
+                <div class="community-banner-header">
+                    <h1 class="community-name">@Model.Name</h1>
+                    <span class="community-creation-date">Created on @Model.CreatedDate.ToString("MMM dd, yyyy")</span>
+                </div>
+
+                <p class="community-description">
+                    @(string.IsNullOrEmpty(Model.Description) ? "No description available" : Model.Description)
+                </p>
+            </div>
+
+            <div class="community-banner-right">
+                <div class="community-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">@Model.Users.Count</span>
+                        <span class="stat-label">Members</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">@Model.Blooms.Count</span>
+                        <span class="stat-label">Blooms</span>
+                    </div>
+                </div>
+
+                @if (!ViewBag.IsUserInCommunity)
+                {
+                    @using (Html.BeginForm("Join", "Communities", new { id = Model.Id }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="join-button">Join Community</button>
+                    }
+                }
+                else if (!isUserCreator)
+                {
+                    @using (Html.BeginForm("Leave", "Communities", new { id = Model.Id }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="leave-button">Leave Community</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="community-content">
+        <!-- Main Content Area (Blooms) -->
+        <div class="blooms-section">
+            @if (ViewBag.IsUserInCommunity)
+            {
+                <a href="/Blooms/New?communityId=@Model.Id" class="create-bloom-button">
+                    Create New Bloom
+                </a>
+            }
+
+            <div class="blooms-list">
+                @if (Model.Blooms != null && Model.Blooms.Any())
+                {
+                    @foreach (var bloom in Model.Blooms.OrderByDescending(b => b.Date))
+                    {
+                        <div class="bloom-container">
+                            @if (isUserModerator || isUserCreator)
+                            {
+                                <div class="bloom-actions">
+                                    @using (Html.BeginForm("RemoveFromCommunity", "Blooms", new { id = bloom.Id }, FormMethod.Post, true, new { @class = "action-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="bloom-action-button" title="Remove from community">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    }
+                                </div>
+                            }
+                            @Html.Partial("_BloomPartial", bloom)
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-blooms">
+                        <p>No blooms posted yet. Be the first to share something!</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Members List) -->
+        <div class="members-section">
+            <h2 class="members-title">Members</h2>
+            <div class="members-list">
+                @foreach (var user in Model.Users)
+                {
+                    <div class="member-card">
+                        <a href="/Users/UserProfile?userId=@user.Id" class="member-info">
+                            @if (user.ProfilePicture != null)
+                            {
+                                <img src="data:image/png;base64,@Convert.ToBase64String(user.ProfilePicture)"
+                                     alt="Profile picture"
+                                     class="member-avatar" />
+                            }
+                            else
+                            {
+                                <div class="member-avatar-placeholder">
+                                    @(user.FirstName?[0])@(user.LastName?[0])
+                                </div>
+                            }
+
+                            <span class="member-name">
+                                @(string.IsNullOrEmpty(user.FirstName) ? user.UserName : $"{user.FirstName} {user.LastName}")
+                            </span>
+                        </a>
+
+                        <div class="member-badges">
+                            @if (Model.CreatedBy == user.Id)
+                            {
+                                <span class="creator-badge">Creator</span>
+                            }
+                            else if (Model.Moderators.Contains(user))
+                            {
+                                <span class="moderator-badge">Mod</span>
+                            }
+                        </div>
+
+                        @if ((isUserModerator || isUserCreator) && user.Id != Model.CreatedBy)
+                        {
+                            <div class="member-actions">
+                                @if (isUserCreator)
+                                {
+                                    @using (Html.BeginForm("UpdateModeratorStatus", "Communities",
+                                   new
+                                   {
+                                       communityId = Model.Id,
+                                       userId = user.Id,
+                                       isPromoting = !Model.Moderators.Contains(user)
+                                   },
+                                   FormMethod.Post, true, new { @class = "action-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="mod-action-button" title="@(Model.Moderators.Contains(user) ? "Remove moderator" : "Make moderator")">
+                                            <i class="fas @(Model.Moderators.Contains(user) ? "fa-user-minus" : "fa-user-plus")"></i>
+                                        </button>
+                                    }
+                                }
+
+                                @if ((isUserModerator && !Model.Moderators.Contains(user)) || isUserCreator)
+                                {
+                                    @using (Html.BeginForm("KickUser", "Communities",
+                                   new { communityId = Model.Id, userId = user.Id },
+                                   FormMethod.Post, true, new { @class = "action-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="kick-button" title="Kick user">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

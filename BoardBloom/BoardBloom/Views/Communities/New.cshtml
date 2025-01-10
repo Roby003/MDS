@@ -1,13 +1,35 @@
-﻿<form  method="POST" action="/Communities/New/">
-    <input type="text"
-           name="name"
-           class="new-board-form-input"
-           placeholder="Name"
-           required />
+﻿@model BoardBloom.Models.Community
+@{
+    ViewData["Title"] = "New Community";
+}
 
-    <textarea name="description"
-              class="new-board-form-textarea"
-              placeholder="Description"
-              required></textarea>
-    <button class="new-board-form-submit" type="submit">Create</button>
-</form>
+<head>
+    <link rel="stylesheet" href="~/css/Communities/CommunityNew.css" />
+</head>
+
+<div class="new-community-wrapper">
+    <h1 class="new-community-title">Create a new<br/><span class="new-community-title-span">Community</span></h1>
+    
+    <div class="new-community-form-wrapper">
+        @using (Html.BeginForm("New", "Communities", FormMethod.Post, new { @class = "new-community-form" }))
+        {
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Name, new { 
+                    @class = "new-community-form-input",
+                    placeholder = "Community Name"
+                })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.TextAreaFor(m => m.Description, new { 
+                    @class = "new-community-form-textarea",
+                    placeholder = "Community Description"
+                })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="new-community-form-submit">Create Community</button>
+        }
+    </div>
+</div>

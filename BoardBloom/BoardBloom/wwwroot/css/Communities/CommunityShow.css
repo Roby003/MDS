@@ -1,0 +1,375 @@
+﻿.community-show-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--background-secondary);
+}
+
+/* Banner Styles */
+.community-banner {
+    background-color: var(--background-primary);
+    padding: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.community-banner-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.community-banner-left {
+    flex: 1;
+}
+
+.community-banner-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.community-banner-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.community-name {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--content-primary);
+    margin: 0;
+}
+
+.community-creation-date {
+    font-size: 14px;
+    color: var(--content-secondary);
+}
+
+.community-description {
+    font-size: 16px;
+    color: var(--content-primary);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 800px;
+}
+
+.community-stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--content-primary);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--content-secondary);
+}
+
+/* Main Content Layout */
+.community-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 0.65fr 350px;
+    gap: 32px;
+    width: 100%;
+}
+
+/* Blooms Section */
+.blooms-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.bloom-container {
+    position: relative;
+    background: var(--background-primary);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .bloom-container:hover {
+        box-shadow: 0 0 8px 2px var(--accent-primary);
+    }
+
+.bloom-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+}
+
+.bloom-action-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+    .bloom-action-button:hover {
+        background-color: #ff4444;
+        color: white;
+        text-decoration: none;
+    }
+
+/* Members Section */
+.members-section {
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 24px;
+    position: sticky;
+    top: 24px;
+    height: calc(100vh - 48px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.members-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--content-primary);
+    margin: 0 0 16px 0;
+}
+
+.members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+}
+
+.member-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--background-secondary);
+    transition: all 0.3s;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    min-width: 0;
+    flex: 1;
+}
+
+.member-avatar, .member-avatar-placeholder {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.member-avatar-placeholder {
+    background-color: var(--accent-primary);
+    color: var(--content-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.member-name {
+    font-size: 13px;
+    color: var(--content-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.member-badges {
+    display: flex;
+    gap: 4px;
+}
+
+.moderator-badge, .creator-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.moderator-badge {
+    background-color: var(--accent-primary);
+    color: var(--content-white);
+}
+
+.creator-badge {
+    background-color: var(--content-primary);
+    color: var(--content-white);
+}
+
+.member-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.mod-action-button, .kick-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.mod-action-button {
+    background-color: rgba(182, 179, 235, 0.1);
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.kick-button {
+    background-color: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    text-decoration: none;
+}
+
+.mod-action-button:hover {
+    background-color: var(--accent-primary);
+    color: white;
+}
+
+.kick-button:hover {
+    background-color: #ff4444;
+    color: white;
+    text-decoration: none;
+}
+
+.action-form {
+    margin: 0;
+}
+
+/* Join/Leave Buttons */
+.join-button, .leave-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.blooms-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.join-button {
+    background-color: var(--accent-primary);
+    color: var(--content-white);
+}
+
+.leave-button {
+    background-color: var(--background-secondary);
+    color: var(--content-primary);
+}
+
+    .join-button:hover, .leave-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+    }
+
+.members-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.members-list::-webkit-scrollbar-track {
+    background: var(--background-secondary);
+    border-radius: 2px;
+}
+
+.members-list::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 2px;
+}
+
+    .members-list::-webkit-scrollbar-thumb:hover {
+        background: var(--content-primary);
+    }
+
+/* Empty State */
+.empty-blooms {
+    text-align: center;
+    padding: 48px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    color: var(--content-secondary);
+}
+
+/* Create Bloom Button */
+.create-bloom-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: var(--accent-primary);
+    color: var(--content-white);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s;
+    align-self: flex-start;
+}
+
+    .create-bloom-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(182, 179, 235, 0.3);
+        text-decoration: none;
+    }
+
+/* Make sure icons are properly sized */
+.fas {
+    font-size: 14px;
+}
+
+
+.bloom-card:hover {
+    box-shadow: none !important;
+}
