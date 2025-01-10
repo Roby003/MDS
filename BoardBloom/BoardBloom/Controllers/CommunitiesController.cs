@@ -52,7 +52,12 @@ namespace BoardBloom.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Index()
         {
-            ViewBag.communities = await db.Communities.ToListAsync();
+            ViewBag.communities = await db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Blooms)
+                .Include(c => c.Moderators)
+                .OrderByDescending(c => c.CreatedDate)
+                .ToListAsync();
 
             return View();
         }
@@ -61,11 +66,14 @@ namespace BoardBloom.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetCommunitiesByName([FromQuery] string? name)
         {
-            ViewBag.communities = await db.Communities.Where(c => c.Name.Contains(name ?? "")).ToListAsync();
+            ViewBag.communities = await db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Blooms)
+                .Include(c => c.Moderators)
+                .Where(c => c.Name.Contains(name ?? ""))
+                .ToListAsync();
 
             return PartialView("_CommunitiesListPartial");
-
-
         }
 
         [HttpPost]
@@ -94,9 +102,12 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> Join([FromQuery] int id)
+        public async Task<IActionResult> Join(int id)
         {
-            var community = db.Communities.Find(id);
+            var community = db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Moderators)
+                .FirstOrDefault(c => c.Id == id);
 
             var user = await _userManager.GetUserAsync(User);
             if (community == null)
@@ -104,11 +115,10 @@ namespace BoardBloom.Controllers
                 return NotFound();
             }
 
-
             AddUserToCommunity(ref community, user);
+            await db.SaveChangesAsync();  // Added explicit save
 
-
-            return Redirect("/Communities/Show/" + community.Id);
+            return RedirectToAction("Show", new { id = community.Id });
         }
 
 
@@ -116,7 +126,7 @@ namespace BoardBloom.Controllers
 
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult Show([FromQuery] int id)
+        public IActionResult Show(int id)
         {
 
             var community = db.Communities
@@ -140,11 +150,15 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> Leave([FromQuery] int id)
+        public async Task<IActionResult> Leave(int id)
         {
-            var community = db.Communities.Find(id);
+            var community = db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Moderators)
+                .FirstOrDefault(c => c.Id == id);
 
             var user = await _userManager.GetUserAsync(User);
+
             if (community == null)
             {
                 return NotFound();
@@ -155,12 +169,19 @@ namespace BoardBloom.Controllers
                 return BadRequest("You cannot leave a community you created");
             }
 
-            community.Users.Remove(user);
-            community.Moderators.Remove(user);
+            if (community.Users != null && community.Users.Contains(user))
+            {
+                community.Users.Remove(user);
+            }
 
-            db.SaveChanges();
+            if (community.Moderators != null && community.Moderators.Contains(user))
+            {
+                community.Moderators.Remove(user);
+            }
 
-            return Redirect("/Communities/Show/" + community.Id);
+            await db.SaveChangesAsync();  // Make sure to save the changes
+
+            return RedirectToAction("Show", new { id = community.Id });
         }
 
         [HttpPost]
@@ -197,26 +218,117 @@ namespace BoardBloom.Controllers
         //all the logic for adding a user to a community,
         //! community should be transmitted by reference in case it is not tracked by the db context
         [NonAction]
-        private int AddUserToCommunity(ref Community community, ApplicationUser user)
+        private void AddUserToCommunity(ref Community community, ApplicationUser user)
         {
-            if (community.Users.Contains(user))
+            if (community.Users == null)
+                community.Users = new List<ApplicationUser>();
+
+            if (community.Moderators == null)
+                community.Moderators = new List<ApplicationUser>();
+
+            if (!community.Users.Contains(user))
             {
-                return 0;
+                community.Users.Add(user);
+
+                if (community.CreatedBy == user.Id)
+                {
+                    community.Moderators.Add(user);
+                }
+
+                db.Entry(community).State = EntityState.Modified;
+            }
+        }
+
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> UpdateModeratorStatus(int communityId, string userId, bool isPromoting)
+        {
+            var community = await db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Moderators)
+                .FirstOrDefaultAsync(c => c.Id == communityId);
+
+            var user = await _userManager.FindByIdAsync(userId);
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (community == null || user == null)
+            {
+                return NotFound();
             }
 
-            if (community.CreatedBy == user.Id)
+            // Only creator can promote/demote moderators
+            if (community.CreatedBy != currentUser.Id)
             {
-                community.Moderators.Add(user);
+                return BadRequest("Only the community creator can manage moderators");
             }
 
-            community.Users.Add(user);
-
-
-            if (db.Entry(community).State == EntityState.Modified) // check if entity is tracked 
+            if (isPromoting)
             {
-                return db.SaveChanges();
+                if (!community.Moderators.Contains(user))
+                {
+                    community.Moderators.Add(user);
+                }
             }
-            else return 1;
+            else
+            {
+                if (community.Moderators.Contains(user))
+                {
+                    community.Moderators.Remove(user);
+                }
+            }
+
+            await db.SaveChangesAsync();
+            return RedirectToAction("Show", new { id = communityId });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> KickUser(int communityId, string userId)
+        {
+            var community = await db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Moderators)
+                .FirstOrDefaultAsync(c => c.Id == communityId);
+
+            var userToKick = await _userManager.FindByIdAsync(userId);
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (community == null || userToKick == null)
+            {
+                return NotFound();
+            }
+
+            // Check if current user is creator or moderator
+            if (community.CreatedBy != currentUser.Id && !community.Moderators.Contains(currentUser))
+            {
+                return BadRequest("Only moderators can kick users");
+            }
+
+            // Can't kick the creator
+            if (userToKick.Id == community.CreatedBy)
+            {
+                return BadRequest("Cannot kick the community creator");
+            }
+
+            // Can't kick other moderators unless you're the creator
+            if (community.Moderators.Contains(userToKick) && community.CreatedBy != currentUser.Id)
+            {
+                return BadRequest("Only the creator can kick moderators");
+            }
+
+            if (community.Users.Contains(userToKick))
+            {
+                community.Users.Remove(userToKick);
+                // Also remove from moderators if applicable
+                if (community.Moderators.Contains(userToKick))
+                {
+                    community.Moderators.Remove(userToKick);
+                }
+            }
+
+            await db.SaveChangesAsync();
+            return RedirectToAction("Show", new { id = communityId });
         }
 
 

@@ -207,25 +207,59 @@ namespace BoardBloom.Controllers
 
         public IActionResult UserProfile(string userId)
         {
+            // Get the user with their communities included
+            var user = db.Users
+                .Include(u => u.Communities)
+                    .ThenInclude(c => c.Users)
+                .Include(u => u.Communities)
+                    .ThenInclude(c => c.Blooms)
+                .Include(u => u.Communities)
+                    .ThenInclude(c => c.Moderators)
+                .FirstOrDefault(u => u.Id == userId);
 
-            int _perPage = 5;
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-            var blooms = db.Blooms.Include("User")
-                            .Where(b => b.UserId == userId )
-                            .OrderByDescending(a => a.TotalLikes)
-                            .ToList();
+            // Get user's blooms with all necessary data
+            var blooms = db.Blooms
+                .Include(b => b.User)
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.Date)
+                .ToList();
 
             ViewBag.Blooms = blooms;
-            
-            var user = db.Users.Find(userId);
 
-            var boards = db.Boards.Include("BloomBoards")
-                            .Where(b => b.UserId == userId)
-                            .Include("User")
-                            .Include("BloomBoards.Bloom")
-                            .ToList();
+            // Get user's boards with all necessary relationships
+            var boards = db.Boards
+                .Include(b => b.BloomBoards)
+                    .ThenInclude(bb => bb.Bloom)
+                .Include(b => b.User)
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.Id)
+                .ToList();
 
             ViewBag.Boards = boards;
+
+            // Get user's moderated communities
+            var moderatedCommunities = db.Communities
+                .Include(c => c.Moderators)
+                .Where(c => c.Moderators.Any(m => m.Id == userId))
+                .ToList();
+
+            ViewBag.ModeratedCommunities = moderatedCommunities;
+
+            // Get communities created by the user
+            var createdCommunities = db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Blooms)
+                .Include(c => c.Moderators)
+                .Where(c => c.CreatedBy == userId)
+                .OrderByDescending(c => c.CreatedDate)
+                .ToList();
+
+            ViewBag.CreatedCommunities = createdCommunities;
 
             return View(user);
         }
