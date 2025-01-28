@@ -86,12 +86,19 @@ namespace BoardBloom.Controllers
             community.CreatedDate = DateTime.Now;
             community.CreatedBy = user.Id;
 
-
             if (TryValidateModel(community, nameof(community)))
             {
-                AddUserToCommunity(ref community, user);
+                // First save the community
                 db.Communities.Add(community);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
+
+                // Now that we have the community ID, we can set up relationships
+                community.Users = new List<ApplicationUser> { user };
+                community.Moderators = new List<ApplicationUser> { user };
+
+                // Save the relationships
+                await db.SaveChangesAsync();
+
                 return Redirect("/Communities/Show/" + community.Id);
             }
             else
