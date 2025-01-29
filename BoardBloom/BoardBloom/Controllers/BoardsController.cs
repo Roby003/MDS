@@ -126,22 +126,24 @@ namespace BoardBloom.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "User,Admin")]
-		public ActionResult New(Board cat)
+		public ActionResult New(Board board)
 		{
-			cat.UserId = _userManager.GetUserId(User);
+			board.UserId = _userManager.GetUserId(User);
 
 			if (ModelState.IsValid)
 			{
-				db.Boards.Add(cat);
+				db.Boards.Add(board);
 				db.SaveChanges();
-				TempData["message"] = "Categoia a fost adaugata";
-				TempData["messageType"] = "alert-success";
-				return RedirectToAction("Index");
-			}
 
+				TempData["message"] = "Board created successfully";
+				TempData["messageType"] = "alert-success";
+
+				// Redirect to Show action with the new board's ID
+				return RedirectToAction("Show", new { id = board.Id });
+			}
 			else
 			{
-				return View(cat);
+				return View(board);
 			}
 		}
 
@@ -296,7 +298,8 @@ namespace BoardBloom.Controllers
 						var bloomBoard = new BloomBoard
 						{
 							BloomId = bloom.Id,
-							BoardId = board.Id
+							BoardId = board.Id,
+							BoardDate = System.DateTime.Now
 						};
 
 						if(!db.BloomBoards.Any(bb => bb.BloomId == bloom.Id && bb.BoardId == board.Id))
