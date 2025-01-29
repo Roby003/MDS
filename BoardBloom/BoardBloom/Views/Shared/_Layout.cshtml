@@ -1,58 +1,81 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using BoardBloom.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BoardBloom is a platform for creating and sharing interactive boards of blooms." />
-    <meta name="author" content="BoardBloom" />
-    <meta name="keywords" content="BoardBloom, board, bloom, interactive, platform, share" />
-    <link rel="icon" type="image/x-icon" href="https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/18a00ca6-6321-4f6d-96a7-002783d94895/b1c2cfc6-ba2c-469e-a6be-06f81c05c92b.png" /> 
-    <title>BoardBloom</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/BoardBloom.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="BloomBoard - Where ideas blossom and creativity blooms" />
+	<title>@ViewData["Title"] - BloomBoard</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/navbar.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BoardBloom</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="BLooms" asp-action="New">Add Bloom</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Boards" asp-action="Index">Boards</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div>
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
 
-    @* <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - BoardBloom - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<body>
+	<header>
+			@if (SignInManager.IsSignedIn(User))
+			{
+			<nav class="navbar">
+				<div class="nav-content">
+					<div class="nav-left">
+						<a class="nav-brand" href="/">
+							<span class="nav-logo">BloomBoard</span>
+							<span class="nav-motto">Where ideas blossom</span>
+						</a>
+						<ul class="nav-links">
+							<li><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+							<li><a class="nav-link" asp-area="" asp-controller="Blooms" asp-action="New">Create Bloom</a></li>
+							<li><a class="nav-link" asp-area="" asp-controller="Boards" asp-action="Index">Boards</a></li>
+							<li><a class="nav-link" asp-area="" asp-controller="Communities" asp-action="Index">Communities</a></li>
+						</ul>
+					</div>
+
+					@if (SignInManager.IsSignedIn(User))
+					{
+						<div class="nav-right">
+							<a asp-controller="Users" asp-action="UserProfile" asp-route-userId="@UserManager.GetUserId(User)" class="user-profile_navbar">
+								@if (User.Identity?.Name != null)
+								{
+									var currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
+									@if (currentUser?.ProfilePicture != null)
+									{
+										<img class="profile-picture_navbar" src="data:image/png;base64,@Convert.ToBase64String(currentUser.ProfilePicture)" alt="Profile Picture" />
+									}
+									else
+									{
+										<img class="profile-picture_navbar" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Default Profile" />
+									}
+									<span class="profile-name_navbar">@User.Identity.Name</span>
+								}
+							</a>
+							<form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/Identity/Account/Login">
+								<button type="submit" class="logout-button">Logout</button>
+							</form>
+						</div>
+					}
+					else
+					{
+						<div class="nav-right">
+							<a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+							<a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+						</div>
+					}
+				</div>
+			</nav>
+		}
+	</header>
+
+	<main role="main">
+		@RenderBody()
+	</main>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
