@@ -1,4 +1,5 @@
 @model BoardBloom.Models.Comment
+
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -9,11 +10,13 @@
 
 <head>
     <link rel="stylesheet" href="~/css/Comments/_CommentPartial.css" />
+    <script src="~/js/Comment/_CommentPartial.js"></script>
 </head>
 
-<div class="comment-card">
+<div class="comment-card" id=comment-@Model.Id>
+    <input type="hidden" class="comment-id" value="@Model.Id" />
     <div class="comment-header">
-        <img class="comment-header-profile-image" src="https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg" alt="profile image" />
+        <img class="comment-header-profile-image" src="@(Model.User.ProfilePicture != null ? "data:image/png;base64," + Convert.ToBase64String(Model.User.ProfilePicture) : "https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg")" alt="profile image" />
         <div class="comment-header-info">
             <a href="@Url.Action("UserProfile", "Users", new { userId = Model.User.Id })">
                 <h4 class="comment-header-title">@Model.User.UserName</h4>
@@ -22,16 +25,11 @@
         </div>
 
         <div class="comment-header-actions">
-            @if (UserManager.GetUserId(User) == Model.User.Id)
+            @if (UserManager.GetUserId(User) == Model.User.Id || User.IsInRole("Admin"))
             {
-
-                <a class="comment-edit-action" href="@Url.Action("Edit", "Comments", new { id = Model.Id })">
-                    <p>Edit</p>
-                </a>
+                <button class="comment-edit-button" onclick="onEditTap(@Model.Id)">Edit</button>
                 <form method="post" action="@Url.Action("Delete", "Comments", new { id = Model.Id })">
-                    <button class="comment-delete-button" type="submit">
-                        <p>Delete</p>
-                    </button>
+                    <button class="comment-delete-button" type="submit">Delete</button>
                 </form>
             }
         </div>

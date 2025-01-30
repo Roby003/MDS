@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 namespace BoardBloom.Controllers
@@ -51,7 +53,8 @@ namespace BoardBloom.Controllers
 							select usr.UserName).FirstOrDefault();
 
 			ViewBag.UserName = UserName;
-
+			
+			// Get the user's profile picture
 			var userPP = (from usr in db.Users
 						  where usr.Id == userId
 						  select usr.ProfilePicture).FirstOrDefault();
@@ -66,40 +69,21 @@ namespace BoardBloom.Controllers
 			}
 
 			SetAccessRights();
+			var boards = db.Boards
+				.Include(b => b.User)  // Include the User associated with the Board
+				.Include(b => b.BloomBoards)  // Include the join table entries
+					.ThenInclude(bb => bb.Bloom)  // Include the Blooms associated via the join table
+				.Where(b => b.UserId == userId)  // Filter by User ID
+				.ToList();
 
-			if (User.IsInRole("User"))
-			{
-				var boards = from categ in db.Boards.Include("User")
-							   .Where(b => b.UserId == userId)
-								 select categ;
+			ViewBag.Boards = boards;
+			ViewBag.IsBloomPreviewable = false;
 
-				ViewBag.Boards = boards;
-
-				return View();
-			}
-			else
-			if (User.IsInRole("Admin"))
-			{
-				var boards = from categ in db.Boards.Include("User")
-								 .Where(b => b.UserId == userId)
-								 select categ;
-
-				ViewBag.Boards = boards;
-
-				return View();
-			}
-
-			else
-			{
-				TempData["message"] = "Nu aveti drepturi asupra bloomi";
-				TempData["messageType"] = "alert-danger";
-				return RedirectToAction("Index", "Blooms");
-			}
-
+			return View();
 		}
 
 		// Afisarea tuturor bloomurilor pe care utilizatorul le-a salvat
-		// in categorii
+		// in board-uri
 
 		[Authorize(Roles = "User,Admin")]
 		public IActionResult Show(int id)
@@ -113,48 +97,24 @@ namespace BoardBloom.Controllers
 
 			SetAccessRights();
 
-			int _perPage = 5;
+			var blooms = db.BloomBoards
+					.Where(bb => bb.BoardId == id)
+					.Include(bb => bb.Bloom)
+					.ThenInclude(b => b.Comments)
+					.Include(bb => bb.Board)
+					.Select(bb => bb.Bloom)
+					.ToList(); 
+							
+			ViewBag.Blooms = blooms;
 
-			var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
-
-			ViewBag.CurrentPage = currentPage;
-
-			var offset = 0;
-
-			if (!currentPage.Equals(0))
-			{
-				offset = (currentPage - 1) * _perPage;
-			}
-
-			var BookCat = db.BloomBoards.Include(bc => bc.Bloom)
-				.Where(bc => bc.BoardId == id).ToList();
-
-			var blooms = BookCat.Select(bc => bc.Bloom);
-
-			var paginatedBlooms = blooms.Skip(offset).Take(_perPage);
-
-			int totalItems = blooms.Count();
-
-			ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
-
-			var boards = db.Boards
-								  .Include("BloomBoards.Bloom.User")
-								  .Include("User")
-								  .Where(c => c.Id == id)
-								  .FirstOrDefault();
-
-
-			if (boards == null)
-			{
-				TempData["message"] = "Resursa cautata nu poate fi gasita";
-				TempData["messageType"] = "alert-danger";
-				return RedirectToAction("Index", "Blooms");
-			}
-
-
-			return View(boards);
-
-
+			var board = db.Boards
+					.Where(b => b.Id == id)
+					.Include(b => b.BloomBoards)
+					.ThenInclude(bb => bb.Bloom)
+					.FirstOrDefault();
+					
+			ViewBag.IsBloomPreviewable = true;
+			return View(board);
 		}
 
 
@@ -186,11 +146,14 @@ namespace BoardBloom.Controllers
 		}
 
 		[Authorize(Roles = "User,Admin")]
+		// admin ar trb scos
 		public IActionResult Edit(int id)
 		{
-			Board categ = db.Boards.Where(cat => cat.Id == id)
-										.First();
+			Board categ = db.Boards
+				.Where(c => c.Id == id)
+				.FirstOrDefault();
 
+			// If the current user can edit the category
 			if (categ.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
 			{
 				return View(categ);
@@ -242,6 +205,7 @@ namespace BoardBloom.Controllers
 									  .ThenInclude(bc => bc.Bloom)
 									  .FirstOrDefault(c => c.Id == id);
 
+			// If the current user can delete the category
 			if (categ.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
 			{
 				if (categ != null)
@@ -269,6 +233,90 @@ namespace BoardBloom.Controllers
 			}
 		}
 
+		[Authorize(Roles = "User,Admin")]
+		[HttpPost]
+		public IActionResult RemoveBloomFromBoard( int id, [FromForm] int bloomId)
+		{
+			var bloomBoard = db.BloomBoards
+								.Where(bb => bb.BoardId == id && bb.BloomId == bloomId)
+								.FirstOrDefault();
+
+			var board = db.Boards
+						.Where(b => b.Id == id)
+						.Include(b => b.BloomBoards)
+						.ThenInclude(bb => bb.Bloom)
+						.FirstOrDefault();
+
+			// If the current user can delete the category
+			if (board.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+			{
+				db.BloomBoards.Remove(bloomBoard);
+				db.SaveChanges();
+				TempData["message"] = "Bloomul a fost sters din categoria";
+				TempData["messageType"] = "alert-success";
+				return RedirectToAction("Show", new { id });
+			}
+			else
+			{
+				TempData["message"] = "Nu aveti dreptul sa stergeti un bloom care nu va apartine";
+				TempData["messageType"] = "alert-danger";
+				return RedirectToAction("Show", new { id });
+			}
+		}
+
+		[Authorize(Roles = "User,Admin")]
+		[HttpPost]
+		public IActionResult AddBloomToBoards(int id, [FromQuery] string boardsIds)
+		{
+			var bloom = db.Blooms
+						.Where(b => b.Id == id)
+						.Include(b => b.BloomBoards)
+						.ThenInclude(bb => bb.Board)
+						.FirstOrDefault();
+
+			// iterate through the boards and add the bloom to them
+			if (String.Empty == boardsIds || boardsIds ==null)
+				return NotFound();
+            foreach (string boardId in boardsIds.Split(","))
+			{
+				var board = db.Boards
+							.Where(b => b.Id == int.Parse(boardId))
+							.Include(b => b.BloomBoards)
+							.ThenInclude(bb => bb.Bloom)
+							.FirstOrDefault();
+
+				if (board.UserId == _userManager.GetUserId(User) || User.IsInRole("Admin"))
+				{
+					if(db.BloomBoards.Any(bb => bb.BoardId == board.Id && bb.BloomId == bloom.Id))
+					{
+						db.BloomBoards.Remove(db.BloomBoards.FirstOrDefault(bb => bb.BoardId == board.Id && bb.BloomId == bloom.Id));
+						db.SaveChanges();
+					} else 
+					{
+						var bloomBoard = new BloomBoard
+						{
+							BloomId = bloom.Id,
+							BoardId = board.Id
+						};
+
+						if(!db.BloomBoards.Any(bb => bb.BloomId == bloom.Id && bb.BoardId == board.Id))
+						{
+							db.BloomBoards.Add(bloomBoard);
+							db.SaveChanges();
+						}
+					}
+				}
+				else
+				{
+					TempData["message"] = "Nu aveti dreptul sa adaugati un bloom in categoria care nu va apartine";
+					TempData["messageType"] = "alert-danger";
+					return StatusCode(403);
+				}
+			}
+
+			return Ok();
+		}
+
 
 		// Conditiile de afisare a butoanelor 
 		private void SetAccessRights()
@@ -283,6 +331,24 @@ namespace BoardBloom.Controllers
 			ViewBag.EsteAdmin = User.IsInRole("Admin");
 
 			ViewBag.UserCurent = _userManager.GetUserId(User);
+		}
+		[Authorize(Roles = "User,Admin")]
+		public IActionResult GetAllUserBoards([FromQuery] string userId, [FromQuery] string bloomId)
+		{
+			var boards = db.Boards
+				.Where(b => b.UserId == userId)
+				.Include(b => b.User)
+				.ToList();
+
+			// return the boards and the number of blooms in each board
+			var json = Json(boards.Select(board => new
+			{
+				board,
+				bloomsCount = db.BloomBoards.Where(bb => bb.BoardId == board.Id).Count(),
+				saved = db.BloomBoards.Any(bb => bb.BoardId == board.Id && bb.BloomId == int.Parse(bloomId))
+			}));
+
+			return json;
 		}
 	}
 }

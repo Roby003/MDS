@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BoardBloom.Migrations
 {
-    public partial class init_24_4 : Migration
+    public partial class m1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -257,25 +257,23 @@ namespace BoardBloom.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BloomId = table.Column<int>(type: "int", nullable: false),
-                    BoardId = table.Column<int>(type: "int", nullable: false),
+                    BloomId = table.Column<int>(type: "int", nullable: true),
+                    BoardId = table.Column<int>(type: "int", nullable: true),
                     BoardDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BloomBoards", x => new { x.Id, x.BloomId, x.BoardId });
+                    table.PrimaryKey("PK_BloomBoards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BloomBoards_Blooms_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_BloomBoards_Blooms_BloomId",
+                        column: x => x.BloomId,
                         principalTable: "Blooms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_BloomBoards_Boards_BoardId",
                         column: x => x.BoardId,
                         principalTable: "Boards",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -316,6 +314,11 @@ namespace BoardBloom.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BloomBoards_BloomId",
+                table: "BloomBoards",
+                column: "BloomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BloomBoards_BoardId",

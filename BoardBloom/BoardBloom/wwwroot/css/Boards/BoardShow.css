@@ -1,0 +1,125 @@
+.board-wrapper * {
+    margin: 0;
+    padding: 0;
+}
+
+.board-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0 10vw;
+    gap: 16px;
+}
+
+
+.board-header {
+    display: flex;
+    flex-direction: row;
+    align-items: last baseline;
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+
+.board-header-info {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+}
+
+.board-title {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.board-description {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--content-secondary);
+}
+
+.board-header-paragraph {
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.board-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    gap: 8px;
+    position: relative;
+}
+
+.bloom-more-button {
+    display: block;
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.bloom-more-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--content-primary);
+    transition: all 0.5s;
+}
+
+.bloom-more-menu {
+    display: none;
+}
+
+.board-header:hover .bloom-more-button:hover + .bloom-more-menu,
+.board-header:hover .bloom-more-menu:hover {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 8px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 2px 2px 10px var(--content-secondary);
+    width: 100px;
+    transition: all 0.5s;
+}
+
+.bloom-more-edit-button, .bloom-more-delete-button {
+    color: var(--content-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bloom-more-edit-button:hover {
+    color: var(--accent-primary);
+    text-decoration: none;
+}
+
+.bloom-more-delete-button:hover {
+    color: red;
+    text-decoration: none;
+}
+
+
+.board-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+    position: relative;
+}

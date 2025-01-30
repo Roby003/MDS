@@ -3,6 +3,16 @@
     align-self: center;
 }
 
+.bloom-card:hover {
+    box-shadow: none !important;
+    background-color: var(--background-primary) !important;
+    cursor: default !important;
+}
+
+.bloom-card {
+    min-width: 450px;
+}
+
 .bloom-show {
     display: flex;
     flex-direction: row;
@@ -30,6 +40,20 @@
     min-width: 450px;
 }
 
+.bloom-comments-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    background-color: var(--background-primary);
+    border-radius: 12px;
+    color: var(--content-primary);
+    font-size: 16px;
+}
+
 .bloom-comments {
     display: flex;
     flex-direction: column;
@@ -38,7 +62,8 @@
     gap: 12px;
     width: 100%;
     overflow-y: scroll;
-    height: 60vh;
+    min-height: 500px;
+    max-height: 60vh;
     scrollbar-color: var(--accent-primary) var(--background-secondary);
     scrollbar-width: thin;
 }

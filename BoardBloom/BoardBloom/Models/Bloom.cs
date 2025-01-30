@@ -23,6 +23,8 @@ namespace BoardBloom.Models
 
         public DateTime Date { get; set; }
 
+        public int? CommunityId { get; set; } // un Bloom poate fi asociat cu o comunitate
+
         // un Bloom poate avea o colectie de comentarii
         public virtual ICollection<Comment>? Comments { get; set; }
 
@@ -37,5 +39,7 @@ namespace BoardBloom.Models
 
         // relatia many-to-many dintre Bloom si Board
         public virtual ICollection<BloomBoard>? BloomBoards { get; set; }
+
+
     }
 }
