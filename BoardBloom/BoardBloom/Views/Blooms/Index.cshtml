@@ -1,171 +1,64 @@
-﻿@using Microsoft.AspNetCore.Identity
-
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewData["Title"] = "Blooms";
 }
-<br />
 
-<style>
+<head>
+    <link rel="stylesheet" href="~/css/Blooms/BloomIndex.css" />
+    <script src="~/js/Bloom/BloomIndex.js"></script>
+</head>
 
-    .input-group .btn {
-        height: 38px;
-        width: 40px;
-        background-color: #3838b2;
-        color: #ffffff;
-    }
-</style>
+<div class="blooms-index-wrapper">
+    <!-- Hero Section -->
+    <div class="blooms-hero">
+        <h1 class="blooms-hero-title">Discover <span>Amazing</span> Content</h1>
 
-<h1 class="text-center" style="font-family: 'Rubik Doodle Shadow', cursive;">Bloom-uri</h1>
-
-
-<hr class="mb-4">
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-3">
-            <form method="get" action="/Bloom/Index" id="searchForm">
-                <div class="input-group ">
-                    <div class="form-outline" data-mdb-input-init>
-                        <input name="search" class="form-control"
-                               type="text" placeholder="Cauta bloomuri..."
-                               value="@ViewBag.search">
-                    </div>
-
-                    <button type="submit" class="btn btn" data-mdb-ripple-init>
-                        <i class="bi bi-search"></i>
-                    </button>
-
-                </div>
-
-
-            </form>
+        <!-- Search Section -->
+        <div class="blooms-search">
+            <div class="search-container glass-effect">
+                <input type="text"
+                       id="search"
+                       placeholder="Search blooms..."
+                       value="@ViewBag.Search"
+                       onkeyup="handleSearch(event)" />
+                <button class="search-icon">
+                    <img src="https://www.svgrepo.com/show/532555/search.svg" alt="search" />
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-
-<br />
-
-@if (TempData["message"] != null)
-{
-    <div class="alert @ViewBag.Alert p-3 rounded-3 text-center mb-5">
-        @ViewBag.Message
-    </div>
-}
-
-<br />
-
-<style>
-    .btn-outline-purple {
-        color: #6f42c1;
-        border-color: #6f42c1;
+    <!-- Messages Section -->
+    @if (TempData["message"] != null)
+    {
+        <div class="alert @ViewBag.Alert glass-effect">
+            @ViewBag.Message
+        </div>
     }
 
-        .btn-outline-purple:hover {
-            background-color: #6f42c1;
-            color: #fff;
+    <!-- Blooms Grid -->
+    <div class="blooms-grid">
+        @foreach (BoardBloom.Models.Bloom bloom in ViewBag.Blooms)
+        {
+            @Html.Partial("_BloomPartial", bloom)
         }
-</style>
-
-
-@foreach (BoardBloom.Models.Bloom bloom in ViewBag.Blooms)
-{
-    <div class="card text-center mx-auto" style="max-width: 600px;">
-        <div class="card-header">
-            <ul class="nav nav-tabs card-header-tabs" style="display: flex; justify-content: space-between;">
-                <li class="nav-item">
-                    <a class="user-link" href="@Url.Action("UserProfile", "Users", new { userId = bloom.User.Id })">
-                        <i class="bi bi-person"></i> @bloom.User.UserName
-                    </a>
-                </li>
-
-
-                <li class="nav-item">
-                    <a>
-                        @bloom.Date
-                    </a>
-                </li>
-
-            </ul>
-        </div>
-        <div class="card-body">
-
-            @Html.Partial("BloomInfo", bloom)
-
-            <div class="card-text">@bloom.Content</div>
-
-            <!-- Like/Unlike -->
-            @if (User.Identity.IsAuthenticated)
-            {
-
-                var userLikes = ViewData["UserLikes"] as List<int?>;
-
-                if (userLikes != null && userLikes.Contains(bloom.Id))
-                {
-                    <form asp-action="Unlike" asp-route-bloomId="@bloom.Id" method="post">
-                        <button type="submit" class="btn btn-outline-purple mx-auto d-block">
-                            <i class="bi bi-hand-thumbs-up-fill"></i>
-                            @(bloom.TotalLikes != null ? bloom.TotalLikes : 0)
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <form asp-action="Like" asp-route-bloomId="@bloom.Id" method="post">
-                        <button type="submit" class="btn btn-outline-purple mx-auto d-block">
-                            <i class="bi bi-hand-thumbs-up"></i>
-                            @(bloom.TotalLikes != null ? bloom.TotalLikes : 0)
-                        </button>
-                    </form>
-                }
-
-            }
-
-
-
-
-        </div>
-
-        <a class="btn" style="background-color: #3838b2; color: #ffffff;" href="/Blooms/Show/@bloom.Id">Afisare Bloom</a>
     </div>
-    <br />
-    <br />
-}
 
-<style>
-    .centered-div {
-        margin: 0 auto;
-        width: fit-content;
-    }
-</style>
+    <!-- Pagination -->
+    <div class="pagination glass-effect">
+        <a href="@ViewBag.PaginationBaseUrl=1" class="page-link">
+            <img src="https://www.svgrepo.com/show/131073/left-arrow.svg" alt="first" />
+        </a>
 
+        @for (int i = 1; i <= ViewBag.lastPage; i++)
+        {
+            <a href="@ViewBag.PaginationBaseUrl=@i"
+               class="page-link @(i == ViewBag.CurrentPage ? "active" : "")">
+                @i
+            </a>
+        }
 
-@* Afisarea paginata a bloom-urilor *@
-<div class="centered-div">
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link"
-                   href="@ViewBag.PaginationBaseUrl=1" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            @for (int i = 1; i <= ViewBag.lastPage; i++)
-            {
-                <li class="page-item">
-                    <a class="page-link"
-                       href="@ViewBag.PaginationBaseUrl=@i">@(i)</a>
-                </li>
-            }
-            <li class="page-item">
-                <a class="page-link"
-                   href="@ViewBag.PaginationBaseUrl=@(ViewBag.lastPage)" aria-
-                   label="Next">
-
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+        <a href="@ViewBag.PaginationBaseUrl=@ViewBag.lastPage" class="page-link">
+            <img src="https://www.svgrepo.com/show/28675/right-arrow.svg" alt="last" />
+        </a>
+    </div>
 </div>
-

@@ -1,20 +1,49 @@
 @model BoardBloom.Models.Board
-
 @using System.Collections
 @using BoardBloom.Models
-
 @{
     Layout = null;
-    var blooms = new List<Bloom>(); // Using List<Bloom> to dynamically add blooms
-    if (Model.BloomBoards != null)
+    var blooms = new List<Bloom>();
+
+    // Safely handle null checks for BloomBoards
+    if (Model?.BloomBoards != null)
     {
-        foreach (var bloomBoard in Model.BloomBoards)
+        blooms = Model.BloomBoards
+            .Where(bb => bb?.Bloom != null)
+            .Select(bb => bb.Bloom)
+            .ToList();
+    }
+
+    // Find the oldest board date
+    DateTime? oldestDate = null;
+    if (Model?.BloomBoards != null && Model.BloomBoards.Any())
+    {
+        oldestDate = Model.BloomBoards
+            .Where(bb => bb?.BoardDate != null)
+            .Min(bb => bb.BoardDate);
+    }
+
+    // Calculate time elapsed
+    string formattedTimeElapsed = "Recently added";
+    if (oldestDate.HasValue)
+    {
+        var timeElapsed = DateTime.Now - oldestDate.Value;
+        var totalDays = timeElapsed.TotalDays;
+        var totalHours = timeElapsed.TotalHours;
+        var totalMinutes = timeElapsed.TotalMinutes;
+
+        formattedTimeElapsed = totalDays switch
         {
-            if (bloomBoard.Bloom != null)
-            {
-                blooms.Add(bloomBoard.Bloom);
-            }
-        }
+            >= 365 => $"{Math.Floor(totalDays / 365)} {(Math.Floor(totalDays / 365) == 1 ? "year" : "years")} ago",
+            >= 30 => $"{Math.Floor(totalDays / 30)} {(Math.Floor(totalDays / 30) == 1 ? "month" : "months")} ago",
+            >= 7 => $"{Math.Floor(totalDays / 7)} {(Math.Floor(totalDays / 7) == 1 ? "week" : "weeks")} ago",
+            >= 1 => $"{Math.Floor(totalDays)} {(Math.Floor(totalDays) == 1 ? "day" : "days")} ago",
+            _ => totalHours >= 1
+                ? $"{Math.Floor(totalHours)} {(Math.Floor(totalHours) == 1 ? "hour" : "hours")} ago"
+                : totalMinutes >= 1
+                    ? $"{Math.Floor(totalMinutes)} {(Math.Floor(totalMinutes) == 1 ? "minute" : "minutes")} ago"
+                    : "Just now"
+        };
     }
 }
 
@@ -23,23 +52,46 @@
     <script src="~/js/Board/_BoardPreviewPartial.js"></script>
 </head>
 
-<div class="board-preview-wrapper" id="@Model.Id">
+<div class="board-preview-wrapper" id="@Model?.Id">
     <div class="board-preview-card">
         @{
             var maxElements = blooms.Count > 4 ? 4 : blooms.Count;
-            @for(int i = 0; i < maxElements; i++)
+
+            @for (int i = 0; i < maxElements; i++)
             {
-                @Html.Partial("_BloomPreviewPartial", new BoardBloom.ViewModels.BloomsPreviewViewModel { Bloom = blooms[i], BoardId = Model.Id })
+                if (blooms[i] != null)
+                {
+                    @Html.Partial("_BloomPreviewPartial", new BoardBloom.ViewModels.BloomsPreviewViewModel
+        {
+        Bloom = blooms[i],
+        BoardId = Model?.Id ?? 0
+        })
+                }
             }
-            @for(int i = maxElements; i < 4; i++)
+
+            @for (int i = maxElements; i < 4; i++)
             {
-               <div class="bloom-empty-preview"></div>
+                <div class="bloom-empty-preview"></div>
             }
         }
+
+        <p class="board-preview-overlay"></p>
     </div>
 
-    <div class="board-preview-overlay">
-        <p class="board-preview-overlay-title">@Model.Name</p>
+    <div class="board-bottom-info">
+        <div class="board-bottom-info-header">
+            <h3 class="board-bottom-info-title">@(Model?.Name ?? "Untitled Board")</h3>
+            <span class="board-bottom-info-count">
+                @blooms.Count @(blooms.Count == 1 ? "bloom" : "blooms")
+            </span>
+        </div>
+        <div class="board-bottom-info-footer">
+            <span class="board-bottom-time-passed">@formattedTimeElapsed</span>
+            @if (blooms.Any())
+            {
+                <span class="board-bottom-info-dot">•</span>
+                <span class="board-bottom-info-status">Active</span>
+            }
+        </div>
     </div>
 </div>
-

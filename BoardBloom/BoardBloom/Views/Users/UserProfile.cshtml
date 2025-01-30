@@ -1,73 +1,155 @@
 ﻿@model BoardBloom.Models.ApplicationUser
 @using Microsoft.AspNetCore.Identity
 @using BoardBloom.Models
-
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
-@{
-    Layout = "_Layout";
-}
-
-@{
-    Layout = "_Layout";
-}
 
 <head>
     <link rel="stylesheet" href="~/css/Users/UserProfile.css" />
     <script src="~/js/User/UserProfile.js"></script>
 </head>
 
-<div class="user-profile-wrapper">
-    <div class="user-profile-header">
-        <div class="user-profile-picture-wrapper">
-            @if (Model.ProfilePicture != null) {
-                <img class="user-profile-picture" src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" alt="Profile Picture" />
-            } else {
-                <img class="user-profile-picture" src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg" />
-            }
-            @if (User.Identity.IsAuthenticated && UserManager.GetUserId(User) == Model.Id) {
-                <div class="user-profile-picture-actions">
-                    <a class="user-profile-picture-button" href="/Users/EditProfilePicture/@Model.Id">Edit</a>
-                    <button class="user-profile-picture-button" onclick="deleteProfilePicture('@Model.Id')">Delete</button>
-                </div>
+<div class="profile-container">
+    <!-- Profile Header Section -->
+    <section class="profile-header">
+        <div class="profile-cover-photo">
+            @if (Model.ProfilePicture != null)
+            {
+                <img class="profile-cover-image" src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" alt="" />
             }
         </div>
-        <div class="user-profile-picture-header-info">
-            <h2 class="user-profile-title">@Model.UserName</h2>
-            <div class="user-profile-info">
-                <p class="user-profile-info-item">Email: @Model.Email</p>
-                <div class="user-profile-info-sub">
-                    <p class="user-profile-info-item">Boards: @ViewBag.Boards.Count</p>
-                    <p class="user-profile-info-item">Blooms: @ViewBag.Blooms.Count</p>
+
+        <div class="profile-main-info">
+            <div class="profile-picture-container">
+                @if (Model.ProfilePicture != null)
+                {
+                    <img class="profile-picture" src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" alt="Profile Picture" />
+                }
+                else
+                {
+                    <img class="profile-picture" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Default Profile" />
+                }
+
+                @if (User.Identity.IsAuthenticated && UserManager.GetUserId(User) == Model.Id)
+                {
+                    <div class="profile-picture-overlay">
+                        <a href="/Users/EditProfilePicture/@Model.Id" class="edit-button">Edit</a>
+                        <button onclick="deleteProfilePicture('@Model.Id')" class="delete-button">Delete</button>
+                    </div>
+                }
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name">@Model.UserName</h1>
+                <div class="profile-details">
+                    <p class="profile-email">@Model.Email</p>
+                    @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
+                    {
+                        <p class="profile-fullname">@Model.FirstName @Model.LastName</p>
+                    }
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-number">@ViewBag.Boards.Count</span>
+                    <span class="stat-label">Boards</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">@ViewBag.Blooms.Count</span>
+                    <span class="stat-label">Blooms</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">@Model.Communities?.Count</span>
+                    <span class="stat-label">Communities</span>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="user-profile-boards-wrapper">
-        <p class="user-profile-boards-title">User's boards</p>
-        <div class="user-profile-boards">
-            @if (ViewBag.Boards == null || ViewBag.Boards.Count == 0) {
-                <p class="user-profile-no-boards">No boards found</p>
-            } else {
-                @foreach (Board board in ViewBag.Boards) {
-                    @Html.Partial("_BoardPreviewPartial", board)
-                }
-            }
+    <!-- Content Tabs -->
+    <section class="profile-content">
+        <div class="content-tabs">
+            <button class="tab-button active" data-tab="boards">Boards</button>
+            <button class="tab-button" data-tab="blooms">Blooms</button>
+            <button class="tab-button" data-tab="communities">Communities</button>
         </div>
-    </div>
 
-    <div class="user-profile-boards-wrapper">
-        <p class="user-profile-blooms-title">User's blooms</p>
-        <div class="user-profile-blooms">
-            @if (ViewBag.Blooms == null || ViewBag.Blooms.Count == 0) {
-                <p class="user-profile-no-blooms">No blooms found</p>
-            } else {
-                @foreach (Bloom bloom in ViewBag.Blooms) {
-                    @Html.Partial("_BloomPartial", bloom)
+        <!-- Boards Tab -->
+        <div class="tab-content active" id="boards-content">
+            <h2>Boards</h2>
+            <div class="boards-grid">
+                @if (ViewBag.Boards == null || ViewBag.Boards.Count == 0)
+                {
+                    <p class="no-content">No boards found</p>
                 }
-            }
+                else
+                {
+                    @foreach (Board board in ViewBag.Boards)
+                    {
+                        @Html.Partial("_BoardPreviewPartial", board)
+                    }
+                }
+            </div>
         </div>
-    </div>
+
+        <!-- Blooms Tab -->
+        <div class="tab-content" id="blooms-content">
+            <h2>Blooms</h2>
+            <div class="blooms-grid">
+                @if (ViewBag.Blooms == null || ViewBag.Blooms.Count == 0)
+                {
+                    <p class="no-content">No blooms found</p>
+                }
+                else
+                {
+                    @foreach (Bloom bloom in ViewBag.Blooms)
+                    {
+                        @Html.Partial("_BloomPartial", bloom)
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Communities Tab -->
+        <div class="tab-content" id="communities-content">
+            <h2>Communities</h2>
+            <div class="communities-grid">
+                @if (Model.Communities == null || !Model.Communities.Any())
+                {
+                    <p class="no-content">No communities joined</p>
+                }
+                else
+                {
+                    @foreach (var community in Model.Communities)
+                    {
+                        <a href="/Communities/Show/@community.Id" class="community-card-link">
+                            <div class="community-card">
+                                <h3>@community.Name</h3>
+                                <p class="community-description">@community.Description</p>
+                                <div class="community-stats">
+                                    <span>@community.Users?.Count Members</span>
+                                    <span>@community.Blooms?.Count Blooms</span>
+                                </div>
+                                <div class="community-role">
+                                    @if (community.CreatedBy == Model.Id)
+                                    {
+                                        <span class="role creator">Creator</span>
+                                    }
+                                    else if (community.Moderators.Contains(Model))
+                                    {
+                                        <span class="role moderator">Moderator</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="role member">Member</span>
+                                    }
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    </section>
 </div>

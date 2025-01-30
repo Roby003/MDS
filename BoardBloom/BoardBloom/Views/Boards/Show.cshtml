@@ -9,40 +9,42 @@
     <link rel="stylesheet" href="~/css/Boards/BoardShow.css" />
 </head>
 
-<div>
+<div class="board-container">
     <div class="board-wrapper">
+        <!-- Board Header -->
         <div class="board-header">
             <div class="board-header-info">
                 <h1 class="board-title">@Model.Name</h1>
-                @if (Model.Note != null) {
+                @if (Model.Note != null)
+                {
                     <p class="board-description">@Model.Note</p>
                 }
             </div>
 
             @if (UserManager.GetUserId(User) == Model.UserId || User.IsInRole("Admin"))
-            {            
+            {
                 <div class="board-header-actions">
-                    <a class="bloom-more-button">
+                    <div class="bloom-more-button">
                         <img class="bloom-more-icon" src="https://www.svgrepo.com/show/335225/ellipsis.svg" alt="actions icon" />
-                    </a>
-                    <div class="bloom-more-menu">
-                        <a class="bloom-more-edit-button" href="@Url.Action("Edit", "Boards", new {id = @Model.Id})">Edit</a>
-                        
-                        <form method="POST" action="@Url.Action("Delete", "Boards", new {id = @Model.Id})">
-                            <input type="hidden" name="bloomId" value="@Model.Id" />
-                            <button class="bloom-more-delete-button">Delete</button>
-                        </form>
+                        <div class="bloom-more-menu">
+                            <a class="bloom-more-edit-button" href="@Url.Action("Edit", "Boards", new { id = @Model.Id })">Edit</a>
+                            <form method="POST" action="@Url.Action("Delete", "Boards", new { id = @Model.Id })">
+                                <input type="hidden" name="bloomId" value="@Model.Id" />
+                                <button class="bloom-more-delete-button">Delete</button>
+                            </form>
+                        </div>
                     </div>
                     <p class="board-header-paragraph">@Model.BloomBoards.Count() saved posts</p>
                 </div>
             }
         </div>
 
+        <!-- Board Body -->
         <div class="board-body">
             @foreach (Bloom bloom in ViewBag.Blooms)
-            {   
+            {
                 @Html.Partial("_BloomPreviewPartial", new BloomsPreviewViewModel { Bloom = bloom, BoardId = Model.Id })
-            }   
+            }
         </div>
     </div>
-</div>
+</div> 

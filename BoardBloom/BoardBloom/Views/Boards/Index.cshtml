@@ -1,16 +1,24 @@
-﻿@using BoardBloom.Models    
-
-<head>
+﻿<head>
     <link rel="stylesheet" href="~/css/Boards/BoardIndex.css" />
+    <!-- Add Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 
 <div class="board-index-wrapper">
-    <h1 class="board-index-title">Your saved boards</h1>
+    <div class="header-section">
+        <h1 class="board-index-title">Your Saved Collections</h1>
+        <p class="board-count">@ViewBag.Boards.Count collections</p>
+    </div>
 
     @if (ViewBag.Boards == null || ViewBag.Boards.Count == 0)
     {
-        <p class="board-index-no-boards">No boards found</p>
-    } else {
+        <div class="empty-state">
+            <span class="material-icons-round empty-icon">dashboard</span>
+            <p class="empty-text">No collections found. Start by creating a new one!</p>
+        </div>
+    }
+    else
+    {
         <div class="board-index-boards">
             @foreach (Board board in ViewBag.Boards)
             {
@@ -18,6 +26,8 @@
             }
         </div>
     }
-</div> 
+</div>
 
-<a class="board-index-new-button" href="/Boards/New">+</a>
+<a class="board-index-new-button" href="/Boards/New">
+    <span class="material-icons-round">add</span>
+</a>

@@ -51,7 +51,7 @@ namespace BoardBloom.Controllers
         //[Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            int _perPage = 5;
+            int _perPage = 8;
 
             var search = "";
 
@@ -400,41 +400,107 @@ namespace BoardBloom.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult NewBloom([FromBody] Bloom bloom, [FromQuery] int? communityId) // poti adauga un bloom specific pt o comunitate
+        public async Task<IActionResult> NewBloom([FromBody] Bloom bloom, [FromQuery] int? communityId)
         {
-            var user = _userManager.GetUserAsync(User).Result;
-
-            if (communityId != null)
+            try
             {
-                var community = db.Communities.Include(c=>c.Users).FirstOrDefault(c=>c.Id==communityId);
-                if (community == null)
-                    return BadRequest(new { message = "Comunitatea nu exista" });
 
-                if (community.Users == null || !community.Users.Contains(user))
+                if (!ModelState.IsValid)
                 {
-                    return BadRequest(new { message = "Nu puteti posta in aceasta comunitate" });
+                    return BadRequest(ModelState);
                 }
+
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                if (communityId.HasValue)
+                {
+                    var community = await db.Communities
+                        .Include(c => c.Users)
+                        .FirstOrDefaultAsync(c => c.Id == communityId);
+
+                    if (community == null)
+                    {
+                        return BadRequest(new { message = "Community does not exist" });
+                    }
+
+                    if (!community.Users.Contains(user))
+                    {
+                        return BadRequest(new { message = "You cannot post in this community" });
+                    }
+                }
+
+                var newBloom = new Bloom
+                {
+                    Title = string.IsNullOrEmpty(bloom.Title) ? "Image Post" : bloom.Title.Trim(),
+                    Content = bloom.Content?.Trim(),
+                    Image = bloom.Image?.Trim(),
+                    Date = DateTime.Now,
+                    User = user,
+                    UserId = user.Id,
+                    CommunityId = communityId,
+                    TotalLikes = 0
+                };
+
+                db.Blooms.Add(newBloom);
+                await db.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    bloomId = newBloom.Id,
+                    communityId = newBloom.CommunityId,
+                    success = true
+                });
             }
-            // Create a new Bloom object with the data from the request
-            Bloom newBloom = new Bloom
+            catch (Exception ex)
             {
-                Title = bloom.Title,
-                Content = bloom.Content,
-                Image = bloom.Image,
-                Date = DateTime.Now,
-                User = user,
-                Likes = new List<Like>(),
-                Comments = new List<Comment>(),
-                TotalLikes = 0,
-                UserId = user.Id,
-                BloomBoards = new List<BloomBoard>(),
-                CommunityId = communityId,
-            };
+                return BadRequest(new { message = "Error creating new bloom" });
+            }
+        }
 
-            db.Blooms.Add(newBloom);
-            db.SaveChanges();
 
-            return Ok(new { id = newBloom.Id });
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> RemoveFromCommunity(int id)
+        {
+            var bloom = await db.Blooms
+                .Include(b => b.Comments)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (bloom == null)
+            {
+                return NotFound();
+            }
+
+            // Get the community and current user
+            var community = await db.Communities
+                .Include(c => c.Moderators)
+                .FirstOrDefaultAsync(c => c.Id == bloom.CommunityId);
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (community == null)
+            {
+                return NotFound();
+            }
+
+            // Check if user is creator, moderator, or post owner
+            bool canDelete = bloom.UserId == currentUser.Id || // Post owner
+                            community.CreatedBy == currentUser.Id || // Community creator
+                            community.Moderators.Contains(currentUser); // Moderator
+
+            if (!canDelete)
+            {
+                return BadRequest("You don't have permission to delete this post");
+            }
+
+            db.Blooms.Remove(bloom);
+            await db.SaveChangesAsync();
+
+            return RedirectToAction("Show", "Communities", new { id = community.Id });
         }
 
 

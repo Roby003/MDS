@@ -1,9 +1,66 @@
-﻿<head>
-    <link rel="stylesheet" href="~/css/Home/Index.css" />
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Home/HomeIndex.css" />
+    <script src="~/js/Home/HomeIndex.js" defer></script>
 </head>
 
-<div class="main-blooms">
-    @foreach (Bloom bloom in ViewBag.Blooms) {
-        @Html.Partial("_BloomPartial", bloom)
-    }   
+<div class="home-hero">
+    <div class="hero-content">
+        <h1>Share Your <span class="accent-text">Thoughts</span></h1>
+        <p>Join the community and share your ideas, experiences, and creativity with others.</p>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a href="/Identity/Account/Register" class="cta-button">Get Started</a>
+        }
+        else
+        {
+            <a href="/Blooms/New" class="cta-button">Create Bloom</a>
+        }
+    </div>
+</div>
+
+<div class="home-content">
+    <section class="recent-blooms-section glass-panel">
+        <div class="section-header">
+            <h2>Recent Blooms</h2>
+            <a href="/Blooms/Index" class="see-more-link">See More →</a>
+        </div>
+        <div class="blooms-grid">
+            @foreach (var bloom in ViewBag.RecentBlooms)
+            {
+                <partial name="_BloomPartial" model="bloom" />
+            }
+        </div>
+    </section>
+
+    <div class="side-content">
+        <section class="popular-communities glass-panel">
+            <div class="section-header">
+                <h2>Popular Communities</h2>
+                <a href="/Communities/Index" class="see-more-link">See More →</a>
+            </div>
+            <div class="communities-list">
+                @foreach (var community in ViewBag.PopularCommunities)
+                {
+                    <partial name="_CommunityPreviewPartial" model="community" />
+                }
+            </div>
+        </section>
+
+        <section class="top-users glass-panel">
+            <div class="section-header">
+                <h2>Top Contributors</h2>
+                <a href="/Users/Index" class="see-more-link">See More →</a>
+            </div>
+            <div class="users-list">
+                @foreach (var user in ViewBag.TopUsers)
+                {
+                    <partial name="_UserPreviewPartial" model="user" />
+                }
+            </div>
+        </section>
+    </div>
 </div>
