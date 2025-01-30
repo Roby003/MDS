@@ -29,18 +29,64 @@ namespace BoardBloom.Controllers
 
             _roleManager = roleManager;
         }
-        public IActionResult Index()
+
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Index(string search, int page = 1)
         {
-            var users = from user in db.Users
-                        orderby user.UserName
-                        select user;
+            var _perPage = 8; // Number of users per page
 
-            ViewBag.UsersList = users;
+            var query = db.Users.AsQueryable();
+            ViewBag.CurrentSearch = search;
 
+            // Apply search if provided
+            if (!string.IsNullOrEmpty(search))
+            {
+                var searchLower = search.ToLower();
+                query = query.Where(u =>
+                    u.UserName.ToLower().Contains(searchLower) ||
+                    (u.FirstName != null && u.FirstName.ToLower().Contains(searchLower)) ||
+                    (u.LastName != null && u.LastName.ToLower().Contains(searchLower)));
+            }
+
+            // Include required relationships and order
+            query = query
+                .Include(u => u.Blooms)
+                .Include(u => u.Comments)
+                .Include(u => u.Communities)
+                .OrderBy(u => u.UserName);
+
+            // Calculate pagination
+            var totalUsers = await query.CountAsync();
+            ViewBag.LastPage = Math.Ceiling((decimal)totalUsers / _perPage);
+            ViewBag.CurrentPage = page;
+
+            var users = await query
+                .Skip((page - 1) * _perPage)
+                .Take(_perPage)
+                .ToListAsync();
+
+            // Get most recent bloom for each user
+            var userRecentBlooms = new Dictionary<string, Bloom>();
+            foreach (var user in users)
+            {
+                var recentBloom = await db.Blooms
+                    .Where(b => b.UserId == user.Id)
+                    .OrderByDescending(b => b.Date)
+                    .FirstOrDefaultAsync();
+
+                if (recentBloom != null)
+                {
+                    userRecentBlooms[user.Id] = recentBloom;
+                }
+            }
+
+            ViewBag.UserRecentBlooms = userRecentBlooms;
+            ViewBag.Users = users;
 
             return View();
         }
 
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> Show(string id)
         {
             ApplicationUser user = db.Users.Find(id);
@@ -51,6 +97,7 @@ namespace BoardBloom.Controllers
             return View(user);
         }
 
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> Edit(string id)
         {
             if (id != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
@@ -77,6 +124,7 @@ namespace BoardBloom.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> Edit(string id, ApplicationUser newData, [FromForm] string newRole)
         {
             ApplicationUser user = db.Users.Find(id);
@@ -113,6 +161,7 @@ namespace BoardBloom.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Delete(string id)
         {
             if (id != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
@@ -207,25 +256,59 @@ namespace BoardBloom.Controllers
 
         public IActionResult UserProfile(string userId)
         {
+            // Get the user with their communities included
+            var user = db.Users
+                .Include(u => u.Communities)
+                    .ThenInclude(c => c.Users)
+                .Include(u => u.Communities)
+                    .ThenInclude(c => c.Blooms)
+                .Include(u => u.Communities)
+                    .ThenInclude(c => c.Moderators)
+                .FirstOrDefault(u => u.Id == userId);
 
-            int _perPage = 5;
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-            var blooms = db.Blooms.Include("User")
-                            .Where(b => b.UserId == userId )
-                            .OrderByDescending(a => a.TotalLikes)
-                            .ToList();
+            // Get user's blooms with all necessary data
+            var blooms = db.Blooms
+                .Include(b => b.User)
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.Date)
+                .ToList();
 
             ViewBag.Blooms = blooms;
-            
-            var user = db.Users.Find(userId);
 
-            var boards = db.Boards.Include("BloomBoards")
-                            .Where(b => b.UserId == userId)
-                            .Include("User")
-                            .Include("BloomBoards.Bloom")
-                            .ToList();
+            // Get user's boards with all necessary relationships
+            var boards = db.Boards
+                .Include(b => b.BloomBoards)
+                    .ThenInclude(bb => bb.Bloom)
+                .Include(b => b.User)
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.Id)
+                .ToList();
 
             ViewBag.Boards = boards;
+
+            // Get user's moderated communities
+            var moderatedCommunities = db.Communities
+                .Include(c => c.Moderators)
+                .Where(c => c.Moderators.Any(m => m.Id == userId))
+                .ToList();
+
+            ViewBag.ModeratedCommunities = moderatedCommunities;
+
+            // Get communities created by the user
+            var createdCommunities = db.Communities
+                .Include(c => c.Users)
+                .Include(c => c.Blooms)
+                .Include(c => c.Moderators)
+                .Where(c => c.CreatedBy == userId)
+                .OrderByDescending(c => c.CreatedDate)
+                .ToList();
+
+            ViewBag.CreatedCommunities = createdCommunities;
 
             return View(user);
         }

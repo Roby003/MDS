@@ -1,0 +1,28 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/auth.css" />
+</head>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Email Confirmation</h1>
+            <p class="auth-subtitle">@Model.StatusMessage</p>
+        </div>
+
+        <div class="auth-confirmation-content">
+            <p class="auth-confirmation-text">
+                Your email has been confirmed successfully. You can now access your account.
+            </p>
+        </div>
+
+        <a href="/Identity/Account/Login" class="auth-submit-button">
+            Continue to Login
+        </a>
+    </div>
+</div>

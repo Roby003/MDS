@@ -104,6 +104,9 @@ namespace BoardBloom.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("CommunityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -126,6 +129,8 @@ namespace BoardBloom.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
 
                     b.HasIndex("UserId");
 
@@ -212,6 +217,35 @@ namespace BoardBloom.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("BoardBloom.Models.Community", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.ToTable("Communities");
                 });
 
             modelBuilder.Entity("BoardBloom.Models.Like", b =>
@@ -377,8 +411,42 @@ namespace BoardBloom.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ModeratorCommunity", b =>
+                {
+                    b.Property<int>("CommunityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CommunityId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ModeratorCommunity", (string)null);
+                });
+
+            modelBuilder.Entity("UserCommunity", b =>
+                {
+                    b.Property<int>("CommunityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CommunityId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCommunity", (string)null);
+                });
+
             modelBuilder.Entity("BoardBloom.Models.Bloom", b =>
                 {
+                    b.HasOne("BoardBloom.Models.Community", null)
+                        .WithMany("Blooms")
+                        .HasForeignKey("CommunityId");
+
                     b.HasOne("BoardBloom.Models.ApplicationUser", "User")
                         .WithMany("Blooms")
                         .HasForeignKey("UserId");
@@ -425,6 +493,16 @@ namespace BoardBloom.Migrations
                     b.Navigation("Bloom");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BoardBloom.Models.Community", b =>
+                {
+                    b.HasOne("BoardBloom.Models.ApplicationUser", "CreatedByNavigation")
+                        .WithMany("CreatedCommunities")
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedByNavigation");
                 });
 
             modelBuilder.Entity("BoardBloom.Models.Like", b =>
@@ -491,11 +569,43 @@ namespace BoardBloom.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ModeratorCommunity", b =>
+                {
+                    b.HasOne("BoardBloom.Models.Community", null)
+                        .WithMany()
+                        .HasForeignKey("CommunityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BoardBloom.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserCommunity", b =>
+                {
+                    b.HasOne("BoardBloom.Models.Community", null)
+                        .WithMany()
+                        .HasForeignKey("CommunityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BoardBloom.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BoardBloom.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Blooms");
 
                     b.Navigation("Comments");
+
+                    b.Navigation("CreatedCommunities");
 
                     b.Navigation("Likes");
                 });
@@ -512,6 +622,11 @@ namespace BoardBloom.Migrations
             modelBuilder.Entity("BoardBloom.Models.Board", b =>
                 {
                     b.Navigation("BloomBoards");
+                });
+
+            modelBuilder.Entity("BoardBloom.Models.Community", b =>
+                {
+                    b.Navigation("Blooms");
                 });
 #pragma warning restore 612, 618
         }

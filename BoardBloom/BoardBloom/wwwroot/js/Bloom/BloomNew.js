@@ -1,109 +1,176 @@
-let image = undefined;
-let title = undefined;
-let content = undefined;
+let state = {
+    image: '',
+    title: '',
+    content: ''
+};
 
 const openTab = (tabIndex) => {
     const tabs = document.getElementsByClassName('new-bloom-form');
     const tabButtons = document.getElementsByClassName('new-bloom-tabview-button');
-    for (let i = 0; i < tabs.length; i++) {
-        tabs[i].style.display = 'none';
+
+    Array.from(tabs).forEach((tab, i) => {
+        tab.style.display = 'none';
         tabButtons[i].classList.remove('new-bloom-tabview-button-active');
-    }
+    });
 
     tabs[tabIndex].style.display = 'flex';
     tabButtons[tabIndex].classList.add('new-bloom-tabview-button-active');
 };
 
-const backToEdit = () => {
-    const tabview = document.getElementsByClassName('new-bloom-tabview')[0];
-    tabview.style.display = null;
-
-    const previewArea = document.getElementById('preview-area');
-    previewArea.style.display = 'none';
-}
-
-const createPost = (communityId) => {
-    const xhr = new XMLHttpRequest();
-    console.log('create post', communityId);
-    const path = communityId == undefined ? '/Blooms/NewBloom' : `/Blooms/NewBloom?communityId=${communityId}`;
-    xhr.open('POST', path, true);
-
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    const data = JSON.stringify({
-        Title: title,
-        Content: content,
-        Image: image
-    });
-
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const bloomId = JSON.parse(xhr.responseText)["id"];
-            window.location.href = `/Blooms/Show/${bloomId}`;
-        } else {
-            console.error(xhr.responseText);
-        }
-    };
-
-    xhr.onerror = function() {
-        console.error('An error occurred during the request');
-    };
-
-    xhr.send(data);
-}
-
-const nextStep = (communityId) => {
-    
+const getFormData = () => {
+    // Get the active form
     const activeForm = document.querySelector('.new-bloom-form[style="display: flex;"]');
     if (!activeForm) {
-        console.error('No active form found');
-        return;
+        throw new Error('No active form found');
     }
-    console.log('next step', communityId);
-    title = activeForm.querySelector('input[name="title"]').value;
-    content = activeForm.querySelector('textarea[name="content"]').value;
-    image = activeForm.querySelector('input[name="image"]').value;
 
-    const tabview = document.getElementsByClassName('new-bloom-tabview')[0];
-    tabview.style.display = 'none';
+    // Check if it's an image post or text post
+    const isImagePost = activeForm.querySelector('input[name="image"]') !== null;
 
-    const xhr = new XMLHttpRequest();
+    if (isImagePost) {
+        return {
+            Title: 'Image Post', // Default title for image posts
+            Content: activeForm.querySelector('textarea[name="content"]').value,
+            Image: activeForm.querySelector('input[name="image"]').value
+        };
+    } else {
+        return {
+            Title: activeForm.querySelector('input[name="title"]').value,
+            Content: activeForm.querySelector('textarea[name="content"]').value,
+            Image: '' // No image for text posts
+        };
+    }
+};
 
-    xhr.open('POST', '/Blooms/Preview', true);
+const validateForm = (data) => {
+    const activeForm = document.querySelector('.new-bloom-form[style="display: flex;"]');
+    const isImagePost = activeForm.querySelector('input[name="image"]') !== null;
 
-    xhr.setRequestHeader('Content-Type', 'application/json');
+    if (isImagePost) {
+        if (!data.Image || !data.Content) {
+            throw new Error('Please fill in both image URL and content');
+        }
+    } else {
+        if (!data.Title || !data.Content) {
+            throw new Error('Please fill in both title and content');
+        }
+    }
+};
 
-    const data = JSON.stringify({
-        Title: title,
-        Content: content,
-        Image: image
-    });
+const createPost = async (communityId) => {
+    try {
+        // Debug logging
+        console.log('Creating post with communityId:', communityId);
+        console.log('Current state:', state);
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const html = JSON.parse(xhr.responseText)["html"];
-            const previewArea = document.getElementById('preview-area')
-            previewArea.innerHTML = html;
+        const path = (communityId && communityId !== 'null' && communityId !== 'undefined')
+            ? `/Blooms/NewBloom?communityId=${communityId}`
+            : '/Blooms/NewBloom';
 
-            const previewForm = `
+        console.log('Request path:', path);
+
+        const response = await fetch(path, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            },
+            body: JSON.stringify({
+                ...state,
+                CommunityId: communityId // Explicitly include communityId in the request body
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to create post');
+        }
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (data.bloomId) {
+            const redirectUrl = data.communityId
+                ? `/Communities/Show/${data.communityId}`
+                : `/Blooms/Show/${data.bloomId}`;
+
+            console.log('Redirecting to:', redirectUrl);
+            window.location.href = redirectUrl;
+        } else {
+            throw new Error('No bloom ID returned from server');
+        }
+    } catch (error) {
+        console.error('Error creating post:', error);
+        alert(error.message || 'Failed to create post. Please try again.');
+    }
+};
+
+const nextStep = async (communityId) => {
+    try {
+        // Convert empty string or 'undefined' to null
+        communityId = (communityId && communityId !== 'undefined' && communityId !== '')
+            ? parseInt(communityId)
+            : null;
+
+        console.log('NextStep called with communityId:', communityId); // Debug log
+
+        // Get and validate form data
+        const formData = getFormData();
+        validateForm(formData);
+
+        // Update state
+        state = {
+            ...formData,
+            CommunityId: communityId
+        };
+
+        const tabview = document.querySelector('.new-bloom-tabview');
+        if (tabview) {
+            tabview.style.display = 'none';
+        }
+
+        // Preview request
+        const response = await fetch('/Blooms/Preview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate preview');
+        }
+
+        const data = await response.json();
+        const previewArea = document.getElementById('preview-area');
+
+        if (previewArea) {
+            previewArea.innerHTML = data.html;
+
+            const previewButtons = `
                 <div class="new-bloom-preview-buttons">
                     <button class="new-bloom-preview-back" onclick="backToEdit()">Back to edit</button>
-
-                    <button onclick="createPost(${communityId})" class="new-bloom-preview-submit">Post</button>
-
+                    <button onclick="createPost(${communityId || null})" class="new-bloom-preview-submit">Post</button>
                 </div>
-            `
-            previewArea.innerHTML += previewForm;
+            `;
 
-            previewArea.style.display = null;
-        } else {
-            console.error(xhr.responseText);
+            previewArea.innerHTML += previewButtons;
+            previewArea.style.display = '';
         }
-    };
+    } catch (error) {
+        console.error('Error in preview:', error);
+        alert(error.message || 'Failed to generate preview. Please try again.');
+    }
+};
 
-    xhr.onerror = function() {
-        console.error('An error occurred during the request');
-    };
+const backToEdit = () => {
+    const tabview = document.querySelector('.new-bloom-tabview');
+    const previewArea = document.getElementById('preview-area');
 
-    xhr.send(data);
+    if (tabview && previewArea) {
+        tabview.style.display = '';
+        previewArea.style.display = 'none';
+    }
 };

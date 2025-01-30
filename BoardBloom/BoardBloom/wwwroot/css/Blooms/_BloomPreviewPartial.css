@@ -8,6 +8,7 @@
     border-radius: 12px;
     width: 100%;
     overflow: hidden; /* Ensures nothing spills out from the card */
+    transition: all 0.5s;
 }
 
 .bloom-preview-card * {

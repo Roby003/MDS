@@ -1,0 +1,43 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Register confirmation";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/auth.css" />
+</head>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Account Created</h1>
+            <p class="auth-subtitle">One more step to get started</p>
+        </div>
+
+        <div class="auth-confirmation-content">
+            @if (@Model.DisplayConfirmAccountLink)
+            {
+                <p class="auth-confirmation-text">
+                    For development purposes, you can confirm your account here:
+                </p>
+                <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="auth-confirm-link">
+                    Confirm Account
+                </a>
+                <p class="auth-dev-note">
+                    Note: In production, this link would be sent to your email.
+                </p>
+            }
+            else
+            {
+                <p class="auth-confirmation-text">
+                    Please check your email to confirm your account.
+                </p>
+            }
+        </div>
+
+        <div class="auth-footer">
+            <p>Already confirmed? <a href="/Identity/Account/Login" class="auth-link">Log in</a></p>
+        </div>
+    </div>
+</div>

@@ -1,10 +1,34 @@
-﻿ 
-<head>
-    
-    <script src="~/js/Community/Index.js"></script>
+﻿@{
+    ViewData["Title"] = "Communities";
+}
 
+<head>
+    <link rel="stylesheet" href="~/css/Communities/CommunityIndex.css" />
+    <script src="~/js/Community/Index.js"></script>
 </head>
-<input type="text" id="searchInput" oninput="handleInputChange()"/>
-<div id="indexWrapper">
-@Html.Partial("_CommunitiesListPartial")
+
+<div class="community-index-wrapper">
+    <div class="community-index-header">
+        <h1 class="community-index-title">Explore <span class="community-index-title-span">Communities</span></h1>
+        <a href="/Communities/New" class="create-community-button">Create New Community</a>
+    </div>
+
+    <div class="search-container">
+        <input 
+            type="text" 
+            id="searchInput" 
+            class="community-search-input" 
+            placeholder="Search communities by name..."
+            oninput="handleInputChange()"
+        />
+    </div>
+
+    <div id="indexWrapper" class="communities-list-container">
+        @Html.Partial("_CommunitiesListPartial")
+    </div>
+
+    <div id="loadingState" class="loading-state" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Finding communities...</p>
+    </div>
 </div>

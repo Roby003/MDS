@@ -1,13 +1,40 @@
-﻿<form  method="POST" action="/Communities/New/">
-    <input type="text"
-           name="name"
-           class="new-board-form-input"
-           placeholder="Name"
-           required />
+﻿@model BoardBloom.Models.Community
+@{
+    ViewData["Title"] = "New Community";
+}
 
-    <textarea name="description"
-              class="new-board-form-textarea"
-              placeholder="Description"
-              required></textarea>
-    <button class="new-board-form-submit" type="submit">Create</button>
-</form>
+<head>
+    <link rel="stylesheet" href="~/css/Communities/CommunityNew.css" />
+</head>
+
+<div class="community-new-wrapper">
+    <div class="community-new-container">
+        <div class="community-new-header">
+            <h1 class="community-new-title">Create Community</h1>
+            <p class="community-new-subtitle">Build a space for your ideas to bloom</p>
+        </div>
+
+        @using (Html.BeginForm("New", "Communities", FormMethod.Post, new { @class = "community-new-form" }))
+        {
+            <div class="community-new-input-group">
+                <label class="community-new-label" for="Name">Community Name</label>
+                @Html.TextBoxFor(m => m.Name, new {
+            @class = "community-new-input",
+            placeholder = "Enter your community name"
+            })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "community-new-validation" })
+            </div>
+
+            <div class="community-new-input-group">
+                <label class="community-new-label" for="Description">Description</label>
+                @Html.TextAreaFor(m => m.Description, new {
+            @class = "community-new-input community-new-textarea",
+            placeholder = "What's your community about?"
+            })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "community-new-validation" })
+            </div>
+
+            <button type="submit" class="community-new-button">Create Community</button>
+        }
+    </div>
+</div>

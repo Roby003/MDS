@@ -1,24 +1,46 @@
-﻿let timeout;
+﻿let searchTimeout = null;
 
-async function fetchData() {
-    const input = document.getElementById("searchInput");
-    const url = `/Communities/GetCommunitiesByName?name=${encodeURIComponent(input.value)}`;  
+function showLoading() {
+    document.getElementById('loadingState').style.display = 'flex';
+}
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        const data = await response.text()
-
-        const wrapper = document.getElementById('indexWrapper')
-        wrapper.innerHTML = data
-    }
-    catch (error) {
-        console.error("Fetch error:", error);
-    }
+function hideLoading() {
+    document.getElementById('loadingState').style.display = 'none';
 }
 
 function handleInputChange() {
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(fetchData, 1000)
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value;
+
+    // Clear existing timeout
+    if (searchTimeout) {
+        clearTimeout(searchTimeout);
+    }
+
+    // Set new timeout to avoid too many requests
+    searchTimeout = setTimeout(() => {
+        fetchCommunities(searchTerm);
+    }, 300);
+}
+
+async function fetchCommunities(searchTerm) {
+    try {
+        showLoading();
+        const response = await fetch(`/Communities/GetCommunitiesByName?name=${encodeURIComponent(searchTerm)}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const html = await response.text();
+        document.getElementById('indexWrapper').innerHTML = html;
+    } catch (error) {
+        console.error('Error fetching communities:', error);
+        document.getElementById('indexWrapper').innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">⚠️</div>
+                <h3 class="empty-state-title">Oops! Something went wrong</h3>
+                <p class="empty-state-description">Please try again later</p>
+            </div>`;
+    } finally {
+        hideLoading();
+    }
 }

@@ -1,48 +1,67 @@
 ﻿@page
 @model LoginModel
-
 @{
     ViewData["Title"] = "Log in";
 }
+
 <head>
-    <link rel="stylesheet" href="~/css/Account/Login.css" />
+    <link rel="stylesheet" href="~/css/auth.css" />
 </head>
 
-<form class="user-login" id="account" method="post">
-    <div class="user-login-wrapper">
-        <div class="user-login-header">
-            <h1>@ViewData["Title"]</h1>
-            <p>Welcome back<br/>to your<br/>bloom realm.</p>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+            <p class="auth-subtitle">Login to your Bloom account</p>
         </div>
 
-        <hr />
+        <form class="auth-form" id="account" method="post">
+            <div asp-validation-summary="ModelOnly" class="auth-error"></div>
 
-        <div class="user-login-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="user-login-form-input">
-                <input asp-for="Input.Email" class=".user-login-form-input" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Email" class="form-label"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="user-login-form-input">
-                <input asp-for="Input.Password" class=".user-login-form-input" autocomplete="current-password" aria-required="true" />
-                <label asp-for="Input.Password" class="form-label"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div>
-                <div class="">
-                    <label asp-for="Input.RememberMe" class="user-login-checkbox">
-                        <input class="form-check-input" asp-for="Input.RememberMe" />
-                        @Html.DisplayNameFor(m => m.Input.RememberMe)
-                    </label>
+            <div class="auth-input-group">
+                <div class="auth-input-wrapper">
+                    <input asp-for="Input.Email"
+                           class="auth-input"
+                           placeholder="Email"
+                           autocomplete="username"
+                           aria-required="true" />
+                    <span class="auth-input-icon">✉️</span>
                 </div>
+                <span asp-validation-for="Input.Email" class="auth-validation-error"></span>
             </div>
+
+            <div class="auth-input-group">
+                <div class="auth-input-wrapper">
+                    <input asp-for="Input.Password"
+                           class="auth-input"
+                           placeholder="Password"
+                           type="password"
+                           autocomplete="current-password"
+                           aria-required="true" />
+                    <span class="auth-input-icon">🔒</span>
+                </div>
+                <span asp-validation-for="Input.Password" class="auth-validation-error"></span>
+            </div>
+
+            <div class="auth-options">
+                <label class="auth-checkbox-label">
+                    <input class="auth-checkbox" asp-for="Input.RememberMe" />
+                    <span>Remember me</span>
+                </label>
+                <a href="/Identity/Account/ForgotPassword" class="auth-forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="auth-submit-button">
+                Login
+                <span class="auth-button-icon">→</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="/Identity/Account/Register" class="auth-link">Sign up</a></p>
         </div>
     </div>
-    <div>
-        <button id="login-submit" type="submit" class="user-login-button">Log in</button>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -58,4 +58,3 @@ window.onload = () => {
     handlesBloomsTap();
 } 
 
-
