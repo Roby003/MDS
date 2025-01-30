@@ -149,3 +149,4 @@ main {
     min-height: calc(100vh - var(--nav-height) - 24px);
     padding: 0 var(--nav-padding);
 }
+

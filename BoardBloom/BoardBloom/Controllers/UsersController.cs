@@ -29,18 +29,64 @@ namespace BoardBloom.Controllers
 
             _roleManager = roleManager;
         }
-        public IActionResult Index()
+
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Index(string search, int page = 1)
         {
-            var users = from user in db.Users
-                        orderby user.UserName
-                        select user;
+            var _perPage = 8; // Number of users per page
 
-            ViewBag.UsersList = users;
+            var query = db.Users.AsQueryable();
+            ViewBag.CurrentSearch = search;
 
+            // Apply search if provided
+            if (!string.IsNullOrEmpty(search))
+            {
+                var searchLower = search.ToLower();
+                query = query.Where(u =>
+                    u.UserName.ToLower().Contains(searchLower) ||
+                    (u.FirstName != null && u.FirstName.ToLower().Contains(searchLower)) ||
+                    (u.LastName != null && u.LastName.ToLower().Contains(searchLower)));
+            }
+
+            // Include required relationships and order
+            query = query
+                .Include(u => u.Blooms)
+                .Include(u => u.Comments)
+                .Include(u => u.Communities)
+                .OrderBy(u => u.UserName);
+
+            // Calculate pagination
+            var totalUsers = await query.CountAsync();
+            ViewBag.LastPage = Math.Ceiling((decimal)totalUsers / _perPage);
+            ViewBag.CurrentPage = page;
+
+            var users = await query
+                .Skip((page - 1) * _perPage)
+                .Take(_perPage)
+                .ToListAsync();
+
+            // Get most recent bloom for each user
+            var userRecentBlooms = new Dictionary<string, Bloom>();
+            foreach (var user in users)
+            {
+                var recentBloom = await db.Blooms
+                    .Where(b => b.UserId == user.Id)
+                    .OrderByDescending(b => b.Date)
+                    .FirstOrDefaultAsync();
+
+                if (recentBloom != null)
+                {
+                    userRecentBlooms[user.Id] = recentBloom;
+                }
+            }
+
+            ViewBag.UserRecentBlooms = userRecentBlooms;
+            ViewBag.Users = users;
 
             return View();
         }
 
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> Show(string id)
         {
             ApplicationUser user = db.Users.Find(id);
@@ -51,6 +97,7 @@ namespace BoardBloom.Controllers
             return View(user);
         }
 
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> Edit(string id)
         {
             if (id != _userManager.GetUserId(User) && !User.IsInRole("Admin"))
@@ -77,6 +124,7 @@ namespace BoardBloom.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> Edit(string id, ApplicationUser newData, [FromForm] string newRole)
         {
             ApplicationUser user = db.Users.Find(id);
@@ -113,6 +161,7 @@ namespace BoardBloom.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Delete(string id)
         {
             if (id != _userManager.GetUserId(User) && !User.IsInRole("Admin"))

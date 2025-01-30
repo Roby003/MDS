@@ -51,7 +51,7 @@ namespace BoardBloom.Controllers
         //[Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            int _perPage = 5;
+            int _perPage = 8;
 
             var search = "";
 

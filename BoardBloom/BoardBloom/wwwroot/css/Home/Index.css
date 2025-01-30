@@ -1,8 +1,0 @@
-.main-blooms {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(300px, 1fr));
-    gap: 16px;
-    padding: 0 10vw;
-    justify-content: center;
-    align-items: center;
-}

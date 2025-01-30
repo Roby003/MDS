@@ -4,7 +4,7 @@ namespace BoardBloom.Models
 {
     public class Community
     {
-        [Key]
+		[Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Numele comunitatii este obligatoriu", ErrorMessageResourceName = null)]

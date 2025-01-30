@@ -77,5 +77,48 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	@await RenderSectionAsync("Scripts", required: false)
+
+	<footer class="footer">
+		<div class="footer-content">
+			<div class="footer-brand">
+				<a href="/" class="footer-logo">
+					<img src="/images/logo.png" alt="BloomBoard Logo" width="40" height="40">
+					<span>BloomBoard</span>
+				</a>
+				<p class="footer-motto">Where ideas blossom and creativity blooms</p>
+			</div>
+
+			<div class="footer-section">
+				<h3>Explore</h3>
+				<ul class="footer-links">
+					<li><a asp-controller="Home" asp-action="Index">Home</a></li>
+					<li><a asp-controller="Blooms" asp-action="New">Create Bloom</a></li>
+					<li><a asp-controller="Boards" asp-action="Index">Boards</a></li>
+					<li><a asp-controller="Communities" asp-action="Index">Communities</a></li>
+				</ul>
+			</div>
+
+			<div class="footer-section">
+				<h3>Also see</h3>
+				<ul class="footer-links">
+					<li><a href="/Users/Index/">Users</a></li>
+					<li><a href="/Blooms/Index/">Blooms</a></li
+				</ul>
+			</div>
+
+			<div class="footer-section">
+				<h3>Resources</h3>
+				<ul class="footer-links">
+					<li><a href="/Home/Privacy">Privacy Policy</a></li>
+					<li><a href="/Home/TermsOfService">Terms of Service</a></li>
+					<li><a href="/Home/Guidelines">Community Guidelines</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="footer-bottom">
+			<p>&copy; @DateTime.Now.Year BloomBoard. All rights reserved.</p>
+		</div>
+	</footer>
 </body>
 </html>

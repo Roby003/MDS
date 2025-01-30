@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using BoardBloom.Models
+@model ApplicationUser
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="user-card glass-effect" onclick="window.location.href='/Users/UserProfile/@Model.Id'">
+    <div class="user-card-header">
+        <div class="user-card-profile">
+            @if (Model.ProfilePicture != null)
+            {
+                <img class="user-profile-image"
+                     src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)"
+                     alt="@Model.UserName profile" />
+            }
+            else
+            {
+                <div class="user-profile-placeholder">
+                    @(Model.UserName?.Substring(0, 1).ToUpper())
+                </div>
+            }
+            <div class="user-info">
+                <h3 class="user-name">@Model.UserName</h3>
+                @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
+                {
+                    <p class="user-full-name">@Model.FirstName @Model.LastName</p>
+                }
+            </div>
+        </div>
+
+        @if (User.IsInRole("Admin") && Model.Id != UserManager.GetUserId(User))
+        {
+            <form class="delete-user-form" method="post"
+                  action="@Url.Action("Delete", "Users", new { id = Model.Id })"
+                  onclick="event.stopPropagation();">
+                <button type="submit" class="delete-user-button"
+                        onclick="return confirm('Are you sure you want to delete this user?')">
+                    <img src="https://www.svgrepo.com/show/533023/trash-xmark-alt.svg" alt="delete user" />
+                </button>
+            </form>
+        }
+    </div>
+
+    <div class="user-stats">
+        <div class="stat-item">
+            <span class="stat-value">@Model.Blooms?.Count</span>
+            <span class="stat-label">Blooms</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">@Model.Comments?.Count</span>
+            <span class="stat-label">Comments</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">@Model.Communities?.Count</span>
+            <span class="stat-label">Communities</span>
+        </div>
+    </div>
+
+    @{
+        var recentBloom = ViewBag.UserRecentBlooms != null &&
+        ViewBag.UserRecentBlooms.ContainsKey(Model.Id) ?
+        ViewBag.UserRecentBlooms[Model.Id] : null;
+    }
+
+    @if (recentBloom != null)
+    {
+        <div class="recent-bloom glass-effect">
+            <h4>Recent Bloom</h4>
+            <div class="recent-bloom-content">
+                @if (!string.IsNullOrEmpty(recentBloom.Image))
+                {
+                    <img src="@recentBloom.Image" alt="recent bloom" />
+                }
+                <div class="bloom-info">
+                    <p class="bloom-title">@recentBloom.Title</p>
+                    <span class="bloom-date">@recentBloom.Date.ToString("MMM dd, yyyy")</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>

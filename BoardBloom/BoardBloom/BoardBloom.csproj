@@ -29,4 +29,8 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Views\Home\TermsOfService.cshtml" />
+  </ItemGroup>
+
 </Project>
