@@ -1,5 +1,6 @@
 ﻿using BoardBloom.Data;
 using BoardBloom.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ namespace BoardBloom.Controllers
             _env = env;
         }
 
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Index()
         {
              List<Bloom> blooms = db.Blooms
@@ -51,6 +53,7 @@ namespace BoardBloom.Controllers
             return View();
         }
 
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Privacy()
         {
             return View();
@@ -59,10 +62,9 @@ namespace BoardBloom.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int statusCode)
         {
-            if (statusCode ==404)
+            if (statusCode == 404)
             {
                 return View("404");
-
             }
             else
             {
