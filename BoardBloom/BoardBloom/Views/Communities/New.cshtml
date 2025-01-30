@@ -7,29 +7,34 @@
     <link rel="stylesheet" href="~/css/Communities/CommunityNew.css" />
 </head>
 
-<div class="new-community-wrapper">
-    <h1 class="new-community-title">Create a new<br/><span class="new-community-title-span">Community</span></h1>
-    
-    <div class="new-community-form-wrapper">
-        @using (Html.BeginForm("New", "Communities", FormMethod.Post, new { @class = "new-community-form" }))
+<div class="community-new-wrapper">
+    <div class="community-new-container">
+        <div class="community-new-header">
+            <h1 class="community-new-title">Create Community</h1>
+            <p class="community-new-subtitle">Build a space for your ideas to bloom</p>
+        </div>
+
+        @using (Html.BeginForm("New", "Communities", FormMethod.Post, new { @class = "community-new-form" }))
         {
-            <div class="form-group">
-                @Html.TextBoxFor(m => m.Name, new { 
-                    @class = "new-community-form-input",
-                    placeholder = "Community Name"
-                })
-                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+            <div class="community-new-input-group">
+                <label class="community-new-label" for="Name">Community Name</label>
+                @Html.TextBoxFor(m => m.Name, new {
+            @class = "community-new-input",
+            placeholder = "Enter your community name"
+            })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "community-new-validation" })
             </div>
 
-            <div class="form-group">
-                @Html.TextAreaFor(m => m.Description, new { 
-                    @class = "new-community-form-textarea",
-                    placeholder = "Community Description"
-                })
-                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+            <div class="community-new-input-group">
+                <label class="community-new-label" for="Description">Description</label>
+                @Html.TextAreaFor(m => m.Description, new {
+            @class = "community-new-input community-new-textarea",
+            placeholder = "What's your community about?"
+            })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "community-new-validation" })
             </div>
 
-            <button type="submit" class="new-community-form-submit">Create Community</button>
+            <button type="submit" class="community-new-button">Create Community</button>
         }
     </div>
 </div>

@@ -362,6 +362,7 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(182, 179, 235, 0.3);
         text-decoration: none;
+        color: var(--content-white);
     }
 
 /* Make sure icons are properly sized */
